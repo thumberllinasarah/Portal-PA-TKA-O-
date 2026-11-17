@@ -1406,10 +1406,10 @@
             tasks.unshift(newTask);
             
             syncToGoogleSheet(
-                "Tasks",
-                ["Task / Perkara", "Pegawai", "Catatan", "Deadline", "Priority", "Status"],
-                [desc, pic, notes, deadline, priority, "Pending"]
-            );
+    "Tasks",
+    ["Task / Perkara", "Pegawai", "Catatan", "Deadline", "Priority", "Status"],
+    [desc, pic, notes, deadline, priority, "Pending"]
+);
         }
 
         localStorage.setItem('pa_tasks', JSON.stringify(tasks));
