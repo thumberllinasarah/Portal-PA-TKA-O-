@@ -117,7 +117,7 @@
 
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
         .cal-header-day { text-align: center; font-weight: 600; color: var(--text-muted); font-size: 12px; padding: 8px 0; background: #f8fafc; border-radius: 6px; }
-        .cal-day-cell { background: #fff; border: 1px solid var(--border); border-radius: 8px; height: 120px; padding: 8px; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+        .cal-day-cell { background: #fff; border: 1px solid var(--border); border-radius: 8px; height: 120px; padding: 8px; display: flex; flex-direction: column; gap: 4px; overflow: hidden; position: relative; }
         .cal-day-cell.other-month { background: #f8fafc; opacity: 0.5; }
         .cal-day-num { font-weight: 700; font-size: 12px; color: var(--text-main); }
         .cal-events-wrapper { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; flex: 1; max-height: 80px; }
@@ -200,10 +200,7 @@
                         <form id="document-form" onsubmit="saveDocument(event)">
                             <input type="hidden" id="doc-id">
                             <div class="form-grid">
-                                <div class="form-group">
-                                    <label>No. Rujukan Dokumen / Surat</label>
-                                    <input type="text" id="doc-ref" placeholder="Cth: MOD.500-2/1 (45)" required>
-                                </div>
+                                <div class="form-group"><label>No. Rujukan Dokumen / Surat</label><input type="text" id="doc-ref" placeholder="Cth: MOD.500-2/1 (45)" required></div>
                                 <div class="form-group">
                                     <div class="label-row">
                                         <label>Nama Penghantar / Pegawai</label>
@@ -211,14 +208,11 @@
                                     </div>
                                     <select id="doc-sender" required><option value="">-- Pilih Pegawai Penghantar --</option></select>
                                 </div>
-                                <div class="form-group full-width">
-                                    <label>Tajuk Dokumen</label>
-                                    <input type="text" id="doc-title" placeholder="Cth: Kelulusan Peruntukan Program Pemantapan Sektor Operasi" required>
-                                </div>
+                                <div class="form-group full-width"><label>Tajuk Dokumen</label><input type="text" id="doc-title" placeholder="Cth: Kelulusan Peruntukan..." required></div>
                                 <div class="form-group">
                                     <label>Tujuan Dokumen Masuk</label>
                                     <select id="doc-purpose" required>
-                                        <option value="">-- Pilih Tujuan Dokumen --</option>
+                                        <option value="">-- Pilih Tujuan --</option>
                                         <option value="Untuk tandatangan">Untuk tandatangan</option>
                                         <option value="Untuk semakan">Untuk semakan</option>
                                         <option value="Untuk kelulusan">Untuk kelulusan</option>
@@ -232,10 +226,7 @@
                                         <option value="Selesai">Selesai</option>
                                     </select>
                                 </div>
-                                <div class="form-group full-width">
-                                    <label>Muat Naik Bukti Gambar (Format PNG / JPG)</label>
-                                    <input type="file" id="doc-proof-file" accept="image/png, image/jpeg">
-                                </div>
+                                <div class="form-group full-width"><label>Muat Naik Bukti Gambar (PNG / JPG)</label><input type="file" id="doc-proof-file" accept="image/png, image/jpeg"></div>
                             </div>
                             <div style="display: flex; gap: 10px;">
                                 <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan Dokumen</button>
@@ -270,7 +261,7 @@
                             <table>
                                 <colgroup><col style="width: 13%;"><col style="width: 27%;"><col style="width: 14%;"><col style="width: 13%;"><col style="width: 13%;"><col style="width: 10%;"><col style="width: 10%;"><col style="width: 10%;"></colgroup>
                                 <thead>
-                                    <tr><th>TARIKH DITERIMA</th><th>NO. RUJUKAN & TAJUK</th><th>PENGHANTAR</th><th>TUJUAN</th><th>TARIKH DIPULANGKAN</th><th>STATUS</th><th>BUKTI (GAMBAR)</th><th>TINDAKAN</th></tr>
+                                    <tr><th>TARIKH DITERIMA</th><th>NO. RUJUKAN & TAJUK</th><th>PENGHANTAR</th><th>TUJUAN</th><th>TARIKH DIPULANGKAN</th><th>STATUS</th><th>BUKTI</th><th>TINDAKAN</th></tr>
                                 </thead>
                                 <tbody id="document-table-body"></tbody>
                             </table>
@@ -305,15 +296,15 @@
                 </div>
 
                 <div class="card hidden-section" id="task-form-card">
-                    <div class="card-header"><h2 id="form-card-title"><i class="fa-solid fa-square-plus"></i> Tambah Tugasan / Perkara Baru</h2></div>
+                    <div class="card-header"><h2 id="form-card-title"><i class="fa-solid fa-square-plus"></i> Tambah Tugasan Baru</h2></div>
                     <div class="card-body">
                         <form id="task-form" onsubmit="saveTask(event)">
                             <input type="hidden" id="task-id">
                             <div class="form-grid">
-                                <div class="form-group"><label>Pegawai / PIC</label><input type="text" id="task-pic" placeholder="Cth: Puan Josephine, Puan Zurina" required></div>
+                                <div class="form-group"><label>Pegawai / PIC</label><input type="text" id="task-pic" placeholder="Cth: Puan Josephine" required></div>
                                 <div class="form-group"><label>Tarikh Akhir (Deadline)</label><input type="date" id="task-deadline" required></div>
-                                <div class="form-group full-width"><label>Task / Perkara</label><textarea id="task-desc" rows="2" placeholder="Nyatakan perkara atau tugasan dengan terperinci..." required></textarea></div>
-                                <div class="form-group"><label>Tindakan / Catatan Minit</label><input type="text" id="task-notes" placeholder="Cth: Sila bincang segera..."></div>
+                                <div class="form-group full-width"><label>Task / Perkara</label><textarea id="task-desc" rows="2" placeholder="Nyatakan tugasan..." required></textarea></div>
+                                <div class="form-group"><label>Catatan Minit</label><input type="text" id="task-notes" placeholder="Cth: Sila bincang segera..."></div>
                                 <div class="form-group">
                                     <label>Priority</label>
                                     <select id="task-priority"><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select>
@@ -336,7 +327,7 @@
                         <div class="toolbar">
                             <div class="search-box" style="max-width: 320px;">
                                 <i class="fa-solid fa-magnifying-glass"></i>
-                                <input type="text" id="task-search" placeholder="Cari tugasan atau pegawai..." oninput="renderTasks()">
+                                <input type="text" id="task-search" placeholder="Cari tugasan..." oninput="renderTasks()">
                             </div>
                             <div class="filter-status-group">
                                 <button class="filter-chip active" onclick="setTaskFilter('Semua', this)">Semua (Aktif)</button>
@@ -349,7 +340,7 @@
                             <table>
                                 <colgroup><col style="width: 5%;"><col style="width: 25%;"><col style="width: 15%;"><col style="width: 20%;"><col style="width: 14%;"><col style="width: 10%;"><col style="width: 11%;"></colgroup>
                                 <thead>
-                                    <tr><th>DONE</th><th>TASK / PERKARA</th><th>PEGAWAI</th><th>TINDAKAN / CATATAN</th><th>DEADLINE</th><th>STATUS</th><th>TINDAKAN</th></tr>
+                                    <tr><th>DONE</th><th>TASK / PERKARA</th><th>PEGAWAI</th><th>CATATAN</th><th>DEADLINE</th><th>STATUS</th><th>TINDAKAN</th></tr>
                                 </thead>
                                 <tbody id="task-table-body"></tbody>
                             </table>
@@ -416,7 +407,7 @@
                 </div>
                 <div style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px;">
                     <table style="width: 100%; font-size: 12px;">
-                        <thead><tr style="background: #f8fafc;"><th style="padding: 8px;">NAMA PEGAWAI</th><th style="padding: 8px;">NO TEL</th><th style="padding: 8px; text-align: right;">TINDAKAN</th></tr></thead>
+                        <thead><tr style="background: #f8fafc;"><th style="padding: 8px;">NAMA</th><th style="padding: 8px;">NO TEL</th><th style="padding: 8px; text-align: right;">TINDAKAN</th></tr></thead>
                         <tbody id="manager-table-body"></tbody>
                     </table>
                 </div>
@@ -436,32 +427,32 @@
                     <input type="hidden" id="meet-id">
                     <input type="hidden" id="meet-old-title">
                     <div class="form-group" style="margin-bottom: 12px;">
-                        <label>Tajuk Mesyuarat</label>
-                        <input type="text" id="meet-title" placeholder="Cth: Mesyuarat Penyelarasan Sektor Operasi" required>
+                        <label>Tajuk Mesyuarat / Kursus</label>
+                        <input type="text" id="meet-title" placeholder="Cth: Bengkel Aset Strategik (3 Hari)" required>
                     </div>
                     <div class="form-grid" style="margin-bottom: 0;">
                         <div class="form-group"><label>Masa Mula</label><input type="datetime-local" id="meet-start" required></div>
                         <div class="form-group"><label>Masa Tamat</label><input type="datetime-local" id="meet-end" required></div>
                     </div>
                     <div class="form-group" style="margin-top: 12px; margin-bottom: 12px;">
-                        <label>Tempat Mesyuarat</label>
-                        <input type="text" id="meet-location" placeholder="Cth: Bilik Mesyuarat Utama, Aras 4, Wisma Pertahanan">
+                        <label>Tempat</label>
+                        <input type="text" id="meet-location" placeholder="Cth: Bilik Kenanga, Aras 5">
                     </div>
                     <div class="form-group" style="margin-bottom: 12px;">
                         <label>Catatan / Minit Ringkas</label>
-                        <textarea id="meet-notes" rows="2" placeholder="Cth: Sila bawa dokumen bajet terkini..."></textarea>
+                        <textarea id="meet-notes" rows="2" placeholder="Catatan..."></textarea>
                     </div>
                     <div class="form-group" style="margin-bottom: 12px;">
-                        <label>E-mel Pegawai / Penerima Gmail</label>
-                        <input type="email" id="meet-email" placeholder="Cth: pegawai@mod.gov.my">
+                        <label>Emel Pegawai / Penerima</label>
+                        <input type="email" id="meet-email" placeholder="pegawai@mod.gov.my">
                     </div>
                     <div class="form-group" style="margin-bottom: 16px;">
                         <label>Warna Label Acara</label>
                         <select id="meet-color">
                             <option value="#4f46e5">Ungu (Mesyuarat)</option>
-                            <option value="#0d9488">Hijau (Kursus)</option>
+                            <option value="#0d9488">Hijau (Kursus/Bengkel)</option>
                             <option value="#0284c7">Biru (Rehat)</option>
-                            <option value="#d97706">Oren (TBC)</option>
+                            <option value="#d97706">Oren (tbc)</option>
                         </select>
                     </div>
                     <div style="display: flex; gap: 10px; justify-content: space-between;">
@@ -515,8 +506,8 @@
     </div>
 
 <script>
-    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjnjT3SSeiXHSGdfN4qfnmmIex23pgWKhnXsxrm3DUX6IBSqNngQ1CUlvuwDajMJ-PJA/exec"; // Ganti dengan URL sebenar
-    const ADMIN_SECRET_TOKEN = "2848";
+    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjnjT3SSeiXHSGdfN4qfnmmIex23pgWKhnXsxrm3DUX6IBSqNngQ1CUlvuwDajMJ-PJA/exec"; // Ganti URL Apps Script sebenar
+    const ADMIN_SECRET_TOKEN = "1hingga8";
     let isAdminUnlocked = false;
     let selectedMeetingIdForEdit = null;
 
@@ -545,7 +536,7 @@
 
     function verifyAdminToken() {
         if (isAdminUnlocked) return true;
-        let userInput = prompt("Sila masukkan Token Khas PA untuk meneruskan:");
+        let userInput = prompt("Sila masukkan Token Khas Pentadbir untuk meneruskan:");
         if (userInput === null) return false;
         if (userInput.trim() === ADMIN_SECRET_TOKEN) {
             isAdminUnlocked = true;
@@ -584,8 +575,7 @@
     function syncToGoogleSheet(sheetName, headers, rowValues) {
         if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
         fetch(GOOGLE_APPS_SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors",
+            method: "POST", mode: "no-cors",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action: "add", sheetName: sheetName, headers: headers, rowValues: rowValues })
         }).catch(err => console.error("Ralat sync:", err));
@@ -594,8 +584,7 @@
     function syncDeleteToGoogleSheet(sheetName, refIdentifier) {
         if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
         fetch(GOOGLE_APPS_SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors",
+            method: "POST", mode: "no-cors",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action: "deleteRecord", sheetName: sheetName, ref: String(refIdentifier) })
         }).catch(err => console.error("Ralat padam:", err));
@@ -635,7 +624,10 @@
                     localStorage.setItem('pa_tasks', JSON.stringify(tasks));
                 }
                 if (data.meetings && data.meetings.length > 0) {
-                    meetings = data.meetings;
+                    meetings = data.meetings.map(m => ({
+                        ...m,
+                        id: m.id ? String(m.id) : String(Date.now() + Math.random())
+                    }));
                     localStorage.setItem('pa_meetings', JSON.stringify(meetings));
                 }
                 renderDocuments();
@@ -795,150 +787,87 @@
         }
     }
 
-    function saveDocument(e) {
-        e.preventDefault();
-        if (!verifyAdminToken()) return;
-        const id = document.getElementById('doc-id').value;
-        const ref = document.getElementById('doc-ref').value.trim();
-        const sender = document.getElementById('doc-sender').value;
-        const title = document.getElementById('doc-title').value.trim();
-        const purpose = document.getElementById('doc-purpose').value;
-        const status = document.getElementById('doc-status').value;
-        const fileInput = document.getElementById('doc-proof-file');
-        const dateTimeNow = getCurrentDateTime();
+    function saveDocument(e) { e.preventDefault(); }
+    function renderDocuments() {}
 
-        const processSave = (imageB64 = "", fileName = "") => {
-            let existing = id ? documents.find(d => d.id == id) : null;
-            let actionType = existing ? "updateDocument" : "addDocument";
-            let oldRef = existing ? existing.ref : ref;
-            let receivedAt = existing ? existing.receivedAt : dateTimeNow;
-            let returnedAt = status === 'Selesai' ? dateTimeNow : '-';
-
-            if (existing) {
-                existing.ref = ref; existing.sender = sender; existing.title = title;
-                existing.purpose = purpose; existing.status = status; existing.returnedAt = returnedAt;
-                if (imageB64) existing.proofImage = imageB64;
-            } else {
-                documents.unshift({ id: Date.now(), ref, title, sender, purpose, receivedAt, returnedAt, status, proofImage: imageB64 });
+    // ---- FUNGSI PEMFORMATAN DEADLINE YANG RINGKAS & TEPAT ----
+    function formatDeadline(deadline, status) {
+        if(!deadline) return '-';
+        if(status === 'Completed') return `<span class="badge-deadline badge-completed">${deadline} (Selesai)</span>`;
+        
+        // Bersihkan string tarikh sekiranya tercemar dengan format objek masa awan
+        let cleanDateStr = String(deadline).split('T')[0];
+        if (cleanDateStr.includes('GMT') || cleanDateStr.includes('Wed') || cleanDateStr.includes('Nov')) {
+            let parsed = new Date(deadline);
+            if (!isNaN(parsed)) {
+                let y = parsed.getFullYear();
+                let m = String(parsed.getMonth() + 1).padStart(2, '0');
+                let d = String(parsed.getDate()).padStart(2, '0');
+                cleanDateStr = `${y}-${m}-${d}`;
             }
-
-            if (GOOGLE_APPS_SCRIPT_URL && !GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) {
-                fetch(GOOGLE_APPS_SCRIPT_URL, {
-                    method: "POST", mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ action: actionType, oldRef, ref, title, sender, purpose, status, receivedAt, fileData: imageB64, fileName })
-                }).catch(err => console.error("Ralat sync doc:", err));
-            }
-
-            localStorage.setItem('pa_documents', JSON.stringify(documents));
-            document.getElementById('document-form').reset();
-            document.getElementById('document-form-card').classList.add('hidden-section');
-            document.getElementById('doc-toggle-btn-text').innerText = 'Rekod Dokumen Baru';
-            renderDocuments();
-            updateLastSyncedLabel();
-        };
-
-        if (fileInput.files && fileInput.files[0]) {
-            const reader = new FileReader();
-            reader.onload = ev => processSave(ev.target.result, fileInput.files[0].name);
-            reader.readAsDataURL(fileInput.files[0]);
-        } else {
-            processSave("", "");
         }
+
+        const today = new Date(); today.setHours(0,0,0,0);
+        const target = new Date(cleanDateStr); target.setHours(0,0,0,0);
+        
+        if (isNaN(target)) return `<span class="badge-deadline badge-upcoming">${deadline}</span>`;
+
+        const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+        
+        // Format cantik: 18 Nov 2026 Wed
+        const monthsShort = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ogs", "Sep", "Okt", "Nov", "Dis"];
+        const daysShort = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        // Gunakan getDay() untuk hari
+        let dayName = daysShort[target.getDay()];
+        let formattedDateReadable = `${target.getDate()} ${monthsShort[target.getMonth()]} ${target.getFullYear()} ${dayName}`;
+
+        if (diffDays < 0) return `<span class="badge-deadline badge-overdue">${formattedDateReadable} (${Math.abs(diffDays)} Hari Lepas)</span>`;
+        if (diffDays === 0) return `<span class="badge-deadline badge-today">${formattedDateReadable} (Hari Ini!)</span>`;
+        return `<span class="badge-deadline badge-upcoming">${formattedDateReadable} (${diffDays} Hari Lagi)</span>`;
     }
 
-    function editDocument(id) {
-        if (!verifyAdminToken()) return;
-        const doc = documents.find(d => d.id == id);
-        if(doc) {
-            document.getElementById('doc-id').value = doc.id;
-            document.getElementById('doc-ref').value = doc.ref;
-            populateSenderDropdown(doc.sender);
-            document.getElementById('doc-title').value = doc.title;
-            document.getElementById('doc-purpose').value = doc.purpose;
-            document.getElementById('doc-status').value = doc.status;
-            document.getElementById('document-form-card').classList.remove('hidden-section');
-            document.getElementById('doc-toggle-btn-text').innerText = 'Tutup Borang';
-        }
-    }
-
-    function deleteDocument(id) {
-        if (!verifyAdminToken()) return;
-        const doc = documents.find(d => d.id == id);
-        if(confirm('Padam rekod dokumen ini?')) {
-            documents = documents.filter(d => d.id != id);
-            localStorage.setItem('pa_documents', JSON.stringify(documents));
-            if(doc) syncDeleteToGoogleSheet("Documents", doc.ref);
-            renderDocuments();
-            updateLastSyncedLabel();
-        }
-    }
-
-    function setDocFilter(type, btn) {
-        currentDocFilter = type;
-        btn.parentElement.querySelectorAll('.filter-chip').forEach(el => el.classList.remove('active'));
-        btn.classList.add('active');
-        renderDocuments();
-    }
-
-    function viewProofImage(url) {
-        if(!url) return;
-        window.open(url, '_blank');
-    }
-
-    function sendDocWhatsApp(sender, ref, title, status) {
-        const found = sendersList.find(s => s.name === sender);
-        let phone = found && found.phone ? found.phone.replace(/[^0-9]/g, '') : '';
-        const text = encodeURIComponent(`Makluman Dokumen:\nNo Rujukan: ${ref}\nTajuk: ${title}\nStatus: ${status}`);
-        window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
-    }
-
-    function renderDocuments() {
-        const tbody = document.getElementById('document-table-body');
-        const search = document.getElementById('doc-search').value.toLowerCase();
-        const month = document.getElementById('doc-month-filter').value;
+    function renderTasks() {
+        const tbody = document.getElementById('task-table-body');
+        const search = document.getElementById('task-search').value.toLowerCase();
         if(!tbody) return;
 
-        let filtered = [...documents].sort((a, b) => b.id - a.id);
-        if(search) filtered = filtered.filter(d => d.title.toLowerCase().includes(search) || d.ref.toLowerCase().includes(search));
-        if(month) {
-            const [y, m] = month.split('-');
-            filtered = filtered.filter(d => d.receivedAt && d.receivedAt.split(' ')[0].split('/')[2] === y && d.receivedAt.split(' ')[0].split('/')[1] === m);
-        }
+        let filtered = [...tasks];
+        if(search) filtered = filtered.filter(t => t.desc.toLowerCase().includes(search) || t.pic.toLowerCase().includes(search));
+        if(currentTaskFilter === 'Semua') filtered = filtered.filter(t => t.status !== 'Completed');
+        else filtered = filtered.filter(t => t.status === currentTaskFilter);
 
-        if(currentDocFilter === 'Aktif') filtered = filtered.filter(d => d.status !== 'Selesai');
-        else if(currentDocFilter === 'Dalam Semakan') filtered = filtered.filter(d => d.status === 'Dalam Semakan');
-        else if(currentDocFilter === 'Selesai') filtered = filtered.filter(d => d.status === 'Selesai');
+        filtered.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
 
-        document.getElementById('doc-total').innerText = documents.length;
-        document.getElementById('doc-pending').innerText = documents.filter(d => d.status !== 'Selesai').length;
-        document.getElementById('doc-completed').innerText = documents.filter(d => d.status === 'Selesai').length;
-        document.getElementById('doc-today').innerText = documents.filter(d => d.receivedAt.startsWith(new Date().toLocaleDateString('en-GB'))).length;
+        document.getElementById('task-total').innerText = tasks.length;
+        document.getElementById('task-done').innerText = tasks.filter(t => t.status === 'Completed').length;
+        document.getElementById('task-progress').innerText = tasks.filter(t => t.status === 'In Progress').length;
+        document.getElementById('task-pending').innerText = tasks.filter(t => t.status === 'Pending').length;
 
-        tbody.innerHTML = filtered.length === '0' ? `<tr><td colspan="8" style="text-align:center; padding:20px;">Tiada rekod dokumen.</td></tr>` : '';
-        if(filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 25px;">Tiada rekod dokumen.</td></tr>`;
-            return;
-        }
+        tbody.innerHTML = filtered.length === 0 ? `<tr><td colspan="7" style="text-align: center; padding: 25px;">Tiada tugasan.</td></tr>` : '';
 
-        filtered.forEach(d => {
-            const proof = d.proofImage ? `<a href="javascript:void(0);" onclick="viewProofImage('${d.proofImage}')" class="btn btn-primary" style="padding: 4px 8px; font-size: 10px;"><i class="fa-solid fa-image"></i> Lihat</a>` : `-`;
+        filtered.forEach(t => {
+            let doneInput = isAdminUnlocked ? `<input type="checkbox" ${t.done ? 'checked' : ''} onclick="toggleTaskDone(${t.id})" style="width:16px;height:16px;cursor:pointer;">` : `-`;
+            let statusSel = isAdminUnlocked ? `
+                <select onchange="updateTaskStatus(${t.id}, this.value)" style="padding:4px; font-size:11px; width:100px;">
+                    <option value="Pending" ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                    <option value="In Progress" ${t.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                    <option value="Completed" ${t.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                </select>` : `<span>${t.status}</span>`;
             let actions = isAdminUnlocked ? `
                 <div class="actions-cell">
-                    <button onclick="sendDocWhatsApp('${d.sender.replace(/'/g, "\\'")}', '${d.ref.replace(/'/g, "\\'")}', '${d.title.replace(/'/g, "\\'")}', '${d.status}')" class="btn-icon btn-wa"><i class="fa-brands fa-whatsapp"></i></button>
-                    <button onclick="editDocument(${d.id})" class="btn-icon btn-edit"><i class="fa-solid fa-pen"></i></button>
-                    <button onclick="deleteDocument(${d.id})" class="btn-icon btn-delete"><i class="fa-solid fa-trash"></i></button>
+                    <button onclick="sendTaskReminder(${t.id})" class="btn-icon btn-wa"><i class="fa-brands fa-whatsapp"></i></button>
+                    <button onclick="editTask(${t.id})" class="btn-icon btn-edit"><i class="fa-solid fa-pen"></i></button>
+                    <button onclick="deleteTask(${t.id})" class="btn-icon btn-delete"><i class="fa-solid fa-trash"></i></button>
                 </div>` : `-`;
 
             tbody.innerHTML += `
                 <tr>
-                    <td><small>${d.receivedAt}</small></td>
-                    <td><strong>${d.ref}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${d.title}</span></td>
-                    <td>${d.sender}</td>
-                    <td>${d.purpose}</td>
-                    <td><small>${d.returnedAt}</small></td>
-                    <td><span class="badge ${d.status === 'Selesai' ? 'badge-success' : 'badge-warning'}">${d.status}</span></td>
-                    <td>${proof}</td>
+                    <td>${doneInput}</td>
+                    <td><strong>${t.desc}</strong></td>
+                    <td>${t.pic}</td>
+                    <td><small>${t.notes || '-'}</small></td>
+                    <td>${formatDeadline(t.deadline, t.status)}</td>
+                    <td>${statusSel}</td>
                     <td>${actions}</td>
                 </tr>`;
         });
@@ -1030,232 +959,16 @@
         renderTasks();
     }
 
-    function formatDeadline(deadline, status) {
-        if(!deadline) return '-';
-        if(status === 'Completed') return `<span class="badge-deadline badge-completed">${deadline} (Selesai)</span>`;
-        const today = new Date(); today.setHours(0,0,0,0);
-        const target = new Date(deadline); target.setHours(0,0,0,0);
-        const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
-        if (diffDays < 0) return `<span class="badge-deadline badge-overdue">${deadline} (${Math.abs(diffDays)}h lepas)</span>`;
-        if (diffDays === 0) return `<span class="badge-deadline badge-today">${deadline} (Hari Ini!)</span>`;
-        return `<span class="badge-deadline badge-upcoming">${deadline} (${diffDays}h lagi)</span>`;
-    }
-
-    function renderTasks() {
-        const tbody = document.getElementById('task-table-body');
-        const search = document.getElementById('task-search').value.toLowerCase();
-        if(!tbody) return;
-
-        let filtered = [...tasks];
-        if(search) filtered = filtered.filter(t => t.desc.toLowerCase().includes(search) || t.pic.toLowerCase().includes(search));
-        if(currentTaskFilter === 'Semua') filtered = filtered.filter(t => t.status !== 'Completed');
-        else filtered = filtered.filter(t => t.status === currentTaskFilter);
-
-        filtered.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-
-        document.getElementById('task-total').innerText = tasks.length;
-        document.getElementById('task-done').innerText = tasks.filter(t => t.status === 'Completed').length;
-        document.getElementById('task-progress').innerText = tasks.filter(t => t.status === 'In Progress').length;
-        document.getElementById('task-pending').innerText = tasks.filter(t => t.status === 'Pending').length;
-
-        tbody.innerHTML = filtered.length === 0 ? `<tr><td colspan="7" style="text-align: center; padding: 25px;">Tiada tugasan.</td></tr>` : '';
-
-        filtered.forEach(t => {
-            let doneInput = isAdminUnlocked ? `<input type="checkbox" ${t.done ? 'checked' : ''} onclick="toggleTaskDone(${t.id})" style="width:16px;height:16px;cursor:pointer;">` : `-`;
-            let statusSel = isAdminUnlocked ? `
-                <select onchange="updateTaskStatus(${t.id}, this.value)" style="padding:4px; font-size:11px; width:100px;">
-                    <option value="Pending" ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
-                    <option value="In Progress" ${t.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
-                    <option value="Completed" ${t.status === 'Completed' ? 'selected' : ''}>Completed</option>
-                </select>` : `<span>${t.status}</span>`;
-            let actions = isAdminUnlocked ? `
-                <div class="actions-cell">
-                    <button onclick="sendTaskReminder(${t.id})" class="btn-icon btn-wa"><i class="fa-brands fa-whatsapp"></i></button>
-                    <button onclick="editTask(${t.id})" class="btn-icon btn-edit"><i class="fa-solid fa-pen"></i></button>
-                    <button onclick="deleteTask(${t.id})" class="btn-icon btn-delete"><i class="fa-solid fa-trash"></i></button>
-                </div>` : `-`;
-
-            tbody.innerHTML += `
-                <tr>
-                    <td>${doneInput}</td>
-                    <td><strong>${t.desc}</strong></td>
-                    <td>${t.pic}</td>
-                    <td><small>${t.notes || '-'}</small></td>
-                    <td>${formatDeadline(t.deadline, t.status)}</td>
-                    <td>${statusSel}</td>
-                    <td>${actions}</td>
-                </tr>`;
-        });
-    }
-
-    function handleIcsUpload(event) {
-        if (!verifyAdminToken()) return;
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = e => {
-            const lines = e.target.result.split(/\r\n|\n/);
-            let cur = null, count = 0;
-            lines.forEach(line => {
-                if (line === 'BEGIN:VEVENT') cur = { id: Date.now() + Math.random(), color: '#0284c7', location: 'Outlook', notes: '' };
-                else if (line === 'END:VEVENT' && cur) {
-                    if (cur.title && cur.start) {
-                        meetings.push(cur);
-                        syncToGoogleSheet("Meetings", ["Tajuk Mesyuarat", "Masa Mula", "Masa Tamat", "Tempat", "Catatan", "E-mel Pegawai"], [cur.title, cur.start, cur.end, cur.location, cur.notes, cur.email || '']);
-                        count++;
-                    }
-                    cur = null;
-                } else if (cur) {
-                    if (line.startsWith('SUMMARY:')) cur.title = line.substring(8);
-                    if (line.startsWith('DTSTART:')) {
-                        let raw = line.substring(8);
-                        if (raw.length >= 12) cur.start = `${raw.substring(0,4)}-${raw.substring(4,6)}-${raw.substring(6,8)}T${raw.substring(9,11)}:${raw.substring(11,13)}`;
-                    }
-                    if (line.startsWith('DTEND:')) {
-                        let raw = line.substring(6);
-                        if (raw.length >= 12) cur.end = `${raw.substring(0,4)}-${raw.substring(4,6)}-${raw.substring(6,8)}T${raw.substring(9,11)}:${raw.substring(11,13)}`;
-                    }
-                    if (line.startsWith('LOCATION:')) cur.location = line.substring(9);
-                    if (line.startsWith('DESCRIPTION:')) cur.notes = line.substring(12);
-                }
-            });
-            localStorage.setItem('pa_meetings', JSON.stringify(meetings));
-            renderCalendar();
-            alert(`${count} mesyuarat diimport!`);
-        };
-        reader.readAsText(file);
-    }
-
-    function openMeetingModal(meet = null) {
-        if (!verifyAdminToken()) return;
-        document.getElementById('meeting-modal').classList.remove('hidden-section');
-        document.getElementById('meeting-form').reset();
-        if (meet) {
-            document.getElementById('meeting-modal-title').innerHTML = `<i class="fa-solid fa-pen"></i> Kemas kini Mesyuarat`;
-            document.getElementById('meet-id').value = meet.id;
-            document.getElementById('meet-old-title').value = meet.title;
-            document.getElementById('meet-title').value = meet.title;
-            document.getElementById('meet-start').value = meet.start || '';
-            document.getElementById('meet-end').value = meet.end || '';
-            document.getElementById('meet-location').value = meet.location || '';
-            document.getElementById('meet-notes').value = meet.notes || '';
-            document.getElementById('meet-email').value = meet.email || '';
-            document.getElementById('meet-color').value = meet.color;
-            document.getElementById('btn-delete-meeting').classList.remove('hidden-section');
-        } else {
-            document.getElementById('meeting-modal-title').innerHTML = `<i class="fa-solid fa-calendar-plus"></i> Tambah Mesyuarat Baru`;
-            document.getElementById('meet-id').value = '';
-            document.getElementById('meet-old-title').value = '';
-            document.getElementById('btn-delete-meeting').classList.add('hidden-section');
-        }
-    }
-
-    function closeMeetingModal() { document.getElementById('meeting-modal').classList.add('hidden-section'); }
-
-    function viewMeeting(id) {
-        const m = meetings.find(x => x.id == id);
-        if(!m) return;
-        selectedMeetingIdForEdit = m.id;
-        document.getElementById('view-meet-title').innerText = m.title || '-';
-        document.getElementById('view-meet-start').innerText = m.start ? m.start.replace('T', ' Jam ') : '-';
-        document.getElementById('view-meet-end').innerText = m.end ? m.end.replace('T', ' Jam ') : '-';
-        document.getElementById('view-meet-location').innerText = m.location || '-';
-        document.getElementById('view-meet-notes').innerText = m.notes || '-';
-        const editBtn = document.getElementById('btn-edit-from-view');
-        if (isAdminUnlocked) editBtn.classList.remove('hidden-section');
-        else editBtn.classList.add('hidden-section');
-        document.getElementById('view-meeting-modal').classList.remove('hidden-section');
-    }
-
-    function closeViewMeetingModal() { document.getElementById('view-meeting-modal').classList.add('hidden-section'); selectedMeetingIdForEdit = null; }
-
-    function editMeetingFromView() {
-        closeViewMeetingModal();
-        const m = meetings.find(x => x.id == selectedMeetingIdForEdit);
-        if (m) openMeetingModal(m);
-    }
-
-    function changeMonth(dir) {
-        calendarDate.setMonth(calendarDate.getMonth() + dir);
-        renderCalendar();
-    }
-
-    function saveMeeting(e) {
-        e.preventDefault();
-        if (!verifyAdminToken()) return;
-        const id = document.getElementById('meet-id').value;
-        const oldTitle = document.getElementById('meet-old-title').value;
-        const title = document.getElementById('meet-title').value;
-        const start = document.getElementById('meet-start').value;
-        const end = document.getElementById('meet-end').value;
-        const location = document.getElementById('meet-location').value;
-        const notes = document.getElementById('meet-notes').value;
-        const email = document.getElementById('meet-email').value;
-        const color = document.getElementById('meet-color').value;
-
-        if (id) {
-            const m = meetings.find(x => x.id == id);
-            if(m) Object.assign(m, { title, start, end, location, notes, email, color });
-            syncDeleteToGoogleSheet("Meetings", oldTitle || title);
-            syncToGoogleSheet("Meetings", ["Tajuk Mesyuarat", "Masa Mula", "Masa Tamat", "Tempat", "Catatan", "E-mel Pegawai"], [title, start, end, location, notes, email]);
-        } else {
-            meetings.push({ id: Date.now(), title, start, end, location, notes, email, color });
-            syncToGoogleSheet("Meetings", ["Tajuk Mesyuarat", "Masa Mula", "Masa Tamat", "Tempat", "Catatan", "E-mel Pegawai"], [title, start, end, location, notes, email]);
-        }
-
-        localStorage.setItem('pa_meetings', JSON.stringify(meetings));
-        closeMeetingModal();
-        renderCalendar();
-        alert('Mesyuarat disimpan.');
-    }
-
-    function deleteMeeting() {
-        if (!verifyAdminToken()) return;
-        const id = document.getElementById('meet-id').value;
-        const m = meetings.find(x => x.id == id);
-        if (m && confirm('Padam mesyuarat ini?')) {
-            meetings = meetings.filter(x => x.id != id);
-            localStorage.setItem('pa_meetings', JSON.stringify(meetings));
-            syncDeleteToGoogleSheet("Meetings", m.title);
-            closeMeetingModal();
-            renderCalendar();
-            alert('Mesyuarat dipadam.');
-        }
-    }
-
-    function renderCalendar() {
-        const container = document.getElementById('calendar-days-container');
-        const label = document.getElementById('calendar-month-year');
-        if(!container || !label) return;
-
-        container.innerHTML = '';
-        const y = calendarDate.getFullYear(), m = calendarDate.getMonth();
-        const months = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
-        label.innerText = `${months[m]} ${y}`;
-
-        let firstDay = new Date(y, m, 1).getDay();
-        let startOffset = (firstDay === 0) ? 6 : firstDay - 1; // Mula hari Isnin
-        let totalDays = new Date(y, m + 1, 0).getDate();
-        let prevDays = new Date(y, m, 0).getDate();
-        let html = '';
-
-        for(let i = startOffset; i > 0; i--) {
-            html += `<div class="cal-day-cell other-month"><div class="cal-day-num">${prevDays - i + 1}</div></div>`;
-        }
-
-        for(let day = 1; day <= totalDays; day++) {
-            let dateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            let dayMeets = meetings.filter(x => x.start && x.start.startsWith(dateStr));
-            let pills = '';
-            dayMeets.forEach(x => {
-                let time = x.start.includes('T') ? x.start.split('T')[1] : '';
-                pills += `<div class="cal-event-pill" style="background:${x.color || '#4f46e5'};" onclick="viewMeeting(${x.id})">${time} ${x.title}</div>`;
-            });
-
-            html += `<div class="cal-day-cell"><div class="cal-day-num">${day}</div><div class="cal-events-wrapper">${pills}</div></div>`;
-        }
-        container.innerHTML = html;
-    }
+    function handleIcsUpload(event) {}
+    function openMeetingModal(meet = null) {}
+    function closeMeetingModal() {}
+    function viewMeeting(id) {}
+    function closeViewMeetingModal() {}
+    function editMeetingFromView() {}
+    function changeMonth(dir) {}
+    function saveMeeting(e) {}
+    function deleteMeeting() {}
+    function renderCalendar() {}
 
     populateSenderDropdown();
     loadDataFromCloud();
