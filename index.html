@@ -573,7 +573,7 @@
         <topbar>
             <div class="topbar-title">
                 <h2>Portal-PA-TKAO-BAMOD</h2>
-                <p>Kementerian Pertahanan Malaysia • Sektor Operasi</p>
+                <p>Kementerian Pertahanan Malaysia • Bahagian Akaun</p>
             </div>
             <div class="topbar-actions">
                 <button class="btn btn-secondary" onclick="refreshData()"><i class="fa-solid fa-rotate"></i> Refresh</button>
@@ -884,7 +884,7 @@
                             <div class="cal-header-day">Khamis</div>
                             <div class="cal-header-day">Jumaat</div>
                             <div class="cal-header-day">Sabtu</div>
-                             <div class="cal-header-day">Ahad</div>
+                            <div class="cal-header-day">Ahad</div>
                         </div>
                         <div class="calendar-grid" id="calendar-days-container" style="margin-top: 8px;"></div>
                     </div>
@@ -924,7 +924,7 @@
         </div>
     </div>
 
-    <!-- Modal Tambah / Edit Mesyuarat (Admin Sahaja) -->
+    <!-- Modal Tambah / Edit Mesyuarat (Admin Sahaja) dengan Masa Mula & Tamat -->
     <div id="meeting-modal" class="hidden-section" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
         <div class="card" style="width: 550px; max-width: 90%; margin: 0;">
             <div class="card-header">
@@ -938,11 +938,17 @@
                         <label>Tajuk Mesyuarat</label>
                         <input type="text" id="meet-title" placeholder="Cth: Mesyuarat Penyelarasan Sektor Operasi" required>
                     </div>
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label>Tarikh & Masa</label>
-                        <input type="datetime-local" id="meet-datetime" required>
+                    <div class="form-grid" style="margin-bottom: 0;">
+                        <div class="form-group">
+                            <label>Masa Mula</label>
+                            <input type="datetime-local" id="meet-start" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Masa Tamat</label>
+                            <input type="datetime-local" id="meet-end" required>
+                        </div>
                     </div>
-                    <div class="form-group" style="margin-bottom: 12px;">
+                    <div class="form-group" style="margin-top: 12px; margin-bottom: 12px;">
                         <label>Tempat Mesyuarat</label>
                         <input type="text" id="meet-location" placeholder="Cth: Bilik Mesyuarat Utama, Aras 4, Wisma Pertahanan">
                     </div>
@@ -951,7 +957,7 @@
                         <textarea id="meet-notes" rows="2" placeholder="Cth: Sila bawa dokumen bajet terkini..."></textarea>
                     </div>
                     <div class="form-group" style="margin-bottom: 12px;">
-                        <label>Emel Pegawai / Penerima Gmail</label>
+                        <label>E-mel Pegawai / Penerima Gmail</label>
                         <input type="email" id="meet-email" placeholder="Cth: pegawai@mod.gov.my">
                     </div>
                     <div class="form-group" style="margin-bottom: 16px;">
@@ -989,20 +995,23 @@
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div>
-                        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Tarikh & Masa</span>
-                        <div id="view-meet-datetime" style="font-weight: 600; margin-top: 2px;">-</div>
+                        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Masa Mula</span>
+                        <div id="view-meet-start" style="font-weight: 600; margin-top: 2px;">-</div>
                     </div>
                     <div>
-                        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Tempat</span>
-                        <div id="view-meet-location" style="font-weight: 600; margin-top: 2px;">-</div>
+                        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Masa Tamat</span>
+                        <div id="view-meet-end" style="font-weight: 600; margin-top: 2px;">-</div>
                     </div>
+                </div>
+                <div>
+                    <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Tempat</span>
+                    <div id="view-meet-location" style="font-weight: 600; margin-top: 2px;">-</div>
                 </div>
                 <div>
                     <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Catatan / Minit Ringkas</span>
                     <div id="view-meet-notes" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid var(--border); margin-top: 2px; color: var(--text-main);">-</div>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                    <!-- Jika admin buka, boleh terus klik edit dari sini -->
                     <button type="button" id="btn-edit-from-view" class="btn btn-primary hidden-section" onclick="editMeetingFromView()"><i class="fa-solid fa-pen"></i> Sunting Mesyuarat Ini</button>
                     <button type="button" class="btn btn-secondary" onclick="closeViewMeetingModal()" style="margin-left: auto;">Tutup</button>
                 </div>
@@ -1070,7 +1079,7 @@
             document.getElementById('document-form-card').classList.add('hidden-section');
             document.getElementById('task-form-card').classList.add('hidden-section');
             closeMeetingModal();
-            closeManagerManagerModal?.();
+            closeViewMeetingModal();
         }
         renderDocuments();
         renderTasks();
@@ -1087,13 +1096,14 @@
         }).catch(err => console.error("Ralat sync Google Sheet:", err));
     }
 
-    function syncDeleteToGoogleSheet(sheetName, ref) {
+    // Fungsi Diperbetulkan untuk Padam Rekod Mesyuarat/Dokumen berdasarkan ID atau Ref di Google Sheet
+    function syncDeleteToGoogleSheet(sheetName, identifier) {
         if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
         fetch(GOOGLE_APPS_SCRIPT_URL, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "deleteRecord", sheetName: sheetName, ref: ref })
+            body: JSON.stringify({ action: "deleteRecord", sheetName: sheetName, ref: String(identifier) })
         }).catch(err => console.error("Ralat padam dari Google Sheet:", err));
     }
 
@@ -1539,7 +1549,7 @@
     function sendTaskReminder(id) {
         const task = tasks.find(t => t.id == id);
         if(task) {
-            const waText = encodeURIComponent(`*Friendly Reminder*:\nPerkara: ${task.desc}\nPegawai: ${task.pic}\nDeadline: ${task.deadline}\nStatus: ${task.status}`);
+            const waText = encodeURIComponent(`Peringatan Tugasan:\nPerkara: ${task.desc}\nPegawai: ${task.pic}\nDeadline: ${task.deadline}\nStatus: ${task.status}`);
             window.open(`https://wa.me/?text=${waText}`, '_blank');
         }
     }
@@ -1690,7 +1700,7 @@
                 if (line === 'BEGIN:VEVENT') {
                     currentEvent = { id: Date.now() + Math.random(), color: '#0284c7', location: 'Outlook Calendar', notes: '' };
                 } else if (line === 'END:VEVENT' && currentEvent) {
-                    if (currentEvent.title && currentEvent.datetime) {
+                    if (currentEvent.title && currentEvent.start) {
                         meetings.push(currentEvent);
                         importedCount++;
                     }
@@ -1700,7 +1710,13 @@
                     if (line.startsWith('DTSTART:')) {
                         let rawDate = line.substring(8);
                         if (rawDate.length >= 12) {
-                            currentEvent.datetime = `${rawDate.substring(0,4)}-${rawDate.substring(4,6)}-${rawDate.substring(6,8)}T${rawDate.substring(9,11)}:${rawDate.substring(11,13)}`;
+                            currentEvent.start = `${rawDate.substring(0,4)}-${rawDate.substring(4,6)}-${rawDate.substring(6,8)}T${rawDate.substring(9,11)}:${rawDate.substring(11,13)}`;
+                        }
+                    }
+                    if (line.startsWith('DTEND:')) {
+                        let rawDate = line.substring(6);
+                        if (rawDate.length >= 12) {
+                            currentEvent.end = `${rawDate.substring(0,4)}-${rawDate.substring(4,6)}-${rawDate.substring(6,8)}T${rawDate.substring(9,11)}:${rawDate.substring(11,13)}`;
                         }
                     }
                     if (line.startsWith('LOCATION:')) currentEvent.location = line.substring(9);
@@ -1731,14 +1747,15 @@
             modalTitle.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Kemas kini Mesyuarat`;
             document.getElementById('meet-id').value = meetingObj.id;
             document.getElementById('meet-title').value = meetingObj.title;
-            document.getElementById('meet-datetime').value = meetingObj.datetime;
+            document.getElementById('meet-start').value = meetingObj.start || '';
+            document.getElementById('meet-end').value = meetingObj.end || '';
             document.getElementById('meet-location').value = meetingObj.location || '';
             document.getElementById('meet-notes').value = meetingObj.notes || '';
             document.getElementById('meet-email').value = meetingObj.email || '';
             document.getElementById('meet-color').value = meetingObj.color;
             deleteBtn.classList.remove('hidden-section');
         } else {
-            modalTitle.innerHTML = `<i class="fa-solid fa-calendar-plus"></i> Tambah Mesyuarat Baru`;
+            modalTitle.innerHTML = `<i class="fa-solid fa-calendar-plus"></i> Tambah / Jadualkan Mesyuarat Baru`;
             document.getElementById('meet-id').value = '';
             deleteBtn.classList.add('hidden-section');
         }
@@ -1749,18 +1766,17 @@
         if(modal) modal.classList.add('hidden-section');
     }
 
-    // Fungsi Klik Lihat Maklumat Mesyuarat untuk Semua Pegawai
     function viewMeeting(id) {
         const meet = meetings.find(m => m.id == id);
         if (!meet) return;
 
         selectedMeetingIdForEdit = meet.id;
         document.getElementById('view-meet-title').innerText = meet.title || '-';
-        document.getElementById('view-meet-datetime').innerText = meet.datetime ? meet.datetime.replace('T', ' Jam ') : '-';
+        document.getElementById('view-meet-start').innerText = meet.start ? meet.start.replace('T', ' Jam ') : '-';
+        document.getElementById('view-meet-end').innerText = meet.end ? meet.end.replace('T', ' Jam ') : '-';
         document.getElementById('view-meet-location').innerText = meet.location || 'Tiada maklumat tempat';
         document.getElementById('view-meet-notes').innerText = meet.notes || 'Tiada catatan tambahan';
 
-        // Tunjukkan butang sunting dari view modal HANYA jika admin sudah unlocked
         const editBtn = document.getElementById('btn-edit-from-view');
         if (isAdminUnlocked) {
             editBtn.classList.remove('hidden-section');
@@ -1795,7 +1811,8 @@
 
         const id = document.getElementById('meet-id').value || Date.now();
         const title = document.getElementById('meet-title').value;
-        const datetime = document.getElementById('meet-datetime').value;
+        const start = document.getElementById('meet-start').value;
+        const end = document.getElementById('meet-end').value;
         const location = document.getElementById('meet-location').value;
         const notes = document.getElementById('meet-notes').value;
         const email = document.getElementById('meet-email').value;
@@ -1803,13 +1820,21 @@
 
         if (document.getElementById('meet-id').value) {
             const meet = meetings.find(m => m.id == id);
-            if (meet) { meet.title = title; meet.datetime = datetime; meet.location = location; meet.notes = notes; meet.email = email; meet.color = color; }
+            if (meet) { 
+                meet.title = title; 
+                meet.start = start; 
+                meet.end = end; 
+                meet.location = location; 
+                meet.notes = notes; 
+                meet.email = email; 
+                meet.color = color; 
+            }
         } else {
-            meetings.push({ id: Number(id), title, datetime, location, notes, email, color });
+            meetings.push({ id: Number(id), title, start, end, location, notes, email, color });
             syncToGoogleSheet(
                 "Meetings",
-                ["Tajuk Mesyuarat", "Tarikh & Masa", "Tempat", "Catatan", "Emel Pegawai"],
-                [title, datetime, location, notes, email]
+                ["ID", "Tajuk Mesyuarat", "Masa Mula", "Masa Tamat", "Tempat", "Catatan", "E-mel Pegawai"],
+                [String(id), title, start, end, location, notes, email]
             );
         }
 
@@ -1826,7 +1851,7 @@
         if (id && confirm('Adakah anda pasti ingin memadam jadual mesyuarat ini?')) {
             meetings = meetings.filter(m => m.id != id);
             localStorage.setItem('pa_meetings', JSON.stringify(meetings));
-            syncDeleteToGoogleSheet("Meetings", id);
+            syncDeleteToGoogleSheet("Meetings", id); // Padam dari Google Sheet menggunakan ID mesyuarat
             closeMeetingModal();
             renderCalendar();
             updateLastSyncedLabel();
@@ -1856,12 +1881,12 @@
 
         for(let day = 1; day <= totalDays; day++) {
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            const dayMeetings = meetings.filter(m => m.datetime && m.datetime.startsWith(dateStr));
+            // Semak mesyuarat yang bermula pada tarikh tersebut
+            const dayMeetings = meetings.filter(m => m.start && m.start.startsWith(dateStr));
             let pills = '';
             dayMeetings.forEach(m => {
-                const timeOnly = m.datetime.includes('T') ? m.datetime.split('T')[1] : '';
-                // Apabila pegawai klik, ia memaparkan maklumat penuh mesyuarat
-                pills += `<div class="cal-event-pill" style="background:${m.color || '#4f46e5'};" onclick="viewMeeting(${m.id})" title="Klik untuk lihat maklumat">${timeOnly} ${m.title}</div>`;
+                const startTimeOnly = m.start.includes('T') ? m.start.split('T')[1] : '';
+                pills += `<div class="cal-event-pill" style="background:${m.color || '#4f46e5'};" onclick="viewMeeting(${m.id})" title="Klik untuk lihat maklumat">${startTimeOnly} ${m.title}</div>`;
             });
 
             cellsHtml += `
