@@ -456,7 +456,6 @@
         }
 
         .btn-icon:hover { opacity: 0.85; }
-        .btn-wa { background: #25d366; }
         .btn-edit { background: var(--accent); }
         .btn-delete { background: var(--danger); }
 
@@ -677,6 +676,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2><i class="fa-solid fa-table-list"></i> Status Pergerakan Dokumen</h2>
+                        <span id="update-time-docs" style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Kemas kini: -</span>
                     </div>
                     <div class="card-body">
                         <div class="toolbar">
@@ -806,6 +806,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2><i class="fa-solid fa-table-list"></i> Senarai Pemantauan Perkara</h2>
+                        <span id="update-time-tasks" style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Kemas kini: -</span>
                     </div>
                     <div class="card-body">
                         <div class="toolbar">
@@ -851,6 +852,7 @@
                     <div class="card-header">
                         <h2><i class="fa-solid fa-calendar-days"></i> Kalendar Mesyuarat Rasmi Pegawai</h2>
                         <div style="display: flex; gap: 10px; align-items: center;">
+                            <span id="update-time-calendar" style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Kemas kini: -</span>
                             <label class="btn btn-secondary" style="cursor: pointer; margin: 0;">
                                 <i class="fa-solid fa-file-import"></i> Import .ics
                                 <input type="file" accept=".ics" onchange="handleIcsUpload(event)" style="display: none;">
@@ -868,13 +870,13 @@
                         </div>
 
                         <div class="calendar-grid">
+                            <div class="cal-header-day">Ahad</div>
                             <div class="cal-header-day">Isnin</div>
                             <div class="cal-header-day">Selasa</div>
                             <div class="cal-header-day">Rabu</div>
                             <div class="cal-header-day">Khamis</div>
                             <div class="cal-header-day">Jumaat</div>
                             <div class="cal-header-day">Sabtu</div>
-                            <div class="cal-header-day">Ahad</div>
                         </div>
                         <div class="calendar-grid" id="calendar-days-container" style="margin-top: 8px;"></div>
                     </div>
@@ -949,8 +951,8 @@
                         <select id="meet-color">
                             <option value="#4f46e5">Ungu (Mesyuarat)</option>
                             <option value="#0d9488">Hijau (Kursus)</option>
-                            <option value="#0284c7">Biru (Rehat)</option>
-                            <option value="#d97706">Oren (TBC)</option>
+                            <option value="#0284c7">Biru (Rest)</option>
+                            <option value="#d97706">Oren (TBCt)</option>
                         </select>
                     </div>
                     <div style="display: flex; gap: 10px; justify-content: space-between;">
@@ -967,7 +969,7 @@
 
 <script>
     const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjnjT3SSeiXHSGdfN4qfnmmIex23pgWKhnXsxrm3DUX6IBSqNngQ1CUlvuwDajMJ-PJA/exec";
-    const ADMIN_SECRET_TOKEN = "thumb2848"; // Token khas PA
+    const ADMIN_SECRET_TOKEN = "2848"; // Token khas PA
 
     function verifyAdminToken() {
         let userInput = prompt("Sila masukkan Token Khas PA untuk meneruskan tindakan ini:");
@@ -1022,6 +1024,18 @@
     let currentTaskFilter = 'Semua';
     let currentDocFilter = 'Aktif';
     let calendarDate = new Date(2026, 10, 1);
+
+    function updateLastSyncedLabel() {
+        const timeNow = getCurrentDateTime();
+        const docTime = document.getElementById('update-time-docs');
+        if(docTime) docTime.innerText = `Kemas kini: ${timeNow}`;
+
+        const taskTime = document.getElementById('update-time-tasks');
+        if(taskTime) taskTime.innerText = `Kemas kini: ${timeNow}`;
+
+        const calTime = document.getElementById('update-time-calendar');
+        if(calTime) calTime.innerText = `Kemas kini: ${timeNow}`;
+    }
 
     function populateSenderDropdown(selectedVal = '') {
         const select = document.getElementById('doc-sender');
@@ -1128,6 +1142,7 @@
         renderDocuments();
         renderTasks();
         renderCalendar();
+        updateLastSyncedLabel();
         alert('Data berjaya disemak semula!');
     }
 
@@ -1249,6 +1264,7 @@
             document.getElementById('doc-toggle-btn-text').innerText = 'Rekod Dokumen Baru';
             document.getElementById('doc-toggle-icon').className = 'fa-solid fa-plus';
             renderDocuments();
+            updateLastSyncedLabel();
         };
 
         if (fileInput.files && fileInput.files[0]) {
@@ -1288,6 +1304,7 @@
             localStorage.setItem('pa_documents', JSON.stringify(documents));
             if(doc) syncDeleteToGoogleSheet("Documents", doc.ref);
             renderDocuments();
+            updateLastSyncedLabel();
         }
     }
 
@@ -1405,6 +1422,7 @@
         document.getElementById('toggle-btn-text').innerText = 'Tambah Task Baru';
         document.getElementById('toggle-icon').className = 'fa-solid fa-plus';
         renderTasks();
+        updateLastSyncedLabel();
     }
 
     function toggleTaskDone(id) {
@@ -1415,17 +1433,7 @@
             task.status = task.done ? 'Completed' : 'Pending';
             localStorage.setItem('pa_tasks', JSON.stringify(tasks));
             renderTasks();
-        }
-    }
-
-    function updateTaskStatus(id, newStatus) {
-        if (!verifyAdminToken()) return;
-        const task = tasks.find(t => t.id == id);
-        if(task) {
-            task.status = newStatus;
-            task.done = (newStatus === 'Completed');
-            localStorage.setItem('pa_tasks', JSON.stringify(tasks));
-            renderTasks();
+            updateLastSyncedLabel();
         }
     }
 
@@ -1454,6 +1462,7 @@
             tasks = tasks.filter(t => t.id != id);
             localStorage.setItem('pa_tasks', JSON.stringify(tasks));
             renderTasks();
+            updateLastSyncedLabel();
         }
     }
 
@@ -1570,6 +1579,7 @@
 
             localStorage.setItem('pa_meetings', JSON.stringify(meetings));
             renderCalendar();
+            updateLastSyncedLabel();
             alert(`${importedCount} acara mesyuarat daripada fail .ics berjaya diimport!`);
             event.target.value = '';
         };
@@ -1641,6 +1651,7 @@
         localStorage.setItem('pa_meetings', JSON.stringify(meetings));
         closeMeetingModal();
         renderCalendar();
+        updateLastSyncedLabel();
         alert('Maklumat mesyuarat berjaya disimpan.');
     }
 
@@ -1653,6 +1664,7 @@
             syncDeleteToGoogleSheet("Meetings", id);
             closeMeetingModal();
             renderCalendar();
+            updateLastSyncedLabel();
             alert('Mesyuarat berjaya dipadam.');
         }
     }
@@ -1705,6 +1717,7 @@
     populateSenderDropdown();
     renderDocuments();
     renderTasks();
+    updateLastSyncedLabel();
 </script>
 
 </body>
