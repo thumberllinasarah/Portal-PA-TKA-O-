@@ -853,13 +853,13 @@
                         </div>
 
                         <div class="calendar-grid">
-                            <div class="cal-header-day">Ahad</div>
                             <div class="cal-header-day">Isnin</div>
                             <div class="cal-header-day">Selasa</div>
                             <div class="cal-header-day">Rabu</div>
                             <div class="cal-header-day">Khamis</div>
                             <div class="cal-header-day">Jumaat</div>
                             <div class="cal-header-day">Sabtu</div>
+                            <div class="cal-header-day">Ahad</div>
                         </div>
                         <div class="calendar-grid" id="calendar-days-container" style="margin-top: 8px;"></div>
                     </div>
@@ -903,7 +903,7 @@
     <div id="meeting-modal" class="hidden-section" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
         <div class="card" style="width: 550px; max-width: 90%; margin: 0;">
             <div class="card-header">
-                <h2 id="meeting-modal-title"><i class="fa-solid fa-calendar-plus"></i> Tambah / Jadualkan Mesyuarat Baru</h2>
+                <h2 id="meeting-modal-title"><i class="fa-solid fa-calendar-plus"></i> Tambah Mesyuarat Baru</h2>
                 <button onclick="closeMeetingModal()" style="background:none; border:none; font-size:16px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="card-body">
@@ -926,16 +926,16 @@
                         <textarea id="meet-notes" rows="2" placeholder="Cth: Sila bawa dokumen bajet terkini..."></textarea>
                     </div>
                     <div class="form-group" style="margin-bottom: 12px;">
-                        <label>Emel Pegawai / Penerima Gmail</label>
-                        <input type="email" id="meet-email" placeholder="Cth: pegawai@mod.gov.my" required>
+                        <label>E-mel Pegawai / Penerima Gmail</label>
+                        <input type="email" id="meet-email" placeholder="Cth: pegawai@mod.gov.my">
                     </div>
                     <div class="form-group" style="margin-bottom: 16px;">
                         <label>Warna Label Acara</label>
                         <select id="meet-color">
-                            <option value="#4f46e5">Ungu (Design/Review)</option>
-                            <option value="#0d9488">Hijau (Meeting/Client)</option>
-                            <option value="#0284c7">Biru (Demos/Prep)</option>
-                            <option value="#d97706">Oren (Releases/Sprint)</option>
+                            <option value="#4f46e5">Ungu (Meeting)</option>
+                            <option value="#0d9488">Hijau (Rest)</option>
+                            <option value="#0284c7">Biru (Kursus)</option>
+                            <option value="#d97706">Oren (TBC)</option>
                         </select>
                     </div>
                     <div style="display: flex; gap: 10px; justify-content: space-between;">
@@ -1442,7 +1442,7 @@
             task.lastRemind = dateTimeNow;
             localStorage.setItem('pa_tasks', JSON.stringify(tasks));
             renderTasks();
-            const waText = encodeURIComponent(`Peringatan Tugasan:\nPerkara: ${task.desc}\nPegawai: ${task.pic}\nDeadline: ${task.deadline}\nStatus: ${task.status}`);
+            const waText = encodeURIComponent(`*Friendly Reminder*:\nPerkara: ${task.desc}\nPegawai: ${task.pic}\nDeadline: ${task.deadline}\nStatus: ${task.status}`);
             window.open(`https://wa.me/?text=${waText}`, '_blank');
         }
     }
@@ -1591,7 +1591,7 @@
             document.getElementById('meet-color').value = meetingObj.color;
             deleteBtn.classList.remove('hidden-section');
         } else {
-            modalTitle.innerHTML = `<i class="fa-solid fa-calendar-plus"></i> Tambah / Jadualkan Mesyuarat Baru`;
+            modalTitle.innerHTML = `<i class="fa-solid fa-calendar-plus"></i> Tambah Mesyuarat Baru`;
             document.getElementById('meet-id').value = '';
             deleteBtn.classList.add('hidden-section');
         }
@@ -1625,7 +1625,7 @@
             
             syncToGoogleSheet(
                 "Meetings",
-                ["ID Unik", "Tajuk Mesyuarat", "Tarikh & Masa", "Tempat", "Catatan", "Emel Pegawai"],
+                ["ID Unik", "Tajuk Mesyuarat", "Tarikh & Masa", "Tempat", "Catatan", "E-mel Pegawai"],
                 [Number(id), title, datetime, location, notes, email]
             );
         }
