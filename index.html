@@ -1683,9 +1683,33 @@
         container.innerHTML = cellsHtml;
     }
 
+function loadFromGoogleSheet() {
+    if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
+
+    fetch(GOOGLE_APPS_SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+            if (data.documents) {
+                documents = data.documents;
+                localStorage.setItem('pa_documents', JSON.stringify(documents));
+                renderDocuments();
+            }
+            if (data.tasks) {
+                tasks = data.tasks;
+                localStorage.setItem('pa_tasks', JSON.stringify(tasks));
+                renderTasks();
+            }
+        })
+        .catch(err => console.error("Ralat tarik data dari Google Sheet:", err));
+}
+
+// Panggil fungsi ini setiap kali laman web dibuka
+window.addEventListener('DOMContentLoaded', loadFromGoogleSheet);
+    
     populateSenderDropdown();
     renderDocuments();
     renderTasks();
+
 </script>
 
 </body>
