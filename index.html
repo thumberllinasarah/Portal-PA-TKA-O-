@@ -387,20 +387,7 @@
             background: #fafafa;
         }
 
-        .badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            white-space: nowrap;
-        }
-        .badge-warning { background: #fef3c7; color: #b45309; }
-        .badge-success { background: #d1fae5; color: #047857; }
-
-        .badge-deadline {
+       .badge-deadline {
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 11px;
@@ -418,12 +405,19 @@
             animation: bounceAndPulse 1.2s infinite ease-in-out;
         }
 
+        .badge-overdue {
+            background: #fee2e2; 
+            color: #b91c1c; 
+            border: 1.5px solid #f87171;
+            box-shadow: 0 2px 4px rgba(185, 28, 28, 0.2);
+            animation: bounceAndPulse 1.2s infinite ease-in-out;
+        }
+
         @keyframes bounceAndPulse {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(220, 38, 38, 0.5); }
         }
 
-        .badge-overdue { background: #fee2e2; color: #b91c1c; border: 1.5px solid #f87171; }
         .badge-upcoming { background: #e0f2fe; color: #0369a1; border: 1.5px solid #38bdf8; }
         .badge-completed { background: #f1f5f9; color: #475569; border: 1.5px solid #cbd5e1; }
 
@@ -1512,8 +1506,23 @@
         const search = searchInput ? searchInput.value.toLowerCase() : '';
 
         let filtered = [...tasks];
-        if(search) { filtered = filtered.filter(t => t.desc.toLowerCase().includes(search) || t.pic.toLowerCase().includes(search)); }
-        if(currentTaskFilter !== 'Semua') { filtered = filtered.filter(t => t.status === currentTaskFilter); }
+        
+        // Carian teks
+        if(search) { 
+            filtered = filtered.filter(t => t.desc.toLowerCase().includes(search) || t.pic.toLowerCase().includes(search)); 
+        }
+
+        // Logik Penapisan (Filtering) Mengikut Tab Pilihan
+        if(currentTaskFilter === 'Semua') {
+            // Paparkan hanya yang BELUM selesai (sembunyikan yang sudah Completed)
+            filtered = filtered.filter(t => t.status !== 'Completed');
+        } else if(currentTaskFilter === 'In Progress') {
+            filtered = filtered.filter(t => t.status === 'In Progress');
+        } else if(currentTaskFilter === 'Pending') {
+            filtered = filtered.filter(t => t.status === 'Pending');
+        } else if(currentTaskFilter === 'Completed') {
+            filtered = filtered.filter(t => t.status === 'Completed');
+        }
         
         filtered.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
 
