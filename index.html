@@ -1899,9 +1899,49 @@
         container.innerHTML = cellsHtml;
     }
 
-    populateSenderDropdown();
-    refreshAllViews();
-    updateLastSyncedLabel();
+    // Fungsi untuk menarik data dari Google Sheet apabila web dibuka
+function loadDataFromCloud() {
+    if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) {
+        console.log("URL Google Apps Script belum dikemaskini. Menggunakan data tempatan (localStorage).");
+        return;
+    }
+
+    fetch(GOOGLE_APPS_SCRIPT_URL)
+        .then(response => response.json())
+        .then(data => {
+            // Jika data dokumen wujud dari cloud, kemaskini simpanan tempatan dan paparan
+            if (data.documents && data.documents.length > 0) {
+                documents = data.documents;
+                localStorage.setItem('pa_documents', JSON.stringify(documents));
+            }
+            // Jika data tugasan wujud
+            if (data.tasks && data.tasks.length > 0) {
+                tasks = data.tasks;
+                localStorage.setItem('pa_tasks', JSON.stringify(tasks));
+            }
+            // Jika data mesyuarat wujud
+            if (data.meetings && data.meetings.length > 0) {
+                meetings = data.meetings;
+                localStorage.setItem('pa_meetings', JSON.stringify(meetings));
+            }
+
+            // Muat semula paparan pada skrin
+            renderDocuments();
+            renderTasks();
+            renderCalendar();
+            updateLastSyncedLabel();
+            console.id ? console.log("Data berjaya ditarik dari Google Sheet!") : null;
+        })
+        .catch(err => {
+            console.error("Ralat semasa menarik data dari cloud:", err);
+        });
+}
+
+    // Panggilan permulaan apabila web dibuka di mana-mana peranti
+populateSenderDropdown();
+loadDataFromCloud(); // <-- Tarik data terkini dari cloud Google Sheet
+refreshAllViews();
+updateLastSyncedLabel();
 </script>
 
 </body>
