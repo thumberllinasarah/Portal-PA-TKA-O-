@@ -450,7 +450,7 @@
                         <label>Warna Label Acara</label>
                         <select id="meet-color">
                             <option value="#4f46e5">Ungu (Mesyuarat)</option>
-                            <option value="#0d9488">Hijau (Kursus/Bengkel)</option>
+                            <option value="#0d9488">Hijau (Kursus)</option>
                             <option value="#0284c7">Biru (Rehat)</option>
                             <option value="#d97706">Oren (tbc)</option>
                         </select>
@@ -506,7 +506,7 @@
     </div>
 
 <script>
-    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjnjT3SSeiXHSGdfN4qfnmmIex23pgWKhnXsxrm3DUX6IBSqNngQ1CUlvuwDajMJ-PJA/exec"; // Ganti URL Apps Script sebenar
+    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjnjT3SSeiXHSGdfN4qfnmmIex23pgWKhnXsxrm3DUX6IBSqNngQ1CUlvuwDajMJ-PJA/exec";
     const ADMIN_SECRET_TOKEN = "1hingga8";
     let isAdminUnlocked = false;
     let selectedMeetingIdForEdit = null;
@@ -536,7 +536,7 @@
 
     function verifyAdminToken() {
         if (isAdminUnlocked) return true;
-        let userInput = prompt("Sila masukkan Token Khas Pentadbir untuk meneruskan:");
+        let userInput = prompt("Sila masukkan Token Khas PA untuk meneruskan:");
         if (userInput === null) return false;
         if (userInput.trim() === ADMIN_SECRET_TOKEN) {
             isAdminUnlocked = true;
@@ -1171,7 +1171,7 @@
     function viewMeeting(id) {
         const m = meetings.find(x => String(x.id) === String(id));
         if(!m) return;
-        selectedMeetingIdForEdit = String(m.id);
+        selectedMeetingIdForEdit = String(m.id); // Simpan ID mesyuarat yang dipilih
         document.getElementById('view-meet-title').innerText = m.title || '-';
         document.getElementById('view-meet-start').innerText = m.start ? m.start.replace('T', ' Jam ') : '-';
         document.getElementById('view-meet-end').innerText = m.end ? m.end.replace('T', ' Jam ') : '-';
@@ -1183,7 +1183,7 @@
         document.getElementById('view-meeting-modal').classList.remove('hidden-section');
     }
 
-    function closeViewMeetingModal() { document.getElementById('view-meeting-modal').classList.add('hidden-section'); selectedMeetingIdForEdit = null; }
+    function closeViewMeetingModal() { document.getElementById('view-meeting-modal').classList.add('hidden-section'); }
 
     function editMeetingFromView() {
         closeViewMeetingModal();
@@ -1222,20 +1222,20 @@
         localStorage.setItem('pa_meetings', JSON.stringify(meetings));
         closeMeetingModal();
         renderCalendar();
-        alert('Mesyuarat disimpan.');
+        alert('Mesyuarat berjaya dikemas kini.');
     }
 
     function deleteMeeting() {
         if (!verifyAdminToken()) return;
         const id = document.getElementById('meet-id').value;
         const m = meetings.find(x => String(x.id) === String(id));
-        if (m && confirm('Padam mesyuarat ini?')) {
+        if (m && confirm('Adakah anda pasti mahu padam mesyuarat ini?')) {
             meetings = meetings.filter(x => String(x.id) !== String(id));
             localStorage.setItem('pa_meetings', JSON.stringify(meetings));
             syncDeleteToGoogleSheet("Meetings", m.title);
             closeMeetingModal();
             renderCalendar();
-            alert('Mesyuarat dipadam.');
+            alert('Mesyuarat berjaya dipadam.');
         }
     }
 
