@@ -456,6 +456,7 @@
         }
 
         .btn-icon:hover { opacity: 0.85; }
+        .btn-wa { background: #25d366; }
         .btn-edit { background: var(--accent); }
         .btn-delete { background: var(--danger); }
 
@@ -576,6 +577,7 @@
             </div>
             <div class="topbar-actions">
                 <button class="btn btn-secondary" onclick="refreshData()"><i class="fa-solid fa-rotate"></i> Refresh</button>
+                <button class="btn btn-primary" onclick="requestAdminAccess()"><i class="fa-solid fa-key"></i> <span id="auth-status-text">Masukkan Token</span></button>
             </div>
         </topbar>
 
@@ -614,7 +616,7 @@
                     </div>
                 </div>
 
-                <div style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
+                <div id="doc-action-container" style="margin-bottom: 20px; display: none; justify-content: flex-end;">
                     <button class="btn btn-success" onclick="toggleDocForm()"><i class="fa-solid fa-plus" id="doc-toggle-icon"></i> <span id="doc-toggle-btn-text">Rekod Dokumen Baru</span></button>
                 </div>
 
@@ -758,7 +760,7 @@
                     </div>
                 </div>
 
-                <div style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
+                <div id="task-action-container" style="margin-bottom: 20px; display: none; justify-content: flex-end;">
                     <button class="btn btn-success" onclick="toggleTaskForm()"><i class="fa-solid fa-plus" id="toggle-icon"></i> <span id="toggle-btn-text">Tambah Task Baru</span></button>
                 </div>
 
@@ -825,10 +827,12 @@
                             <table>
                                 <colgroup>
                                     <col style="width: 5%;">
-                                    <col style="width: 30%;">
-                                    <col style="width: 18%;">
-                                    <col style="width: 27%;">
+                                    <col style="width: 25%;">
+                                    <col style="width: 15%;">
                                     <col style="width: 20%;">
+                                    <col style="width: 14%;">
+                                    <col style="width: 10%;">
+                                    <col style="width: 11%;">
                                 </colgroup>
                                 <thead>
                                     <tr>
@@ -837,6 +841,8 @@
                                         <th>PEGAWAI</th>
                                         <th>TINDAKAN / CATATAN</th>
                                         <th>DEADLINE</th>
+                                        <th>STATUS</th>
+                                        <th>TINDAKAN</th>
                                     </tr>
                                 </thead>
                                 <tbody id="task-table-body"></tbody>
@@ -853,11 +859,13 @@
                         <h2><i class="fa-solid fa-calendar-days"></i> Kalendar Mesyuarat Rasmi Pegawai</h2>
                         <div style="display: flex; gap: 10px; align-items: center;">
                             <span id="update-time-calendar" style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Kemas kini: -</span>
-                            <label class="btn btn-secondary" style="cursor: pointer; margin: 0;">
-                                <i class="fa-solid fa-file-import"></i> Import .ics
-                                <input type="file" accept=".ics" onchange="handleIcsUpload(event)" style="display: none;">
-                            </label>
-                            <button class="btn btn-primary" onclick="openMeetingModal()"><i class="fa-solid fa-plus"></i> Tambah Mesyuarat</button>
+                            <div id="meeting-action-buttons" style="display: none; gap: 10px; align-items: center;">
+                                <label class="btn btn-secondary" style="cursor: pointer; margin: 0;">
+                                    <i class="fa-solid fa-file-import"></i> Import .ics
+                                    <input type="file" accept=".ics" onchange="handleIcsUpload(event)" style="display: none;">
+                                </label>
+                                <button class="btn btn-primary" onclick="openMeetingModal()"><i class="fa-solid fa-plus"></i> Tambah Mesyuarat</button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -870,13 +878,13 @@
                         </div>
 
                         <div class="calendar-grid">
-                            <div class="cal-header-day">Ahad</div>
                             <div class="cal-header-day">Isnin</div>
                             <div class="cal-header-day">Selasa</div>
                             <div class="cal-header-day">Rabu</div>
                             <div class="cal-header-day">Khamis</div>
                             <div class="cal-header-day">Jumaat</div>
                             <div class="cal-header-day">Sabtu</div>
+                             <div class="cal-header-day">Ahad</div>
                         </div>
                         <div class="calendar-grid" id="calendar-days-container" style="margin-top: 8px;"></div>
                     </div>
@@ -916,7 +924,7 @@
         </div>
     </div>
 
-    <!-- Modal Tambah / Edit Mesyuarat -->
+    <!-- Modal Tambah / Edit Mesyuarat (Admin Sahaja) -->
     <div id="meeting-modal" class="hidden-section" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
         <div class="card" style="width: 550px; max-width: 90%; margin: 0;">
             <div class="card-header">
@@ -943,7 +951,7 @@
                         <textarea id="meet-notes" rows="2" placeholder="Cth: Sila bawa dokumen bajet terkini..."></textarea>
                     </div>
                     <div class="form-group" style="margin-bottom: 12px;">
-                        <label>E-mel Pegawai / Penerima Gmail</label>
+                        <label>Emel Pegawai / Penerima Gmail</label>
                         <input type="email" id="meet-email" placeholder="Cth: pegawai@mod.gov.my">
                     </div>
                     <div class="form-group" style="margin-bottom: 16px;">
@@ -951,8 +959,8 @@
                         <select id="meet-color">
                             <option value="#4f46e5">Ungu (Mesyuarat)</option>
                             <option value="#0d9488">Hijau (Kursus)</option>
-                            <option value="#0284c7">Biru (Rest)</option>
-                            <option value="#d97706">Oren (TBCt)</option>
+                            <option value="#0284c7">Biru (Rehat)</option>
+                            <option value="#d97706">Oren (TBC)</option>
                         </select>
                     </div>
                     <div style="display: flex; gap: 10px; justify-content: space-between;">
@@ -967,49 +975,125 @@
         </div>
     </div>
 
+    <!-- Modal Paparan Maklumat Mesyuarat (View-Only untuk Semua Pegawai) -->
+    <div id="view-meeting-modal" class="hidden-section" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1050;">
+        <div class="card" style="width: 500px; max-width: 90%; margin: 0;">
+            <div class="card-header">
+                <h2><i class="fa-solid fa-circle-info" style="color: var(--accent);"></i> Maklumat Lanjut Mesyuarat</h2>
+                <button onclick="closeViewMeetingModal()" style="background:none; border:none; font-size:16px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="card-body" style="display: flex; flex-direction: column; gap: 14px; font-size: 13px;">
+                <div>
+                    <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Tajuk Mesyuarat</span>
+                    <div id="view-meet-title" style="font-size: 15px; font-weight: 700; color: var(--primary); margin-top: 2px;">-</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Tarikh & Masa</span>
+                        <div id="view-meet-datetime" style="font-weight: 600; margin-top: 2px;">-</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Tempat</span>
+                        <div id="view-meet-location" style="font-weight: 600; margin-top: 2px;">-</div>
+                    </div>
+                </div>
+                <div>
+                    <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Catatan / Minit Ringkas</span>
+                    <div id="view-meet-notes" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid var(--border); margin-top: 2px; color: var(--text-main);">-</div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                    <!-- Jika admin buka, boleh terus klik edit dari sini -->
+                    <button type="button" id="btn-edit-from-view" class="btn btn-primary hidden-section" onclick="editMeetingFromView()"><i class="fa-solid fa-pen"></i> Sunting Mesyuarat Ini</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeViewMeetingModal()" style="margin-left: auto;">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <script>
     const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjnjT3SSeiXHSGdfN4qfnmmIex23pgWKhnXsxrm3DUX6IBSqNngQ1CUlvuwDajMJ-PJA/exec";
     const ADMIN_SECRET_TOKEN = "2848"; // Token khas PA
+    let isAdminUnlocked = false;
+    let selectedMeetingIdForEdit = null;
+
+    function requestAdminAccess() {
+        if (isAdminUnlocked) {
+            if (confirm("Log keluar dari mod Pentadbir?")) {
+                isAdminUnlocked = false;
+                document.getElementById('auth-status-text').innerText = "Masukkan Token";
+                refreshAllViews();
+                alert("Anda kini kembali kepada mod View-Only.");
+            }
+            return;
+        }
+
+        let userInput = prompt("Sila masukkan Token Khas PA untuk mengaktifkan mod edit:");
+        if (userInput === null) return;
+        if (userInput.trim() === ADMIN_SECRET_TOKEN) {
+            isAdminUnlocked = true;
+            document.getElementById('auth-status-text').innerText = "Pentadbir (Aktif)";
+            refreshAllViews();
+            alert("Token Sah! Mod edit dan butang tindakan kini diaktifkan.");
+        } else {
+            alert("Token Khas tidak sah! Anda kekal dalam mod view-only.");
+        }
+    }
 
     function verifyAdminToken() {
+        if (isAdminUnlocked) return true;
         let userInput = prompt("Sila masukkan Token Khas PA untuk meneruskan tindakan ini:");
         if (userInput === null) return false;
         if (userInput.trim() === ADMIN_SECRET_TOKEN) {
+            isAdminUnlocked = true;
+            document.getElementById('auth-status-text').innerText = "Pentadbir (Aktif)";
+            refreshAllViews();
             return true;
         } else {
-            alert("Token Khas tidak sah! Anda hanya mempunyai kebenaran untuk melihat (view-only) sahaja.");
+            alert("Token Khas tidak sah!");
             return false;
         }
     }
 
+    function refreshAllViews() {
+        const docAction = document.getElementById('doc-action-container');
+        const taskAction = document.getElementById('task-action-container');
+        const meetAction = document.getElementById('meeting-action-buttons');
+
+        if (isAdminUnlocked) {
+            if(docAction) docAction.style.display = 'flex';
+            if(taskAction) taskAction.style.display = 'flex';
+            if(meetAction) meetAction.style.display = 'flex';
+        } else {
+            if(docAction) docAction.style.display = 'none';
+            if(taskAction) taskAction.style.display = 'none';
+            if(meetAction) meetAction.style.display = 'none';
+            document.getElementById('document-form-card').classList.add('hidden-section');
+            document.getElementById('task-form-card').classList.add('hidden-section');
+            closeMeetingModal();
+            closeManagerManagerModal?.();
+        }
+        renderDocuments();
+        renderTasks();
+        renderCalendar();
+    }
+
     function syncToGoogleSheet(sheetName, headers, rowValues) {
         if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
-        
         fetch(GOOGLE_APPS_SCRIPT_URL, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                action: "add",
-                sheetName: sheetName,
-                headers: headers,
-                rowValues: rowValues
-            })
+            body: JSON.stringify({ action: "add", sheetName: sheetName, headers: headers, rowValues: rowValues })
         }).catch(err => console.error("Ralat sync Google Sheet:", err));
     }
 
     function syncDeleteToGoogleSheet(sheetName, ref) {
         if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
-        
         fetch(GOOGLE_APPS_SCRIPT_URL, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                action: "deleteRecord",
-                sheetName: sheetName,
-                ref: ref
-            })
+            body: JSON.stringify({ action: "deleteRecord", sheetName: sheetName, ref: ref })
         }).catch(err => console.error("Ralat padam dari Google Sheet:", err));
     }
 
@@ -1091,12 +1175,9 @@
         const index = parseInt(document.getElementById('edit-sender-index').value);
         const name = document.getElementById('manager-name-input').value.trim();
         const phone = document.getElementById('manager-phone-input').value.trim();
-
         if(!name) { alert('Sila masukkan nama pegawai.'); return; }
-
         if(index === -1) { sendersList.push({ name, phone }); } 
         else { sendersList[index] = { name, phone }; }
-
         localStorage.setItem('pa_senders', JSON.stringify(sendersList));
         document.getElementById('edit-sender-index').value = "-1";
         document.getElementById('manager-name-input').value = "";
@@ -1126,7 +1207,6 @@
     function switchTab(tabName, btn) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-        
         if(tabName === 'documents') {
             document.getElementById('documents-tab').classList.add('active');
         } else if(tabName === 'tasks') {
@@ -1164,7 +1244,6 @@
         const formCard = document.getElementById('document-form-card');
         const btnText = document.getElementById('doc-toggle-btn-text');
         const toggleIcon = document.getElementById('doc-toggle-icon');
-        
         if(formCard.classList.contains('hidden-section')) {
             formCard.classList.remove('hidden-section');
             btnText.innerText = 'Tutup Borang';
@@ -1185,7 +1264,6 @@
         const formCard = document.getElementById('task-form-card');
         const btnText = document.getElementById('toggle-btn-text');
         const toggleIcon = document.getElementById('toggle-icon');
-        
         if(formCard.classList.contains('hidden-section')) {
             formCard.classList.remove('hidden-section');
             btnText.innerText = 'Tutup Borang';
@@ -1203,7 +1281,6 @@
     function saveDocument(e) {
         e.preventDefault();
         if (!verifyAdminToken()) return;
-        
         const id = document.getElementById('doc-id').value;
         const ref = document.getElementById('doc-ref').value.trim();
         const sender = document.getElementById('doc-sender').value;
@@ -1287,7 +1364,6 @@
             document.getElementById('doc-title').value = doc.title;
             document.getElementById('doc-purpose').value = doc.purpose;
             document.getElementById('doc-status').value = doc.status;
-            
             const formCard = document.getElementById('document-form-card');
             formCard.classList.remove('hidden-section');
             document.getElementById('doc-toggle-btn-text').innerText = 'Tutup Borang';
@@ -1320,6 +1396,13 @@
         if(!base64Data) return;
         const win = window.open();
         win.document.write(`<iframe src="${base64Data}" frameborder="0" style="border:0; top:0; left:0; bottom:0; right:0; width:100%; height:100%;" allowfullscreen></iframe>`);
+    }
+
+    function sendDocWhatsApp(senderName, ref, title, status) {
+        const found = sendersList.find(s => s.name === senderName);
+        let phone = found && found.phone ? found.phone.replace(/[^0-9]/g, '') : '';
+        const waText = encodeURIComponent(`Makluman Dokumen:\nNo Rujukan: ${ref}\nTajuk: ${title}\nStatus: ${status}`);
+        window.open(`https://wa.me/${phone ? phone : ''}?text=${waText}`, '_blank');
     }
 
     function renderDocuments() {
@@ -1370,6 +1453,17 @@
             const badgeClass = isCompleted ? 'badge-success' : 'badge-warning';
             const proofHtml = d.proofImage ? `<a href="javascript:void(0);" onclick="viewProofImage('${d.proofImage}')" class="btn btn-primary" style="padding: 4px 8px; font-size: 10px;"><i class="fa-solid fa-image"></i> Lihat Gambar</a>` : `-`;
 
+            let actionsHtml = `-`;
+            if (isAdminUnlocked) {
+                actionsHtml = `
+                    <div class="actions-cell">
+                        <button onclick="sendDocWhatsApp('${d.sender.replace(/'/g, "\\'")}', '${d.ref.replace(/'/g, "\\'")}', '${d.title.replace(/'/g, "\\'")}', '${d.status}')" class="btn-icon btn-wa" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+                        <button onclick="editDocument(${d.id})" class="btn-icon btn-edit" title="Kemas kini"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteDocument(${d.id})" class="btn-icon btn-delete" title="Padam"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            }
+
             tbody.innerHTML += `
                 <tr>
                     <td><small style="color: var(--text-muted);">${d.receivedAt}</small></td>
@@ -1379,12 +1473,7 @@
                     <td><small style="color: var(--text-muted);">${d.returnedAt}</small></td>
                     <td><span class="badge ${badgeClass}">${d.status}</span></td>
                     <td>${proofHtml}</td>
-                    <td>
-                        <div class="actions-cell">
-                            <button onclick="editDocument(${d.id})" class="btn-icon btn-edit" title="Kemas kini (Perlukan Token)"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="deleteDocument(${d.id})" class="btn-icon btn-delete" title="Padam (Perlukan Token)"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </td>
+                    <td>${actionsHtml}</td>
                 </tr>
             `;
         });
@@ -1393,7 +1482,6 @@
     function saveTask(e) {
         e.preventDefault();
         if (!verifyAdminToken()) return;
-
         const id = document.getElementById('task-id').value || Date.now();
         const pic = document.getElementById('task-pic').value;
         const deadline = document.getElementById('task-deadline').value;
@@ -1407,7 +1495,6 @@
         } else {
             const newTask = { id: Number(id), desc, pic, notes, deadline, priority, status: 'Pending', done: false, lastRemind: '-' };
             tasks.unshift(newTask);
-            
             syncToGoogleSheet(
                 "Tasks",
                 ["Task / Perkara", "Pegawai", "Catatan", "Deadline", "Priority", "Status"],
@@ -1437,6 +1524,26 @@
         }
     }
 
+    function updateTaskStatus(id, newStatus) {
+        if (!verifyAdminToken()) return;
+        const task = tasks.find(t => t.id == id);
+        if(task) {
+            task.status = newStatus;
+            task.done = (newStatus === 'Completed');
+            localStorage.setItem('pa_tasks', JSON.stringify(tasks));
+            renderTasks();
+            updateLastSyncedLabel();
+        }
+    }
+
+    function sendTaskReminder(id) {
+        const task = tasks.find(t => t.id == id);
+        if(task) {
+            const waText = encodeURIComponent(`*Friendly Reminder*:\nPerkara: ${task.desc}\nPegawai: ${task.pic}\nDeadline: ${task.deadline}\nStatus: ${task.status}`);
+            window.open(`https://wa.me/?text=${waText}`, '_blank');
+        }
+    }
+
     function editTask(id) {
         if (!verifyAdminToken()) return;
         const task = tasks.find(t => t.id == id);
@@ -1447,7 +1554,6 @@
             document.getElementById('task-desc').value = task.desc;
             document.getElementById('task-notes').value = task.notes;
             document.getElementById('task-priority').value = task.priority;
-            
             const formCard = document.getElementById('task-form-card');
             formCard.classList.remove('hidden-section');
             document.getElementById('toggle-btn-text').innerText = 'Tutup Borang';
@@ -1525,19 +1631,44 @@
         document.getElementById('task-pending').innerText = pending;
 
         if(filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">Tiada tugasan dijumpai.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 25px;">Tiada tugasan dijumpai.</td></tr>`;
             return;
         }
 
         filtered.forEach((t) => {
             const deadlineBadge = formatDeadlineBadge(t.deadline, t.status);
+            
+            let doneInputHtml = `<input type="checkbox" ${t.done ? 'checked' : ''} disabled style="width: 16px; height: 16px;">`;
+            let statusSelectHtml = `<span>${t.status}</span>`;
+            let actionsHtml = `-`;
+
+            if (isAdminUnlocked) {
+                doneInputHtml = `<input type="checkbox" ${t.done ? 'checked' : ''} onclick="toggleTaskDone(${t.id})" style="width: 16px; height: 16px; cursor: pointer;">`;
+                statusSelectHtml = `
+                    <select onchange="updateTaskStatus(${t.id}, this.value)" style="padding: 4px 8px; font-size: 11px; width: 100px;">
+                        <option value="Pending" ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option value="In Progress" ${t.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                        <option value="Completed" ${t.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                    </select>
+                `;
+                actionsHtml = `
+                    <div class="actions-cell">
+                        <button onclick="sendTaskReminder(${t.id})" class="btn-icon btn-wa" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+                        <button onclick="editTask(${t.id})" class="btn-icon btn-edit" title="Kemas kini"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteTask(${t.id})" class="btn-icon btn-delete" title="Padam"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            }
+
             tbody.innerHTML += `
                 <tr>
-                    <td><input type="checkbox" ${t.done ? 'checked' : ''} onclick="toggleTaskDone(${t.id})" style="width: 16px; height: 16px; cursor: pointer;" title="Perlukan Token Pentadbir"></td>
+                    <td>${doneInputHtml}</td>
                     <td><strong>${t.desc}</strong></td>
                     <td>${t.pic}</td>
                     <td><small>${t.notes || '-'}</small></td>
                     <td>${deadlineBadge}</td>
+                    <td>${statusSelectHtml}</td>
+                    <td>${actionsHtml}</td>
                 </tr>
             `;
         });
@@ -1618,6 +1749,41 @@
         if(modal) modal.classList.add('hidden-section');
     }
 
+    // Fungsi Klik Lihat Maklumat Mesyuarat untuk Semua Pegawai
+    function viewMeeting(id) {
+        const meet = meetings.find(m => m.id == id);
+        if (!meet) return;
+
+        selectedMeetingIdForEdit = meet.id;
+        document.getElementById('view-meet-title').innerText = meet.title || '-';
+        document.getElementById('view-meet-datetime').innerText = meet.datetime ? meet.datetime.replace('T', ' Jam ') : '-';
+        document.getElementById('view-meet-location').innerText = meet.location || 'Tiada maklumat tempat';
+        document.getElementById('view-meet-notes').innerText = meet.notes || 'Tiada catatan tambahan';
+
+        // Tunjukkan butang sunting dari view modal HANYA jika admin sudah unlocked
+        const editBtn = document.getElementById('btn-edit-from-view');
+        if (isAdminUnlocked) {
+            editBtn.classList.remove('hidden-section');
+        } else {
+            editBtn.classList.add('hidden-section');
+        }
+
+        document.getElementById('view-meeting-modal').classList.remove('hidden-section');
+    }
+
+    function closeViewMeetingModal() {
+        document.getElementById('view-meeting-modal').classList.add('hidden-section');
+        selectedMeetingIdForEdit = null;
+    }
+
+    function editMeetingFromView() {
+        closeViewMeetingModal();
+        const meet = meetings.find(m => m.id == selectedMeetingIdForEdit);
+        if (meet) {
+            openMeetingModal(meet);
+        }
+    }
+
     function changeMonth(dir) {
         calendarDate.setMonth(calendarDate.getMonth() + dir);
         renderCalendar();
@@ -1640,10 +1806,9 @@
             if (meet) { meet.title = title; meet.datetime = datetime; meet.location = location; meet.notes = notes; meet.email = email; meet.color = color; }
         } else {
             meetings.push({ id: Number(id), title, datetime, location, notes, email, color });
-            
             syncToGoogleSheet(
                 "Meetings",
-                ["Tajuk Mesyuarat", "Tarikh & Masa", "Tempat", "Catatan", "E-mel Pegawai"],
+                ["Tajuk Mesyuarat", "Tarikh & Masa", "Tempat", "Catatan", "Emel Pegawai"],
                 [title, datetime, location, notes, email]
             );
         }
@@ -1667,12 +1832,6 @@
             updateLastSyncedLabel();
             alert('Mesyuarat berjaya dipadam.');
         }
-    }
-
-    function editMeeting(id) {
-        if (!verifyAdminToken()) return;
-        const meet = meetings.find(m => m.id == id);
-        if (meet) { openMeetingModal(meet); }
     }
 
     function renderCalendar() {
@@ -1701,7 +1860,8 @@
             let pills = '';
             dayMeetings.forEach(m => {
                 const timeOnly = m.datetime.includes('T') ? m.datetime.split('T')[1] : '';
-                pills += `<div class="cal-event-pill" style="background:${m.color || '#4f46e5'};" onclick="editMeeting(${m.id})" title="Tempat: ${m.location || '-'}\nCatatan: ${m.notes || '-'}\nKlik untuk edit">${timeOnly} ${m.title}</div>`;
+                // Apabila pegawai klik, ia memaparkan maklumat penuh mesyuarat
+                pills += `<div class="cal-event-pill" style="background:${m.color || '#4f46e5'};" onclick="viewMeeting(${m.id})" title="Klik untuk lihat maklumat">${timeOnly} ${m.title}</div>`;
             });
 
             cellsHtml += `
@@ -1715,8 +1875,7 @@
     }
 
     populateSenderDropdown();
-    renderDocuments();
-    renderTasks();
+    refreshAllViews();
     updateLastSyncedLabel();
 </script>
 
