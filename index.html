@@ -787,15 +787,159 @@
         }
     }
 
-    function saveDocument(e) { e.preventDefault(); }
-    function renderDocuments() {}
+    function saveDocument(e) {
+        e.preventDefault();
+        if (!verifyAdminToken()) return;
+        const id = document.getElementById('doc-id').value;
+        const ref = document.getElementById('doc-ref').value.trim();
+        const sender = document.getElementById('doc-sender').value;
+        const title = document.getElementById('doc-title').value.trim();
+        const purpose = document.getElementById('doc-purpose').value;
+        const status = document.getElementById('doc-status').value;
+        const fileInput = document.getElementById('doc-proof-file');
+        const dateTimeNow = getCurrentDateTime();
 
-    // ---- FUNGSI PEMFORMATAN DEADLINE YANG RINGKAS & TEPAT ----
+        const processSave = (imageB64 = "", fileName = "") => {
+            let existing = id ? documents.find(d => d.id == id) : null;
+            let actionType = existing ? "updateDocument" : "addDocument";
+            let oldRef = existing ? existing.ref : ref;
+            let receivedAt = existing ? existing.receivedAt : dateTimeNow;
+            let returnedAt = status === 'Selesai' ? dateTimeNow : '-';
+
+            if (existing) {
+                existing.ref = ref; existing.sender = sender; existing.title = title;
+                existing.purpose = purpose; existing.status = status; existing.returnedAt = returnedAt;
+                if (imageB64) existing.proofImage = imageB64;
+            } else {
+                documents.unshift({ id: Date.now(), ref, title, sender, purpose, receivedAt, returnedAt, status, proofImage: imageB64 });
+            }
+
+            if (GOOGLE_APPS_SCRIPT_URL && !GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) {
+                fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: "POST", mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ action: actionType, oldRef, ref, title, sender, purpose, status, receivedAt, fileData: imageB64, fileName })
+                }).catch(err => console.error("Ralat sync doc:", err));
+            }
+
+            localStorage.setItem('pa_documents', JSON.stringify(documents));
+            document.getElementById('document-form').reset();
+            document.getElementById('document-form-card').classList.add('hidden-section');
+            document.getElementById('doc-toggle-btn-text').innerText = 'Rekod Dokumen Baru';
+            renderDocuments();
+            updateLastSyncedLabel();
+        };
+
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = ev => processSave(ev.target.result, fileInput.files[0].name);
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            processSave("", "");
+        }
+    }
+
+    function editDocument(id) {
+        if (!verifyAdminToken()) return;
+        const doc = documents.find(d => d.id == id);
+        if(doc) {
+            document.getElementById('doc-id').value = doc.id;
+            document.getElementById('doc-ref').value = doc.ref;
+            populateSenderDropdown(doc.sender);
+            document.getElementById('doc-title').value = doc.title;
+            document.getElementById('doc-purpose').value = doc.purpose;
+            document.getElementById('doc-status').value = doc.status;
+            document.getElementById('document-form-card').classList.remove('hidden-section');
+            document.getElementById('doc-toggle-btn-text').innerText = 'Tutup Borang';
+        }
+    }
+
+    function deleteDocument(id) {
+        if (!verifyAdminToken()) return;
+        const doc = documents.find(d => d.id == id);
+        if(confirm('Padam rekod dokumen ini?')) {
+            documents = documents.filter(d => d.id != id);
+            localStorage.setItem('pa_documents', JSON.stringify(documents));
+            if(doc) syncDeleteToGoogleSheet("Documents", doc.ref);
+            renderDocuments();
+            updateLastSyncedLabel();
+        }
+    }
+
+    function setDocFilter(type, btn) {
+        currentDocFilter = type;
+        btn.parentElement.querySelectorAll('.filter-chip').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        renderDocuments();
+    }
+
+    function viewProofImage(url) {
+        if(!url) return;
+        window.open(url, '_blank');
+    }
+
+    function sendDocWhatsApp(sender, ref, title, status) {
+        const found = sendersList.find(s => s.name === sender);
+        let phone = found && found.phone ? found.phone.replace(/[^0-9]/g, '') : '';
+        const text = encodeURIComponent(`Makluman Dokumen:\nNo Rujukan: ${ref}\nTajuk: ${title}\nStatus: ${status}`);
+        window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+    }
+
+    function renderDocuments() {
+        const tbody = document.getElementById('document-table-body');
+        const search = document.getElementById('doc-search').value.toLowerCase();
+        const month = document.getElementById('doc-month-filter').value;
+        if(!tbody) return;
+
+        let filtered = [...documents].sort((a, b) => b.id - a.id);
+        if(search) filtered = filtered.filter(d => d.title.toLowerCase().includes(search) || d.ref.toLowerCase().includes(search));
+        if(month) {
+            const [y, m] = month.split('-');
+            filtered = filtered.filter(d => d.receivedAt && d.receivedAt.split(' ')[0].split('/')[2] === y && d.receivedAt.split(' ')[0].split('/')[1] === m);
+        }
+
+        if(currentDocFilter === 'Aktif') filtered = filtered.filter(d => d.status !== 'Selesai');
+        else if(currentDocFilter === 'Dalam Semakan') filtered = filtered.filter(d => d.status === 'Dalam Semakan');
+        else if(currentDocFilter === 'Selesai') filtered = filtered.filter(d => d.status === 'Selesai');
+
+        document.getElementById('doc-total').innerText = documents.length;
+        document.getElementById('doc-pending').innerText = documents.filter(d => d.status !== 'Selesai').length;
+        document.getElementById('doc-completed').innerText = documents.filter(d => d.status === 'Selesai').length;
+        document.getElementById('doc-today').innerText = documents.filter(d => d.receivedAt.startsWith(new Date().toLocaleDateString('en-GB'))).length;
+
+        tbody.innerHTML = '';
+        if(filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 25px;">Tiada rekod dokumen.</td></tr>`;
+            return;
+        }
+
+        filtered.forEach(d => {
+            const proof = d.proofImage ? `<a href="javascript:void(0);" onclick="viewProofImage('${d.proofImage}')" class="btn btn-primary" style="padding: 4px 8px; font-size: 10px;"><i class="fa-solid fa-image"></i> Lihat</a>` : `-`;
+            let actions = isAdminUnlocked ? `
+                <div class="actions-cell">
+                    <button onclick="sendDocWhatsApp('${d.sender.replace(/'/g, "\\'")}', '${d.ref.replace(/'/g, "\\'")}', '${d.title.replace(/'/g, "\\'")}', '${d.status}')" class="btn-icon btn-wa"><i class="fa-brands fa-whatsapp"></i></button>
+                    <button onclick="editDocument(${d.id})" class="btn-icon btn-edit"><i class="fa-solid fa-pen"></i></button>
+                    <button onclick="deleteDocument(${d.id})" class="btn-icon btn-delete"><i class="fa-solid fa-trash"></i></button>
+                </div>` : `-`;
+
+            tbody.innerHTML += `
+                <tr>
+                    <td><small>${d.receivedAt}</small></td>
+                    <td><strong>${d.ref}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${d.title}</span></td>
+                    <td>${d.sender}</td>
+                    <td>${d.purpose}</td>
+                    <td><small>${d.returnedAt}</small></td>
+                    <td><span class="badge ${d.status === 'Selesai' ? 'badge-success' : 'badge-warning'}">${d.status}</span></td>
+                    <td>${proof}</td>
+                    <td>${actions}</td>
+                </tr>`;
+        });
+    }
+
     function formatDeadline(deadline, status) {
         if(!deadline) return '-';
         if(status === 'Completed') return `<span class="badge-deadline badge-completed">${deadline} (Selesai)</span>`;
         
-        // Bersihkan string tarikh sekiranya tercemar dengan format objek masa awan
         let cleanDateStr = String(deadline).split('T')[0];
         if (cleanDateStr.includes('GMT') || cleanDateStr.includes('Wed') || cleanDateStr.includes('Nov')) {
             let parsed = new Date(deadline);
@@ -813,11 +957,8 @@
         if (isNaN(target)) return `<span class="badge-deadline badge-upcoming">${deadline}</span>`;
 
         const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
-        
-        // Format cantik: 18 Nov 2026 Wed
         const monthsShort = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ogs", "Sep", "Okt", "Nov", "Dis"];
         const daysShort = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        // Gunakan getDay() untuk hari
         let dayName = daysShort[target.getDay()];
         let formattedDateReadable = `${target.getDate()} ${monthsShort[target.getMonth()]} ${target.getFullYear()} ${dayName}`;
 
@@ -843,7 +984,11 @@
         document.getElementById('task-progress').innerText = tasks.filter(t => t.status === 'In Progress').length;
         document.getElementById('task-pending').innerText = tasks.filter(t => t.status === 'Pending').length;
 
-        tbody.innerHTML = filtered.length === 0 ? `<tr><td colspan="7" style="text-align: center; padding: 25px;">Tiada tugasan.</td></tr>` : '';
+        tbody.innerHTML = '';
+        if(filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px;">Tiada tugasan.</td></tr>`;
+            return;
+        }
 
         filtered.forEach(t => {
             let doneInput = isAdminUnlocked ? `<input type="checkbox" ${t.done ? 'checked' : ''} onclick="toggleTaskDone(${t.id})" style="width:16px;height:16px;cursor:pointer;">` : `-`;
@@ -959,16 +1104,186 @@
         renderTasks();
     }
 
-    function handleIcsUpload(event) {}
-    function openMeetingModal(meet = null) {}
-    function closeMeetingModal() {}
-    function viewMeeting(id) {}
-    function closeViewMeetingModal() {}
-    function editMeetingFromView() {}
-    function changeMonth(dir) {}
-    function saveMeeting(e) {}
-    function deleteMeeting() {}
-    function renderCalendar() {}
+    function handleIcsUpload(event) {
+        if (!verifyAdminToken()) return;
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            const lines = e.target.result.split(/\r\n|\n/);
+            let cur = null, count = 0;
+            lines.forEach(line => {
+                if (line === 'BEGIN:VEVENT') cur = { id: String(Date.now() + Math.random()), color: '#0284c7', location: 'Outlook', notes: '' };
+                else if (line === 'END:VEVENT' && cur) {
+                    if (cur.title && cur.start) {
+                        meetings.push(cur);
+                        syncToGoogleSheet("Meetings", ["Tajuk Mesyuarat", "Masa Mula", "Masa Tamat", "Tempat", "Catatan", "E-mel Pegawai"], [cur.title, cur.start, cur.end, cur.location, cur.notes, cur.email || '']);
+                        count++;
+                    }
+                    cur = null;
+                } else if (cur) {
+                    if (line.startsWith('SUMMARY:')) cur.title = line.substring(8);
+                    if (line.startsWith('DTSTART:')) {
+                        let raw = line.substring(8);
+                        if (raw.length >= 12) cur.start = `${raw.substring(0,4)}-${raw.substring(4,6)}-${raw.substring(6,8)}T${raw.substring(9,11)}:${raw.substring(11,13)}`;
+                    }
+                    if (line.startsWith('DTEND:')) {
+                        let raw = line.substring(6);
+                        if (raw.length >= 12) cur.end = `${raw.substring(0,4)}-${raw.substring(4,6)}-${raw.substring(6,8)}T${raw.substring(9,11)}:${raw.substring(11,13)}`;
+                    }
+                    if (line.startsWith('LOCATION:')) cur.location = line.substring(9);
+                    if (line.startsWith('DESCRIPTION:')) cur.notes = line.substring(12);
+                }
+            });
+            localStorage.setItem('pa_meetings', JSON.stringify(meetings));
+            renderCalendar();
+            alert(`${count} mesyuarat diimport!`);
+        };
+        reader.readAsText(file);
+    }
+
+    function openMeetingModal(meet = null) {
+        if (!verifyAdminToken()) return;
+        document.getElementById('meeting-modal').classList.remove('hidden-section');
+        document.getElementById('meeting-form').reset();
+        if (meet) {
+            document.getElementById('meeting-modal-title').innerHTML = `<i class="fa-solid fa-pen"></i> Kemas kini Mesyuarat`;
+            document.getElementById('meet-id').value = String(meet.id);
+            document.getElementById('meet-old-title').value = meet.title;
+            document.getElementById('meet-title').value = meet.title;
+            document.getElementById('meet-start').value = meet.start || '';
+            document.getElementById('meet-end').value = meet.end || '';
+            document.getElementById('meet-location').value = meet.location || '';
+            document.getElementById('meet-notes').value = meet.notes || '';
+            document.getElementById('meet-email').value = meet.email || '';
+            document.getElementById('meet-color').value = meet.color || '#4f46e5';
+            document.getElementById('btn-delete-meeting').classList.remove('hidden-section');
+        } else {
+            document.getElementById('meeting-modal-title').innerHTML = `<i class="fa-solid fa-calendar-plus"></i> Tambah Mesyuarat Baru`;
+            document.getElementById('meet-id').value = '';
+            document.getElementById('meet-old-title').value = '';
+            document.getElementById('btn-delete-meeting').classList.add('hidden-section');
+        }
+    }
+
+    function closeMeetingModal() { document.getElementById('meeting-modal').classList.add('hidden-section'); }
+
+    function viewMeeting(id) {
+        const m = meetings.find(x => String(x.id) === String(id));
+        if(!m) return;
+        selectedMeetingIdForEdit = String(m.id);
+        document.getElementById('view-meet-title').innerText = m.title || '-';
+        document.getElementById('view-meet-start').innerText = m.start ? m.start.replace('T', ' Jam ') : '-';
+        document.getElementById('view-meet-end').innerText = m.end ? m.end.replace('T', ' Jam ') : '-';
+        document.getElementById('view-meet-location').innerText = m.location || '-';
+        document.getElementById('view-meet-notes').innerText = m.notes || '-';
+        const editBtn = document.getElementById('btn-edit-from-view');
+        if (isAdminUnlocked) editBtn.classList.remove('hidden-section');
+        else editBtn.classList.add('hidden-section');
+        document.getElementById('view-meeting-modal').classList.remove('hidden-section');
+    }
+
+    function closeViewMeetingModal() { document.getElementById('view-meeting-modal').classList.add('hidden-section'); selectedMeetingIdForEdit = null; }
+
+    function editMeetingFromView() {
+        closeViewMeetingModal();
+        const m = meetings.find(x => String(x.id) === String(selectedMeetingIdForEdit));
+        if (m) openMeetingModal(m);
+    }
+
+    function changeMonth(dir) {
+        calendarDate.setMonth(calendarDate.getMonth() + dir);
+        renderCalendar();
+    }
+
+    function saveMeeting(e) {
+        e.preventDefault();
+        if (!verifyAdminToken()) return;
+        const id = document.getElementById('meet-id').value;
+        const oldTitle = document.getElementById('meet-old-title').value;
+        const title = document.getElementById('meet-title').value;
+        const start = document.getElementById('meet-start').value;
+        const end = document.getElementById('meet-end').value;
+        const location = document.getElementById('meet-location').value;
+        const notes = document.getElementById('meet-notes').value;
+        const email = document.getElementById('meet-email').value;
+        const color = document.getElementById('meet-color').value;
+
+        if (id) {
+            const m = meetings.find(x => String(x.id) === String(id));
+            if(m) Object.assign(m, { title, start, end, location, notes, email, color });
+            syncDeleteToGoogleSheet("Meetings", oldTitle || title);
+            syncToGoogleSheet("Meetings", ["Tajuk Mesyuarat", "Masa Mula", "Masa Tamat", "Tempat", "Catatan", "E-mel Pegawai"], [title, start, end, location, notes, email]);
+        } else {
+            meetings.push({ id: String(Date.now()), title, start, end, location, notes, email, color });
+            syncToGoogleSheet("Meetings", ["Tajuk Mesyuarat", "Masa Mula", "Masa Tamat", "Tempat", "Catatan", "E-mel Pegawai"], [title, start, end, location, notes, email]);
+        }
+
+        localStorage.setItem('pa_meetings', JSON.stringify(meetings));
+        closeMeetingModal();
+        renderCalendar();
+        alert('Mesyuarat disimpan.');
+    }
+
+    function deleteMeeting() {
+        if (!verifyAdminToken()) return;
+        const id = document.getElementById('meet-id').value;
+        const m = meetings.find(x => String(x.id) === String(id));
+        if (m && confirm('Padam mesyuarat ini?')) {
+            meetings = meetings.filter(x => String(x.id) !== String(id));
+            localStorage.setItem('pa_meetings', JSON.stringify(meetings));
+            syncDeleteToGoogleSheet("Meetings", m.title);
+            closeMeetingModal();
+            renderCalendar();
+            alert('Mesyuarat dipadam.');
+        }
+    }
+
+    function renderCalendar() {
+        const container = document.getElementById('calendar-days-container');
+        const label = document.getElementById('calendar-month-year');
+        if(!container || !label) return;
+
+        container.innerHTML = '';
+        const y = calendarDate.getFullYear(), m = calendarDate.getMonth();
+        const months = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+        label.innerText = `${months[m]} ${y}`;
+
+        let firstDay = new Date(y, m, 1).getDay();
+        let startOffset = (firstDay === 0) ? 6 : firstDay - 1;
+        let totalDays = new Date(y, m + 1, 0).getDate();
+        let prevDays = new Date(y, m, 0).getDate();
+        let html = '';
+
+        for(let i = startOffset; i > 0; i--) {
+            html += `<div class="cal-day-cell other-month"><div class="cal-day-num">${prevDays - i + 1}</div></div>`;
+        }
+
+        for(let day = 1; day <= totalDays; day++) {
+            let currentDateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            let currentTimestamp = new Date(currentDateStr).setHours(0,0,0,0);
+
+            let dayMeets = meetings.filter(x => {
+                if (!x.start) return false;
+                let startDateStr = x.start.split('T')[0];
+                let endDateStr = x.end ? x.end.split('T')[0] : startDateStr;
+                let startTS = new Date(startDateStr).setHours(0,0,0,0);
+                let endTS = new Date(endDateStr).setHours(0,0,0,0);
+                return currentTimestamp >= startTS && currentTimestamp <= endTS;
+            });
+
+            let pills = '';
+            dayMeets.forEach(x => {
+                let startDateStr = x.start.split('T')[0];
+                let isMultiDay = x.end && x.end.split('T')[0] !== startDateStr;
+                let badgeText = isMultiDay ? `📅 [${startDateStr.split('-')[2]}/${startDateStr.split('-')[1]}] ${x.title}` : x.title;
+                pills += `<div class="cal-event-pill" style="background:${x.color || '#4f46e5'};" onclick="viewMeeting('${x.id}')" title="${x.title}">${badgeText}</div>`;
+            });
+
+            html += `<div class="cal-day-cell"><div class="cal-day-num">${day}</div><div class="cal-events-wrapper">${pills}</div></div>`;
+        }
+        container.innerHTML = html;
+    }
 
     populateSenderDropdown();
     loadDataFromCloud();
