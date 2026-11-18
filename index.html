@@ -7,12 +7,12 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Gaya Asas Portal */
+        /* Gaya Asas Portal & Responsif */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { display: flex; background-color: #f8fafc; color: #1e293b; min-height: 100vh; }
+        body { display: flex; background-color: #f8fafc; color: #1e293b; min-height: 100vh; overflow-x: hidden; }
         
-        /* Sidebar */
-        aside { width: 260px; background-color: #1e1b4b; color: #fff; display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; }
+        /* Sidebar Desktop */
+        aside { width: 260px; background-color: #1e1b4b; color: #fff; display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; transition: transform 0.3s ease; }
         .sidebar-brand { padding: 20px; font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 10px; background: #312e81; }
         .sidebar-menu { padding: 20px 10px; display: flex; flex-direction: column; gap: 8px; }
         .menu-category { font-size: 11px; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; padding-left: 10px; }
@@ -20,11 +20,11 @@
         .menu-item:hover, .menu-item.active { background-color: #4338ca; color: #fff; }
 
         /* Main Wrapper & Topbar */
-        .main-wrapper { margin-left: 260px; padding: 20px; width: calc(100% - 260px); }
-        topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .main-wrapper { margin-left: 260px; padding: 20px; width: calc(100% - 260px); transition: margin 0.3s ease, width 0.3s ease; }
+        topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex-wrap: wrap; gap: 10px; }
         .topbar-title h2 { font-size: 20px; color: #1e293b; }
         .topbar-title p { font-size: 13px; color: #64748b; }
-        .topbar-actions { display: flex; gap: 10px; }
+        .topbar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
         .btn { padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
         .btn-secondary { background: #f1f5f9; color: #475569; }
         .btn-primary { background: #4f46e5; color: #fff; }
@@ -49,7 +49,7 @@
         .bg-purple-light { background: #f3e8ff; color: #9333ea; }
 
         .card { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; overflow: hidden; }
-        .card-header { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .card-header { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .card-header h2 { font-size: 16px; color: #1e293b; display: flex; align-items: center; gap: 8px; }
         .card-body { padding: 20px; }
 
@@ -58,10 +58,10 @@
         .form-group { display: flex; flex-direction: column; gap: 6px; }
         .form-group.full-width { grid-column: 1 / -1; }
         .form-group label { font-size: 12px; font-weight: 600; color: #475569; }
-        .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
+        .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; width: 100%; }
         
         .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-        .search-filter-group { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; flex: 1; }
+        .search-filter-group { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; flex: 1; width: 100%; }
         .search-box { position: relative; flex: 1; min-width: 200px; }
         .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 13px; }
         .search-box input { width: 100%; padding: 8px 12px 8px 35px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
@@ -70,16 +70,16 @@
         .filter-chip { padding: 6px 12px; background: #f1f5f9; border: none; border-radius: 20px; font-size: 12px; font-weight: 600; color: #475569; cursor: pointer; transition: 0.2s; }
         .filter-chip.active { background: #1e1b4b; color: #fff; }
 
-        .table-responsive { width: 100%; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
-        th { background: #f8fafc; padding: 12px; font-weight: 600; color: #475569; border-bottom: 1px solid #e2e8f0; }
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; min-width: 750px; }
+        th { background: #f8fafc; padding: 12px; font-weight: 600; color: #475569; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
         td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
         
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
         .badge-warning { background: #fef3c7; color: #d97706; }
         .badge-success { background: #ecfdf5; color: #059669; }
 
-        /* Animasi Denyut (Pulse) untuk Deadline Lepas Tarikh */
+        /* Animasi Denyut (Pulse) untuk Deadline */
         @keyframes pulseAlert {
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
             70% { transform: scale(1.02); box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
@@ -98,36 +98,50 @@
         .btn-edit { color: #2563eb; }
         .btn-delete { color: #dc2626; }
 
-        /* Kalendar Seragam (Lebar & Tinggi Sama Rata) */
+        /* Kalendar Seragam */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; width: 100%; }
-        .cal-header-day { background: #f1f5f9; text-align: center; font-weight: 600; font-size: 12px; padding: 10px; color: #475569; border-radius: 6px; }
-        .cal-day-cell { background: #fff; border: 1px solid #e2e8f0; height: 115px; border-radius: 6px; padding: 6px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+        .cal-header-day { background: #f1f5f9; text-align: center; font-weight: 600; font-size: 11px; padding: 8px 4px; color: #475569; border-radius: 6px; }
+        .cal-day-cell { background: #fff; border: 1px solid #e2e8f0; height: 105px; border-radius: 6px; padding: 4px; cursor: pointer; display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
         .cal-day-cell:hover { background: #f8fafc; border-color: #cbd5e1; }
         .cal-day-cell.other-month { background: #f8fafc; opacity: 0.35; }
-        .cal-day-num { font-size: 12px; font-weight: 600; color: #1e293b; }
-        .cal-events-wrapper { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; max-height: 80px; width: 100%; }
-        .cal-event-pill { font-size: 10px; padding: 2px 6px; border-radius: 3px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cal-day-num { font-size: 11px; font-weight: 600; color: #1e293b; }
+        .cal-events-wrapper { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; max-height: 70px; width: 100%; }
+        .cal-event-pill { font-size: 9px; padding: 2px 4px; border-radius: 3px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Butang Menu Mudah Alih (Hamburger Toggle) */
+        .mobile-menu-toggle { display: none; background: none; border: none; font-size: 20px; color: #1e293b; cursor: pointer; }
+
+        /* MEDIA QUERIES UNTUK PERANTI MUDAH ALIH (MOBILE RESPONSIVE) */
+        @media (max-width: 900px) {
+            aside { transform: translateX(-260px); transition: transform 0.3s ease; }
+            aside.mobile-open { transform: translateX(0); }
+            .main-wrapper { margin-left: 0; width: 100%; padding: 10px; }
+            .mobile-menu-toggle { display: inline-block; }
+            .calendar-grid { gap: 3px; }
+            .cal-day-cell { height: 85px; padding: 2px; }
+            .cal-header-day { font-size: 10px; padding: 6px 2px; }
+        }
     </style>
 </head>
 <body>
 
     <!-- SIDEBAR -->
-    <aside>
+    <aside id="app-sidebar">
         <div class="sidebar-brand">
             <i class="fa-solid fa-shield-halved"></i>
             <span>Pejabat TKA(Operasi)</span>
         </div>
         <div class="sidebar-menu">
             <div class="menu-category">Modul</div>
-            <button class="menu-item active" onclick="switchTab('documents', this)" title="Document Tracker">
+            <button class="menu-item active" onclick="switchTab('documents', this); toggleMobileMenu();" title="Document Tracker">
                 <i class="fa-solid fa-folder-open"></i>
                 <span>Dokumen</span>
             </button>
-            <button class="menu-item" onclick="switchTab('tasks', this)" title="Pemantauan Tugasan">
+            <button class="menu-item" onclick="switchTab('tasks', this); toggleMobileMenu();" title="Pemantauan Tugasan">
                 <i class="fa-solid fa-list-check"></i>
                 <span>Tugasan</span>
             </button>
-            <button class="menu-item" onclick="switchTab('calendar', this)" title="Kalendar Mesyuarat">
+            <button class="menu-item" onclick="switchTab('calendar', this); toggleMobileMenu();" title="Kalendar Mesyuarat">
                 <i class="fa-solid fa-calendar-days"></i>
                 <span>Kalendar</span>
             </button>
@@ -137,9 +151,12 @@
     <!-- MAIN CONTENT -->
     <div class="main-wrapper">
         <topbar>
-            <div class="topbar-title">
-                <h2>Portal PA TKA(O)</h2>
-                <p>Kementerian Pertahanan Malaysia</p>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
+                <div class="topbar-title">
+                    <h2>Portal PA TKA(O)</h2>
+                    <p>Kementerian Pertahanan Malaysia</p>
+                </div>
             </div>
             <div class="topbar-actions">
                 <button class="btn btn-secondary" onclick="refreshData()"><i class="fa-solid fa-rotate"></i> Refresh</button>
@@ -328,9 +345,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2><i class="fa-solid fa-calendar-days"></i> Kalendar Mesyuarat TKA(Operasi)</h2>
-                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                            <span id="update-time-calendar" style="font-size: 11px; color: #64748b; font-weight: 500;">Kemas kini: -</span>
-                        </div>
+                        <span id="update-time-calendar" style="font-size: 11px; color: #64748b; font-weight: 500;">Kemas kini: -</span>
                     </div>
                     <div class="card-body">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
@@ -477,6 +492,13 @@
     
     let isAdminUnlocked = false;
     let selectedMeetingIdForEdit = null;
+
+    function toggleMobileMenu() {
+        const sidebar = document.getElementById('app-sidebar');
+        if(sidebar) {
+            sidebar.classList.toggle('mobile-open');
+        }
+    }
 
     function requestAdminAccess() {
         if (isAdminUnlocked) {
@@ -946,7 +968,6 @@
         });
     }
 
-    // FUNGSI DEADLINE: PAPAR TARIKH DI ATAS, BILANGAN HARI DI BAWAH DENGAN WARNA JELAS & ANIMASI DENYUT
     function formatDeadline(deadline, status) {
         if(!deadline) return '-';
         
