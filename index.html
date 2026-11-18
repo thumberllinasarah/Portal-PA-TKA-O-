@@ -605,43 +605,48 @@
 
     function loadDataFromCloud() {
         if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
+
+        // Menggunakan teknik JSONP global untuk mengelakkan ralat CORS pelayar
+        const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
+        const script = document.createElement('script');
         
-        // Tambah parameter ?action=getData untuk mengelakkan isu cache dan CORS fetch langsung
-        const targetUrl = GOOGLE_APPS_SCRIPT_URL + (GOOGLE_APPS_SCRIPT_URL.includes('?') ? '&' : '?') + 'action=getData&v=' + new Date().getTime();
+        window[callbackName] = function(data) {
+            delete window[callbackName];
+            document.body.removeChild(script);
 
-        fetch(targetUrl)
-            .then(res => {
-                if (!res.ok) throw new Error('Network response was not ok');
-                return res.json();
-            })
-            .then(data => {
-                localStorage.removeItem('pa_documents');
-                localStorage.removeItem('pa_tasks');
-                localStorage.removeItem('pa_meetings');
+            localStorage.removeItem('pa_documents');
+            localStorage.removeItem('pa_tasks');
+            localStorage.removeItem('pa_meetings');
 
-                if (data.documents) {
-                    documents = data.documents;
-                    localStorage.setItem('pa_documents', JSON.stringify(documents));
-                }
-                if (data.tasks) {
-                    tasks = data.tasks;
-                    localStorage.setItem('pa_tasks', JSON.stringify(tasks));
-                }
-                if (data.meetings) {
-                    meetings = data.meetings.map(m => ({
-                        ...m,
-                        id: m.id ? String(m.id) : String(Date.now() + Math.random())
-                    }));
-                    localStorage.setItem('pa_meetings', JSON.stringify(meetings));
-                }
-                renderDocuments();
-                renderTasks();
-                renderCalendar();
-                updateLastSyncedLabel();
-            }).catch(err => {
-                console.warn("Amaran CORS / Cloud fetch gagal, menggunakan data tempatan (localStorage):", err);
-                // Sistem kekal berjalan lancar menggunakan data tempatan jika pelayar menyekat rangkaian
-            });
+            if (data.documents) {
+                documents = data.documents;
+                localStorage.setItem('pa_documents', JSON.stringify(documents));
+            }
+            if (data.tasks) {
+                tasks = data.tasks;
+                localStorage.setItem('pa_tasks', JSON.stringify(tasks));
+            }
+            if (data.meetings) {
+                meetings = data.meetings.map(m => ({
+                    ...m,
+                    id: m.id ? String(m.id) : String(Date.now() + Math.random())
+                }));
+                localStorage.setItem('pa_meetings', JSON.stringify(meetings));
+            }
+            renderDocuments();
+            renderTasks();
+            renderCalendar();
+            updateLastSyncedLabel();
+        };
+
+        script.src = `${GOOGLE_APPS_SCRIPT_URL}?callback=${callbackName}&v=${new Date().getTime()}`;
+        script.onerror = function() {
+            delete window[callbackName];
+            if(script.parentNode) document.body.removeChild(script);
+            console.warn("Gagal memuat turun data cloud melalui JSONP, menggunakan data tempatan.");
+        };
+
+        document.body.appendChild(script);
     }
 
     function populateSenderDropdown(selectedVal = '') {
@@ -745,45 +750,11 @@
             return;
         }
 
-        // 1. Kosongkan data cache tempatan untuk memaksa muat turun baharu
-        localStorage.removeItem('pa_documents');
-        localStorage.removeItem('pa_tasks');
-        localStorage.removeItem('pa_meetings');
-
-        // 2. Tambah parameter masa rambang (?v=...) untuk memotong cache pelayar/Google server
-        const noCacheUrl = GOOGLE_APPS_SCRIPT_URL + (GOOGLE_APPS_SCRIPT_URL.includes('?') ? '&' : '?') + 'v=' + new Date().getTime();
-
-        fetch(noCacheUrl, { cache: "reload" })
-            .then(res => res.json())
-            .then(data => {
-                if (data.documents) {
-                    documents = data.documents;
-                    localStorage.setItem('pa_documents', JSON.stringify(documents));
-                }
-                if (data.tasks) {
-                    tasks = data.tasks;
-                    localStorage.setItem('pa_tasks', JSON.stringify(tasks));
-                }
-                if (data.meetings) {
-                    meetings = data.meetings.map(m => ({
-                        ...m,
-                        id: m.id ? String(m.id) : String(Date.now() + Math.random())
-                    }));
-                    localStorage.setItem('pa_meetings', JSON.stringify(meetings));
-                }
-                
-                // Kemas kini paparan pada semua modul
-                renderDocuments();
-                renderTasks();
-                renderCalendar();
-                updateLastSyncedLabel();
-                
-                alert('Force Refresh berjaya! Data terkini dari pelayan telah dimuat turun.');
-            })
-            .catch(err => {
-                console.error("Ralat Force Refresh:", err.toString());
-                alert('Gagal menyegerakkan data. Sila semak sambungan internet anda.');
-            });
+        loadDataFromCloud();
+        setTimeout(() => {
+            updateLastSyncedLabel();
+            alert('Force Refresh berjaya disemak!');
+        }, 1000);
     }
 
     function getCurrentDateTime() {
