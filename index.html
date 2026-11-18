@@ -436,7 +436,7 @@
                         <textarea id="meet-notes" rows="2" placeholder="Catatan..."></textarea>
                     </div>
                     <div class="form-group" style="margin-bottom: 12px;">
-                        <label>Emel Pegawai / Penerima</label>
+                        <label>E-mel Pegawai / Penerima</label>
                         <input type="email" id="meet-email" placeholder="pegawai@mod.gov.my">
                     </div>
                     <div class="form-group" style="margin-bottom: 16px;">
@@ -499,7 +499,6 @@
     </div>
 
 <script>
-    // URL Apps Script anda (Disembunyikan dari paparan luar apabila token diuji melalui backend)
     const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjnjT3SSeiXHSGdfN4qfnmmIex23pgWKhnXsxrm3DUX6IBSqNngQ1CUlvuwDajMJ-PJA/exec";
     
     let isAdminUnlocked = false;
@@ -517,10 +516,9 @@
             return;
         }
 
-        let userInput = prompt("Sila masukkan Token Khas Pentadbir:");
+        let userInput = prompt("Sila masukkan Token Khas PA:");
         if (userInput === null) return;
         
-        // Simpan sementara di dalam sessionStorage pelayar
         sessionStorage.setItem('admin_token', userInput.trim());
         isAdminUnlocked = true;
         document.getElementById('auth-status-text').innerText = "PA (Aktif)";
@@ -946,12 +944,12 @@
 
             tbody.innerHTML += `
                 <tr>
-                    <td><small>${d.receivedAt}</small></td>
-                    <td><strong>${d.ref}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${d.title}</span></td>
-                    <td>${d.sender}</td>
-                    <td>${d.purpose}</td>
-                    <td><small>${d.returnedAt}</small></td>
-                    <td><span class="badge ${d.status === 'Selesai' ? 'badge-success' : 'badge-warning'}">${d.status}</span></td>
+                    <td><small>${d.receivedAt || '-'}</small></td>
+                    <td><strong>${d.ref || '-'}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${d.title || '-'}</span></td>
+                    <td>${d.sender || '-'}</td>
+                    <td>${d.purpose || '-'}</td>
+                    <td><small>${d.returnedAt || '-'}</small></td>
+                    <td><span class="badge ${d.status === 'Selesai' ? 'badge-success' : 'badge-warning'}">${d.status || 'Dalam Semakan'}</span></td>
                     <td>${proof}</td>
                     <td>${actions}</td>
                 </tr>`;
