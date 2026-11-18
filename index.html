@@ -25,24 +25,26 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-main); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
 
-        aside { width: 260px; background: linear-gradient(180deg, #4f46e5, #312e81); color: white; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; box-shadow: 4px 0 15px rgba(0,0,0,0.05); }
+        /* Sidebar Desktop */
+        aside { width: 260px; background: linear-gradient(180deg, #4f46e5, #312e81); color: white; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; box-shadow: 4px 0 15px rgba(0,0,0,0.05); transition: width 0.3s ease; }
         .sidebar-brand { padding: 24px 20px; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); white-space: nowrap; }
         .sidebar-menu { padding: 20px 12px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; flex: 1; }
         .menu-category { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(255,255,255,0.6); padding: 10px 10px 4px 10px; font-weight: 600; }
         .menu-item { padding: 10px 14px; border-radius: 8px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s; border: none; background: transparent; width: 100%; text-align: left; }
         .menu-item:hover, .menu-item.active { background: rgba(255, 255, 255, 0.15); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
-        .main-wrapper { margin-left: 260px; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        /* Main Wrapper */
+        .main-wrapper { margin-left: 260px; flex: 1; display: flex; flex-direction: column; min-width: 0; transition: margin-left 0.3s ease; }
         topbar { background: white; height: 70px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; position: sticky; top: 0; z-index: 90; }
         .topbar-title h2 { font-size: 18px; font-weight: 700; color: var(--text-main); }
         .topbar-title p { font-size: 12px; color: var(--text-muted); }
-        .topbar-actions { display: flex; align-items: center; gap: 15px; }
+        .topbar-actions { display: flex; align-items: center; gap: 12px; }
 
         .content-body { padding: 30px; flex: 1; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        .btn { padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; text-decoration: none; }
+        .btn { padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; text-decoration: none; white-space: nowrap; }
         .btn-primary { background: var(--accent); color: white; }
         .btn-primary:hover { background: #4338ca; }
         .btn-success { background: var(--success); color: white; }
@@ -51,6 +53,7 @@
         .btn-secondary { background: #f1f5f9; color: var(--text-main); border: 1px solid var(--border); }
         .btn-secondary:hover { background: #e2e8f0; }
 
+        /* Statistik Grid */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: var(--card-bg); padding: 18px 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .stat-info h3 { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
@@ -63,7 +66,7 @@
         .bg-purple-light { background: #f3e8ff; color: #7e22ce; }
 
         .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 25px; overflow: hidden; }
-        .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #fafafa; }
+        .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #fafafa; flex-wrap: wrap; gap: 10px; }
         .card-header h2 { font-size: 15px; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
         .hidden-section { display: none !important; }
         .card-body { padding: 20px; }
@@ -80,22 +83,22 @@
         input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
 
         .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 12px; flex-wrap: wrap; }
-        .search-filter-group { display: flex; gap: 10px; flex: 1; min-width: 280px; }
-        .search-box { position: relative; flex: 1; }
+        .search-filter-group { display: flex; gap: 10px; flex: 1; min-width: 280px; flex-wrap: wrap; }
+        .search-box { position: relative; flex: 1; min-width: 200px; }
         .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13px; }
         .search-box input { padding-left: 36px; width: 100%; }
 
-        .table-responsive { width: 100%; overflow-x: hidden; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; table-layout: fixed; }
-        th { background: #f8fafc; color: var(--text-muted); font-weight: 600; padding: 14px 10px; border-bottom: 1px solid var(--border); word-wrap: break-word; }
-        td { padding: 14px 10px; border-bottom: 1px solid var(--border); color: var(--text-main); vertical-align: middle; word-wrap: break-word; overflow-wrap: break-word; }
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; min-width: 750px; }
+        th { background: #f8fafc; color: var(--text-muted); font-weight: 600; padding: 14px 10px; border-bottom: 1px solid var(--border); }
+        td { padding: 14px 10px; border-bottom: 1px solid var(--border); color: var(--text-main); vertical-align: middle; }
         tr:hover { background: #fafafa; }
 
         .badge { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
         .badge-warning { background: #fef3c7; color: #b45309; }
         .badge-success { background: #d1fae5; color: #047857; }
 
-        .badge-deadline { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px; letter-spacing: 0.2px; }
+        .badge-deadline { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px; letter-spacing: 0.2px; white-space: nowrap; }
         .badge-today { background: #dc2626; color: #ffffff; box-shadow: 0 2px 4px rgba(220, 38, 38, 0.4); animation: bounceAndPulse 1.2s infinite ease-in-out; }
         .badge-overdue { background: #fee2e2; color: #b91c1c; border: 1.5px solid #f87171; box-shadow: 0 2px 4px rgba(185, 28, 28, 0.2); animation: bounceAndPulse 1.2s infinite ease-in-out; }
 
@@ -112,22 +115,39 @@
         .btn-delete { background: var(--danger); }
 
         .filter-status-group { display: flex; gap: 6px; flex-wrap: wrap; }
-        .filter-chip { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: white; color: var(--text-muted); transition: all 0.2s; }
+        .filter-chip { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: white; color: var(--text-muted); transition: all 0.2s; white-space: nowrap; }
         .filter-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-        .cal-header-day { text-align: center; font-weight: 600; color: var(--text-muted); font-size: 12px; padding: 8px 0; background: #f8fafc; border-radius: 6px; }
-        .cal-day-cell { background: #fff; border: 1px solid var(--border); border-radius: 8px; height: 120px; padding: 8px; display: flex; flex-direction: column; gap: 4px; overflow: hidden; position: relative; }
+        /* Kalendar Responsif */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+        .cal-header-day { text-align: center; font-weight: 600; color: var(--text-muted); font-size: 11px; padding: 6px 0; background: #f8fafc; border-radius: 6px; }
+        .cal-day-cell { background: #fff; border: 1px solid var(--border); border-radius: 8px; height: 100px; padding: 6px; display: flex; flex-direction: column; gap: 3px; overflow: hidden; position: relative; }
         .cal-day-cell.other-month { background: #f8fafc; opacity: 0.5; }
-        .cal-day-num { font-weight: 700; font-size: 12px; color: var(--text-main); }
-        .cal-events-wrapper { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; flex: 1; max-height: 80px; }
-        .cal-event-pill { font-size: 10px; padding: 4px 6px; border-radius: 6px; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+        .cal-day-num { font-weight: 700; font-size: 11px; color: var(--text-main); }
+        .cal-events-wrapper { display: flex; flex-direction: column; gap: 3px; overflow-y: auto; flex: 1; max-height: 65px; }
+        .cal-event-pill { font-size: 9px; padding: 3px 5px; border-radius: 4px; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
         .cal-event-pill:hover { opacity: 0.85; }
 
-        @media (max-width: 1024px) {
-            aside { width: 70px; }
+        @media (max-width: 768px) {
+            aside { width: 65px; }
             aside .sidebar-brand span, aside .menu-category, aside .menu-item span { display: none; }
-            .main-wrapper { margin-left: 70px; }
+            .sidebar-brand { justify-content: center; padding: 20px 10px; }
+            .sidebar-menu { padding: 15px 8px; align-items: center; }
+            .menu-item { justify-content: center; padding: 12px; width: 42px; height: 42px; }
+            .menu-item i { font-size: 16px; }
+            
+            .main-wrapper { margin-left: 65px; }
+            topbar { padding: 0 15px; height: 60px; }
+            .topbar-title h2 { font-size: 14px; }
+            .topbar-title p { font-size: 10px; }
+            .content-body { padding: 15px; }
+            
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group.full-width { grid-column: span 1; }
+            
+            .cal-day-cell { height: 85px; padding: 4px; }
+            .cal-day-num { font-size: 10px; }
+            .cal-event-pill { font-size: 8px; padding: 2px 4px; }
         }
     </style>
 </head>
@@ -139,16 +159,16 @@
             <span>Pejabat TKA(Operasi)</span>
         </div>
         <div class="sidebar-menu">
-            <div class="menu-category">Modul Utama</div>
-            <button class="menu-item active" onclick="switchTab('documents', this)">
+            <div class="menu-category">Modul</div>
+            <button class="menu-item active" onclick="switchTab('documents', this)" title="Document Tracker">
                 <i class="fa-solid fa-folder-open"></i>
                 <span>Document Tracker</span>
             </button>
-            <button class="menu-item" onclick="switchTab('tasks', this)">
+            <button class="menu-item" onclick="switchTab('tasks', this)" title="Pemantauan Tugasan">
                 <i class="fa-solid fa-list-check"></i>
                 <span>Pemantauan Tugasan</span>
             </button>
-            <button class="menu-item" onclick="switchTab('calendar', this)">
+            <button class="menu-item" onclick="switchTab('calendar', this)" title="Kalendar Mesyuarat">
                 <i class="fa-solid fa-calendar-days"></i>
                 <span>Kalendar Mesyuarat</span>
             </button>
@@ -158,12 +178,12 @@
     <div class="main-wrapper">
         <topbar>
             <div class="topbar-title">
-                <h2>Portal-PA-TKAO-BAMOD</h2>
-                <p>Kementerian Pertahanan Malaysia • Bahagian Akaun</p>
+                <h2>Portal-PA-TKAO</h2>
+                <p>Kementerian Pertahanan Malaysia</p>
             </div>
             <div class="topbar-actions">
                 <button class="btn btn-secondary" onclick="refreshData()"><i class="fa-solid fa-rotate"></i> Refresh</button>
-                <button class="btn btn-primary" onclick="requestAdminAccess()"><i class="fa-solid fa-key"></i> <span id="auth-status-text">Masukkan Token</span></button>
+                <button class="btn btn-primary" onclick="requestAdminAccess()"><i class="fa-solid fa-key"></i> <span id="auth-status-text">Token</span></button>
             </div>
         </topbar>
 
@@ -173,11 +193,11 @@
             <div id="documents-tab" class="tab-content active">
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-info"><h3>Jumlah Dokumen</h3><div class="number" id="doc-total">0</div></div>
+                        <div class="stat-info"><h3>Jumlah</h3><div class="number" id="doc-total">0</div></div>
                         <div class="stat-icon bg-blue-light"><i class="fa-solid fa-folder"></i></div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-info"><h3>Masih Pending</h3><div class="number" id="doc-pending">0</div></div>
+                        <div class="stat-info"><h3>Pending</h3><div class="number" id="doc-pending">0</div></div>
                         <div class="stat-icon bg-yellow-light"><i class="fa-solid fa-clock"></i></div>
                     </div>
                     <div class="stat-card">
@@ -185,7 +205,7 @@
                         <div class="stat-icon bg-green-light"><i class="fa-solid fa-circle-check"></i></div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-info"><h3>Dokumen Hari Ini</h3><div class="number" id="doc-today">0</div></div>
+                        <div class="stat-info"><h3>Hari Ini</h3><div class="number" id="doc-today">0</div></div>
                         <div class="stat-icon bg-purple-light"><i class="fa-solid fa-calendar-day"></i></div>
                     </div>
                 </div>
@@ -254,7 +274,7 @@
                                 <button class="filter-chip active" onclick="setDocFilter('Aktif', this)">Semua (Aktif)</button>
                                 <button class="filter-chip" onclick="setDocFilter('Dalam Semakan', this)">Dalam Semakan</button>
                                 <button class="filter-chip" onclick="setDocFilter('Selesai', this)">Selesai</button>
-                                <button class="filter-chip" onclick="setDocFilter('Semua', this)">Semua (Termasuk Selesai)</button>
+                                <button class="filter-chip" onclick="setDocFilter('Semua', this)">Semua</button>
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -274,19 +294,19 @@
             <div id="tasks-tab" class="tab-content">
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-info"><h3>Jumlah Tugasan</h3><div class="number" id="task-total">0</div></div>
+                        <div class="stat-info"><h3>Jumlah</h3><div class="number" id="task-total">0</div></div>
                         <div class="stat-icon bg-blue-light"><i class="fa-solid fa-list-check"></i></div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-info"><h3>Selesai (Done)</h3><div class="number" id="task-done">0</div></div>
+                        <div class="stat-info"><h3>Selesai</h3><div class="number" id="task-done">0</div></div>
                         <div class="stat-icon bg-green-light"><i class="fa-solid fa-check"></i></div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-info"><h3>Dalam Proses</h3><div class="number" id="task-progress">0</div></div>
+                        <div class="stat-info"><h3>Proses</h3><div class="number" id="task-progress">0</div></div>
                         <div class="stat-icon bg-yellow-light"><i class="fa-solid fa-spinner"></i></div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-info"><h3>Tertunda (Pending)</h3><div class="number" id="task-pending">0</div></div>
+                        <div class="stat-info"><h3>Pending</h3><div class="number" id="task-pending">0</div></div>
                         <div class="stat-icon bg-purple-light"><i class="fa-solid fa-triangle-exclamation"></i></div>
                     </div>
                 </div>
@@ -354,24 +374,24 @@
                 <div class="card">
                     <div class="card-header">
                         <h2><i class="fa-solid fa-calendar-days"></i> Kalendar Mesyuarat TKA(Operasi)</h2>
-                        <div style="display: flex; gap: 10px; align-items: center;">
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                             <span id="update-time-calendar" style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Kemas kini: -</span>
                             <div id="meeting-action-buttons" style="display: none; gap: 10px; align-items: center;">
                                 <label class="btn btn-secondary" style="cursor: pointer; margin: 0;">
-                                    <i class="fa-solid fa-file-import"></i> Import .ics
+                                    <i class="fa-solid fa-file-import"></i> .ics
                                     <input type="file" accept=".ics" onchange="handleIcsUpload(event)" style="display: none;">
                                 </label>
-                                <button class="btn btn-primary" onclick="openMeetingModal()"><i class="fa-solid fa-plus"></i> Tambah Mesyuarat</button>
+                                <button class="btn btn-primary" onclick="openMeetingModal()"><i class="fa-solid fa-plus"></i> Tambah</button>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                             <div>
-                                <button class="btn btn-secondary" onclick="changeMonth(-1)"><i class="fa-solid fa-chevron-left"></i> Bulan Lepas</button>
-                                <button class="btn btn-secondary" onclick="changeMonth(1)">Bulan Depan <i class="fa-solid fa-chevron-right"></i></button>
+                                <button class="btn btn-secondary" onclick="changeMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button class="btn btn-secondary" onclick="changeMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
-                            <h3 id="calendar-month-year" style="font-size: 18px; font-weight: 700; color: var(--primary);">November 2026</h3>
+                            <h3 id="calendar-month-year" style="font-size: 16px; font-weight: 700; color: var(--primary);">November 2026</h3>
                         </div>
 
                         <div class="calendar-grid">
@@ -383,7 +403,7 @@
                             <div class="cal-header-day">Sabtu</div>
                             <div class="cal-header-day">Ahad</div>
                         </div>
-                        <div class="calendar-grid" id="calendar-days-container" style="margin-top: 8px;"></div>
+                        <div class="calendar-grid" id="calendar-days-container" style="margin-top: 6px;"></div>
                     </div>
                 </div>
             </div>
@@ -392,21 +412,21 @@
     </div>
 
     <!-- Modal Urus Pegawai -->
-    <div id="manager-modal" class="hidden-section" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1100;">
-        <div class="card" style="width: 500px; max-width: 90%; margin: 0;">
+    <div id="manager-modal" class="hidden-section" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1100; padding: 15px;">
+        <div class="card" style="width: 500px; max-width: 100%; margin: 0;">
             <div class="card-header">
-                <h2><i class="fa-solid fa-users-gear"></i> Pengurusan Senarai Pegawai</h2>
+                <h2><i class="fa-solid fa-users-gear"></i> Pengurusan Pegawai</h2>
                 <button onclick="closeManagerModal()" style="background:none; border:none; font-size:16px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="card-body">
-                <div style="margin-bottom: 15px; display: flex; gap: 8px;">
+                <div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
                     <input type="hidden" id="edit-sender-index" value="-1">
-                    <input type="text" id="manager-name-input" placeholder="Nama Pegawai..." style="flex:2;">
-                    <input type="text" id="manager-phone-input" placeholder="No Tel (Cth: 6012...)" style="flex:1;">
+                    <input type="text" id="manager-name-input" placeholder="Nama Pegawai..." style="flex:2; min-width: 150px;">
+                    <input type="text" id="manager-phone-input" placeholder="No Tel (6012...)" style="flex:1; min-width: 120px;">
                     <button class="btn btn-primary" onclick="saveSenderData()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
                 </div>
                 <div style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px;">
-                    <table style="width: 100%; font-size: 12px;">
+                    <table style="width: 100%; font-size: 12px; min-width: 100%;">
                         <thead><tr style="background: #f8fafc;"><th style="padding: 8px;">NAMA</th><th style="padding: 8px;">NO TEL</th><th style="padding: 8px; text-align: right;">TINDAKAN</th></tr></thead>
                         <tbody id="manager-table-body"></tbody>
                     </table>
@@ -416,10 +436,10 @@
     </div>
 
     <!-- Modal Tambah / Edit Mesyuarat -->
-    <div id="meeting-modal" class="hidden-section" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
-        <div class="card" style="width: 550px; max-width: 90%; margin: 0;">
+    <div id="meeting-modal" class="hidden-section" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 15px;">
+        <div class="card" style="width: 550px; max-width: 100%; margin: 0; max-height: 90vh; overflow-y: auto;">
             <div class="card-header">
-                <h2 id="meeting-modal-title"><i class="fa-solid fa-calendar-plus"></i> Tambah Mesyuarat Baru</h2>
+                <h2 id="meeting-modal-title"><i class="fa-solid fa-calendar-plus"></i> Tambah Mesyuarat</h2>
                 <button onclick="closeMeetingModal()" style="background:none; border:none; font-size:16px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="card-body">
@@ -447,15 +467,15 @@
                         <input type="email" id="meet-email" placeholder="pegawai@mod.gov.my">
                     </div>
                     <div class="form-group" style="margin-bottom: 16px;">
-                        <label>Warna Label Acara</label>
+                        <label>Warna Label Acara (Auto ikut tajuk)</label>
                         <select id="meet-color">
-                            <option value="#4f46e5">Ungu (Mesyuarat)</option>
-                            <option value="#0d9488">Hijau (Kursus)</option>
-                            <option value="#0284c7">Biru (Rehat)</option>
-                            <option value="#d97706">Oren (tbc)</option>
+                            <option value="#0284c7">Biru (Mesyuarat / Rehat)</option>
+                            <option value="#0d9488">Hijau (Kursus / Bengkel)</option>
+                            <option value="#d97706">Oren (TBC / Bincang)</option>
+                            <option value="#4f46e5">Ungu (Lain-lain)</option>
                         </select>
                     </div>
-                    <div style="display: flex; gap: 10px; justify-content: space-between;">
+                    <div style="display: flex; gap: 10px; justify-content: space-between; flex-wrap: wrap;">
                         <div style="display: flex; gap: 10px;">
                             <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
                             <button type="button" class="btn btn-secondary" onclick="closeMeetingModal()">Batal</button>
@@ -468,10 +488,10 @@
     </div>
 
     <!-- Modal Paparan Maklumat Mesyuarat -->
-    <div id="view-meeting-modal" class="hidden-section" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1050;">
-        <div class="card" style="width: 500px; max-width: 90%; margin: 0;">
+    <div id="view-meeting-modal" class="hidden-section" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1050; padding: 15px;">
+        <div class="card" style="width: 500px; max-width: 100%; margin: 0;">
             <div class="card-header">
-                <h2><i class="fa-solid fa-circle-info" style="color: var(--accent);"></i> Maklumat Lanjut Mesyuarat</h2>
+                <h2><i class="fa-solid fa-circle-info" style="color: var(--accent);"></i> Maklumat Lanjut</h2>
                 <button onclick="closeViewMeetingModal()" style="background:none; border:none; font-size:16px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="card-body" style="display: flex; flex-direction: column; gap: 14px; font-size: 13px;">
@@ -497,8 +517,8 @@
                     <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Catatan / Minit Ringkas</span>
                     <div id="view-meet-notes" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid var(--border); margin-top: 2px; color: var(--text-main);">-</div>
                 </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                    <button type="button" id="btn-edit-from-view" class="btn btn-primary hidden-section" onclick="editMeetingFromView()"><i class="fa-solid fa-pen"></i> Sunting Mesyuarat Ini</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 10px;">
+                    <button type="button" id="btn-edit-from-view" class="btn btn-primary hidden-section" onclick="editMeetingFromView()"><i class="fa-solid fa-pen"></i> Sunting</button>
                     <button type="button" class="btn btn-secondary" onclick="closeViewMeetingModal()" style="margin-left: auto;">Tutup</button>
                 </div>
             </div>
@@ -507,7 +527,7 @@
 
 <script>
     const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjnjT3SSeiXHSGdfN4qfnmmIex23pgWKhnXsxrm3DUX6IBSqNngQ1CUlvuwDajMJ-PJA/exec";
-    const ADMIN_SECRET_TOKEN = "1hingga8";
+    const ADMIN_SECRET_TOKEN = "lapan8";
     let isAdminUnlocked = false;
     let selectedMeetingIdForEdit = null;
 
@@ -515,7 +535,7 @@
         if (isAdminUnlocked) {
             if (confirm("Log keluar dari mod Pentadbir?")) {
                 isAdminUnlocked = false;
-                document.getElementById('auth-status-text').innerText = "Masukkan Token";
+                document.getElementById('auth-status-text').innerText = "Token";
                 refreshAllViews();
                 alert("Anda kembali kepada mod View-Only.");
             }
@@ -610,42 +630,41 @@
         });
     }
 
-   function loadDataFromCloud() {
-    if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
-    fetch(GOOGLE_APPS_SCRIPT_URL)
-        .then(res => res.json())
-        .then(data => {
-            // Kosongkan data lama supaya peranti lain tidak simpan rekod yang sudah dipadam
-            localStorage.removeItem('pa_documents');
-            localStorage.removeItem('pa_tasks');
-            localStorage.removeItem('pa_meetings');
+    function loadDataFromCloud() {
+        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
+        fetch(GOOGLE_APPS_SCRIPT_URL)
+            .then(res => res.json())
+            .then(data => {
+                localStorage.removeItem('pa_documents');
+                localStorage.removeItem('pa_tasks');
+                localStorage.removeItem('pa_meetings');
 
-            if (data.documents) {
-                documents = data.documents;
-                localStorage.setItem('pa_documents', JSON.stringify(documents));
-            }
-            if (data.tasks) {
-                tasks = data.tasks;
-                localStorage.setItem('pa_tasks', JSON.stringify(tasks));
-            }
-            if (data.meetings) {
-                meetings = data.meetings.map(m => ({
-                    ...m,
-                    id: m.id ? String(m.id) : String(Date.now() + Math.random())
-                }));
-                localStorage.setItem('pa_meetings', JSON.stringify(meetings));
-            }
-            renderDocuments();
-            renderTasks();
-            renderCalendar();
-            updateLastSyncedLabel();
-        }).catch(err => console.error("Ralat load cloud:", err));
-}
+                if (data.documents) {
+                    documents = data.documents;
+                    localStorage.setItem('pa_documents', JSON.stringify(documents));
+                }
+                if (data.tasks) {
+                    tasks = data.tasks;
+                    localStorage.setItem('pa_tasks', JSON.stringify(tasks));
+                }
+                if (data.meetings) {
+                    meetings = data.meetings.map(m => ({
+                        ...m,
+                        id: m.id ? String(m.id) : String(Date.now() + Math.random())
+                    }));
+                    localStorage.setItem('pa_meetings', JSON.stringify(meetings));
+                }
+                renderDocuments();
+                renderTasks();
+                renderCalendar();
+                updateLastSyncedLabel();
+            }).catch(err => console.error("Ralat load cloud:", err));
+    }
 
     function populateSenderDropdown(selectedVal = '') {
         const select = document.getElementById('doc-sender');
         if(!select) return;
-        select.innerHTML = '<option value="">-- Pilih Pegawai Penghantar --</option>';
+        select.innerHTML = '<option value="">-- Pilih Pegawai --</option>';
         sendersList.forEach(s => {
             const opt = document.createElement('option');
             opt.value = s.name;
@@ -740,7 +759,7 @@
     function refreshData() {
         loadDataFromCloud();
         updateLastSyncedLabel();
-        alert('Data disemak semula!');
+        alert('Data disemak semula & dikemas kini!');
     }
 
     function getCurrentDateTime() {
@@ -753,6 +772,32 @@
         const ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12 || 12;
         return `${day}/${month}/${year} ${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
+    }
+
+    // --- FUNGSI FORMAT MASA 12 JAM (AM/PM) ---
+    function formatTo12Hour(isoDateTimeStr) {
+        if (!isoDateTimeStr) return '-';
+        // Contoh input: 2026-11-16T08:00 atau 2026-11-16 08:00
+        let parts = isoDateTimeStr.split('T');
+        if (parts.length < 2) parts = isoDateTimeStr.split(' ');
+        if (parts.length < 2) return isoDateTimeStr;
+
+        let datePart = parts[0]; // 2026-11-16
+        let timePart = parts[1].substring(0, 5); // 08:00
+        let [hours, minutes] = timePart.split(':');
+        
+        let h = parseInt(hours, 10);
+        let ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12;
+        h = h ? h : 12; // Jam 0 jadi 12
+        let formattedTime = `${String(h).padStart(2, '0')}:${minutes} ${ampm}`;
+        
+        // Tukar tarikh kepada format ringkas cth: 16 Nov 2026
+        let [y, m, d] = datePart.split('-');
+        const monthsShort = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ogs", "Sep", "Okt", "Nov", "Dis"];
+        let monthName = monthsShort[parseInt(m, 10) - 1];
+
+        return `${parseInt(d, 10)} ${monthName} ${y}, ${formattedTime}`;
     }
 
     function toggleDocForm() {
@@ -1122,7 +1167,7 @@
                 else if (line === 'END:VEVENT' && cur) {
                     if (cur.title && cur.start) {
                         meetings.push(cur);
-                        syncToGoogleSheet("Meetings", ["Tajuk Mesyuarat", "Masa Mula", "Masa Tamat", "Tempat", "Catatan", "E-mel Pegawai"], [cur.title, cur.start, cur.end, cur.location, cur.notes, cur.email || '']);
+                        syncToGoogleSheet("Meetings", ["Tajuk Mesyuarat", "Masa Mula", "Masa Tamat", "Tempat", "Catatan", "E-mel Pegawai", "Warna"], [cur.title, cur.start, cur.end, cur.location, cur.notes, cur.email || '', cur.color]);
                         count++;
                     }
                     cur = null;
@@ -1161,7 +1206,7 @@
             document.getElementById('meet-location').value = meet.location || '';
             document.getElementById('meet-notes').value = meet.notes || '';
             document.getElementById('meet-email').value = meet.email || '';
-            document.getElementById('meet-color').value = meet.color || '#4f46e5';
+            document.getElementById('meet-color').value = meet.color || '#0284c7';
             document.getElementById('btn-delete-meeting').classList.remove('hidden-section');
         } else {
             document.getElementById('meeting-modal-title').innerHTML = `<i class="fa-solid fa-calendar-plus"></i> Tambah Mesyuarat Baru`;
@@ -1176,10 +1221,13 @@
     function viewMeeting(id) {
         const m = meetings.find(x => String(x.id) === String(id));
         if(!m) return;
-        selectedMeetingIdForEdit = String(m.id); // Simpan ID mesyuarat yang dipilih
+        selectedMeetingIdForEdit = String(m.id);
         document.getElementById('view-meet-title').innerText = m.title || '-';
-        document.getElementById('view-meet-start').innerText = m.start ? m.start.replace('T', ' Jam ') : '-';
-        document.getElementById('view-meet-end').innerText = m.end ? m.end.replace('T', ' Jam ') : '-';
+        
+        // Papar masa format 12 jam (AM/PM)
+        document.getElementById('view-meet-start').innerText = formatTo12Hour(m.start);
+        document.getElementById('view-meet-end').innerText = formatTo12Hour(m.end);
+        
         document.getElementById('view-meet-location').innerText = m.location || '-';
         document.getElementById('view-meet-notes').innerText = m.notes || '-';
         const editBtn = document.getElementById('btn-edit-from-view');
@@ -1212,22 +1260,35 @@
         const location = document.getElementById('meet-location').value;
         const notes = document.getElementById('meet-notes').value;
         const email = document.getElementById('meet-email').value;
-        const color = document.getElementById('meet-color').value;
+        
+        // Auto warna ikut kategori tajuk
+        let titleLower = title.toLowerCase();
+        let color = document.getElementById('meet-color').value;
+        
+        if (titleLower.includes('kursus') || titleLower.includes('bengkel') || titleLower.includes('latihan')) {
+            color = '#0d9488'; // Hijau untuk Kursus/Bengkel
+        } else if (titleLower.includes('tbc') || titleLower.includes('bincang')) {
+            color = '#d97706'; // Oren untuk TBC
+        } else if (titleLower.includes('rehat') || titleLower.includes('lunch') || titleLower.includes('makan')) {
+            color = '#0284c7'; // Biru untuk Rehat
+        } else if (titleLower.includes('mesyuarat')) {
+            color = '#0284c7'; // Biru untuk Mesyuarat
+        }
 
         if (id) {
             const m = meetings.find(x => String(x.id) === String(id));
             if(m) Object.assign(m, { title, start, end, location, notes, email, color });
             syncDeleteToGoogleSheet("Meetings", oldTitle || title);
-            syncToGoogleSheet("Meetings", ["Tajuk Mesyuarat", "Masa Mula", "Masa Tamat", "Tempat", "Catatan", "E-mel Pegawai"], [title, start, end, location, notes, email]);
+            syncToGoogleSheet("Meetings", ["Tajuk Mesyuarat", "Masa Mula", "Masa Tamat", "Tempat", "Catatan", "E-mel Pegawai", "Warna"], [title, start, end, location, notes, email, color]);
         } else {
             meetings.push({ id: String(Date.now()), title, start, end, location, notes, email, color });
-            syncToGoogleSheet("Meetings", ["Tajuk Mesyuarat", "Masa Mula", "Masa Tamat", "Tempat", "Catatan", "E-mel Pegawai"], [title, start, end, location, notes, email]);
+            syncToGoogleSheet("Meetings", ["Tajuk Mesyuarat", "Masa Mula", "Masa Tamat", "Tempat", "Catatan", "E-mel Pegawai", "Warna"], [title, start, end, location, notes, email, color]);
         }
 
         localStorage.setItem('pa_meetings', JSON.stringify(meetings));
         closeMeetingModal();
         renderCalendar();
-        alert('Mesyuarat berjaya dikemas kini.');
+        alert('Mesyuarat berjaya disimpan.');
     }
 
     function deleteMeeting() {
@@ -1282,7 +1343,7 @@
                 let startDateStr = x.start.split('T')[0];
                 let isMultiDay = x.end && x.end.split('T')[0] !== startDateStr;
                 let badgeText = isMultiDay ? `📅 [${startDateStr.split('-')[2]}/${startDateStr.split('-')[1]}] ${x.title}` : x.title;
-                pills += `<div class="cal-event-pill" style="background:${x.color || '#4f46e5'};" onclick="viewMeeting('${x.id}')" title="${x.title}">${badgeText}</div>`;
+                pills += `<div class="cal-event-pill" style="background:${x.color || '#0284c7'};" onclick="viewMeeting('${x.id}')" title="${x.title}">${badgeText}</div>`;
             });
 
             html += `<div class="cal-day-cell"><div class="cal-day-num">${day}</div><div class="cal-events-wrapper">${pills}</div></div>`;
