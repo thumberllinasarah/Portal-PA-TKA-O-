@@ -859,9 +859,9 @@
             }
 
             if (GOOGLE_APPS_SCRIPT_URL && !GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) {
-                if (GOOGLE_APPS_SCRIPT_URL && !GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) {
                 fetch(GOOGLE_APPS_SCRIPT_URL, {
-                    method: "POST", mode: "no-cors",
+                    method: "POST", 
+                    mode: "no-cors",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ 
                         action: actionType, 
@@ -869,7 +869,7 @@
                         oldRef, 
                         ref, 
                         title, 
-                        sender, // <--- Pastikan parameter sender dihantar di sini
+                        sender, 
                         purpose, 
                         status, 
                         receivedAt, 
@@ -878,6 +878,23 @@
                     })
                 }).catch(err => console.error("Ralat sync doc:", err));
             }
+
+            localStorage.setItem('pa_documents', JSON.stringify(documents));
+            document.getElementById('document-form').reset();
+            document.getElementById('document-form-card').classList.add('hidden-section');
+            document.getElementById('doc-toggle-btn-text').innerText = 'Rekod Dokumen Baru';
+            renderDocuments();
+            updateLastSyncedLabel();
+        };
+
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = ev => processSave(ev.target.result, fileInput.files[0].name);
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            processSave("", "");
+        }
+    }
 
     function editDocument(id) {
         if (!verifyAdminToken()) return;
