@@ -117,11 +117,12 @@
 
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
         .cal-header-day { text-align: center; font-weight: 600; color: var(--text-muted); font-size: 11px; padding: 6px 0; background: #f8fafc; border-radius: 6px; }
-        .cal-day-cell { background: #fff; border: 1px solid var(--border); border-radius: 8px; height: 100px; padding: 6px; display: flex; flex-direction: column; gap: 3px; overflow: hidden; position: relative; }
-        .cal-day-cell.other-month { background: #f8fafc; opacity: 0.5; }
+        .cal-day-cell { background: #fff; border: 1px solid var(--border); border-radius: 8px; height: 100px; padding: 6px; display: flex; flex-direction: column; gap: 3px; overflow: hidden; position: relative; cursor: pointer; transition: background 0.2s; }
+        .cal-day-cell:hover { background: #f1f5f9; border-color: var(--accent); }
+        .cal-day-cell.other-month { background: #f8fafc; opacity: 0.5; cursor: default; }
         .cal-day-num { font-weight: 700; font-size: 11px; color: var(--text-main); }
         .cal-events-wrapper { display: flex; flex-direction: column; gap: 3px; overflow-y: auto; flex: 1; max-height: 65px; }
-        .cal-event-pill { font-size: 9px; padding: 3px 5px; border-radius: 4px; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+        .cal-event-pill { font-size: 9px; padding: 3px 5px; border-radius: 4px; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .cal-event-pill:hover { opacity: 0.85; }
 
         @media (max-width: 768px) {
@@ -436,7 +437,7 @@
                         <textarea id="meet-notes" rows="2" placeholder="Catatan..."></textarea>
                     </div>
                     <div class="form-group" style="margin-bottom: 12px;">
-                        <label>E-mel Pegawai / Penerima</label>
+                        <label>Emel Pegawai / Penerima</label>
                         <input type="email" id="meet-email" placeholder="pegawai@mod.gov.my">
                     </div>
                     <div class="form-group" style="margin-bottom: 16px;">
@@ -1162,6 +1163,22 @@
         reader.readAsText(file);
     }
 
+    // Fungsi terbuka apabila klik kotak tarikh pada kalendar
+    function openMeetingModalForDate(dateStr) {
+        if (!verifyAdminToken()) return;
+        document.getElementById('meeting-modal').classList.remove('hidden-section');
+        document.getElementById('meeting-form').reset();
+        
+        document.getElementById('meeting-modal-title').innerHTML = `<i class="fa-solid fa-calendar-plus"></i> Tambah Acara (${dateStr})`;
+        document.getElementById('meet-id').value = '';
+        document.getElementById('meet-old-title').value = '';
+        document.getElementById('btn-delete-meeting').classList.add('hidden-section');
+
+        // Tetapkan masa mula lalai kepada 08:00 pada tarikh yang diklik
+        document.getElementById('meet-start').value = `${dateStr}T08:00`;
+        document.getElementById('meet-end').value = `${dateStr}T09:00`;
+    }
+
     function openMeetingModal(meet = null) {
         if (!verifyAdminToken()) return;
         document.getElementById('meeting-modal').classList.remove('hidden-section');
@@ -1183,6 +1200,11 @@
             document.getElementById('meet-id').value = '';
             document.getElementById('meet-old-title').value = '';
             document.getElementById('btn-delete-meeting').classList.add('hidden-section');
+            
+            // Default ke hari ini jika buka melalui butang tambah biasa
+            const todayStr = new Date().toISOString().split('T')[0];
+            document.getElementById('meet-start').value = `${todayStr}T08:00`;
+            document.getElementById('meet-end').value = `${todayStr}T09:00`;
         }
     }
 
@@ -1322,10 +1344,14 @@
                     badgeText = `[${currentDayIndex}/${totalSpanDays}] ${x.title}`;
                 }
 
-                pills += `<div class="cal-event-pill" style="background:${x.color || '#0284c7'};" onclick="viewMeeting('${x.id}')" title="${x.title}">${badgeText}</div>`;
+                pills += `<div class="cal-event-pill" style="background:${x.color || '#0284c7'};" onclick="event.stopPropagation(); viewMeeting('${x.id}')" title="${x.title}">${badgeText}</div>`;
             });
 
-            html += `<div class="cal-day-cell"><div class="cal-day-num">${day}</div><div class="cal-events-wrapper">${pills}</div></div>`;
+            // Klik pada kotak tarikh kalendar untuk terus tambah mesyuarat hari tersebut
+            html += `<div class="cal-day-cell" onclick="openMeetingModalForDate('${currentDateStr}')">
+                        <div class="cal-day-num">${day}</div>
+                        <div class="cal-events-wrapper">${pills}</div>
+                     </div>`;
         }
         container.innerHTML = html;
     }
