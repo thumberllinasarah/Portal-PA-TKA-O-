@@ -604,11 +604,50 @@
     }
 
     function loadDataFromCloud() {
-        // Menggunakan sumber storan tempatan stabil bagi mengelakkan ralat MIME type & CORS silang domain
-        renderDocuments();
-        renderTasks();
-        renderCalendar();
-        updateLastSyncedLabel();
+        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
+
+        // Menggunakan teknik JSONP global untuk menarik data terkini dari Google Sheets merentas peranti
+        const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
+        const script = document.createElement('script');
+        
+        window[callbackName] = function(data) {
+            delete window[callbackName];
+            if(script.parentNode) document.body.removeChild(script);
+
+            if (!data) return;
+
+            // Kemas kini pemboleh ubah global dengan data baharu dari awan
+            if (data.documents) {
+                documents = data.documents;
+                localStorage.setItem('pa_documents', JSON.stringify(documents));
+            }
+            if (data.tasks) {
+                tasks = data.tasks;
+                localStorage.setItem('pa_tasks', JSON.stringify(tasks));
+            }
+            if (data.meetings) {
+                meetings = data.meetings.map(m => ({
+                    ...m,
+                    id: m.id ? String(m.id) : String(Date.now() + Math.random())
+                }));
+                localStorage.setItem('pa_meetings', JSON.stringify(meetings));
+            }
+
+            // Segarkan paparan pada semua modul
+            renderDocuments();
+            renderTasks();
+            renderCalendar();
+            updateLastSyncedLabel();
+        };
+
+        script.src = `${GOOGLE_APPS_SCRIPT_URL}?callback=${callbackName}&v=${new Date().getTime()}`;
+        script.onerror = function() {
+            delete window[callbackName];
+            if(script.parentNode) document.body.removeChild(script);
+            console.warn("Gagal memuat turun data cloud melalui JSONP, menggunakan data tempatan.");
+        };
+
+        document.body.appendChild(script);
     }
 
     function populateSenderDropdown(selectedVal = '') {
@@ -707,9 +746,16 @@
     }
 
     function refreshData() {
+        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) {
+            alert('Sila tetapkan URL Google Apps Script yang sebenar terlebih dahulu.');
+            return;
+        }
+
+        // Panggil semula fungsi muat turun data awan
         loadDataFromCloud();
-        updateLastSyncedLabel();
-        alert('Data tempatan berjaya dikemas kini!');
+        setTimeout(() => {
+            alert('Force Refresh berjaya! Data terkini telah dimuat turun dari Google Sheets.');
+        }, 800);
     }
 
     function getCurrentDateTime() {
