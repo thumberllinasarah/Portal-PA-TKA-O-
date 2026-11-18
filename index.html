@@ -605,8 +605,15 @@
 
     function loadDataFromCloud() {
         if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
-        fetch(GOOGLE_APPS_SCRIPT_URL)
-            .then(res => res.json())
+        
+        // Tambah parameter ?action=getData untuk mengelakkan isu cache dan CORS fetch langsung
+        const targetUrl = GOOGLE_APPS_SCRIPT_URL + (GOOGLE_APPS_SCRIPT_URL.includes('?') ? '&' : '?') + 'action=getData&v=' + new Date().getTime();
+
+        fetch(targetUrl)
+            .then(res => {
+                if (!res.ok) throw new Error('Network response was not ok');
+                return res.json();
+            })
             .then(data => {
                 localStorage.removeItem('pa_documents');
                 localStorage.removeItem('pa_tasks');
@@ -631,7 +638,10 @@
                 renderTasks();
                 renderCalendar();
                 updateLastSyncedLabel();
-            }).catch(err => console.error("Ralat load cloud:", err));
+            }).catch(err => {
+                console.warn("Amaran CORS / Cloud fetch gagal, menggunakan data tempatan (localStorage):", err);
+                // Sistem kekal berjalan lancar menggunakan data tempatan jika pelayar menyekat rangkaian
+            });
     }
 
     function populateSenderDropdown(selectedVal = '') {
