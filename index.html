@@ -148,6 +148,67 @@
             .cal-day-num { font-size: 9px; }
             .cal-event-pill { font-size: 7px; padding: 2px 3px; }
         }
+        <!-- Bahagian Teks Bergerak Dinamik (Marquee Banner) -->
+<div class="announcement-banner">
+    <div class="announcement-icon">
+        <i class="fa-solid fa-bullhorn"></i> Status Semasa:
+    </div>
+    <div class="marquee-container">
+        <div class="marquee-text" id="dynamic-ticker-content">
+            <span>📢 Sebarang pertanyaan lanjut, sila hubungi PA melalui WhatsApp.</span>
+            <span>&nbsp;&nbsp;&bull;&nbsp;&nbsp;</span>
+            <span id="ticker-tasks">Memuatkan tugasan hari ini...</span>
+            <span>&nbsp;&nbsp;&bull;&nbsp;&nbsp;</span>
+            <span id="ticker-meetings">Memuatkan jadual mesyuarat TKA(O)...</span>
+        </div>
+    </div>
+</div>
+
+<style>
+.announcement-banner {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-left: 4px solid #1e40af;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 15px 0;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.announcement-icon {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #1e40af;
+    white-space: nowrap;
+    padding-right: 15px;
+    border-right: 1px solid #bfdbfe;
+    margin-right: 15px;
+}
+.marquee-container {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.marquee-text {
+    display: inline-block;
+    animation: marquee 30s linear infinite;
+    font-size: 13px;
+    color: #1e293b;
+    font-weight: 500;
+}
+@keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+.marquee-text:hover {
+    animation-play-state: paused;
+    cursor: pointer;
+}
+</style>
     </style>
 </head>
 <body>
@@ -1401,6 +1462,47 @@
         }
         container.innerHTML = html;
     }
+    function updateDynamicTicker() {
+    try {
+        // Tarikh hari ini dalam format carian (contoh mengikut sistem anda)
+        const todayStr = new Date().toISOString().split('T')[0]; 
+
+        // 1. Semak Tugasan (Tasks) yang belum selesai / Pending
+        let pendingTasks = [];
+        if (typeof tasks !== 'undefined' && Array.isArray(tasks)) {
+            pendingTasks = tasks.filter(t => t.status !== 'Selesai' && t.status !== 'Completed');
+        }
+        
+        let taskString = pendingTasks.length > 0 
+            ? `Tugasan Tertunggak Hari Ini (${pendingTasks.length}): ` + pendingTasks.map(t => t.title || t.name).join(' | ')
+            : 'Tiada tugasan tertunggak hari ini. Syabas!';
+
+        // 2. Semak Mesyuarat / Kalendar TKA(O) hari ini
+        let todayMeetings = [];
+        if (typeof calendarEvents !== 'undefined' && Array.isArray(calendarEvents)) {
+            todayMeetings = calendarEvents.filter(ev => ev.date === todayStr || (ev.startDate && ev.startDate.includes(todayStr)));
+        }
+
+        let meetingString = todayMeetings.length > 0
+            ? `Mesyuarat TKA(O) Hari Ini (${todayMeetings.length}): ` + todayMeetings.map(m => m.title).join(' | ')
+            : 'Tiada mesyuarat berjadual untuk TKA(O) hari ini.';
+
+        // Masukkan ke dalam elemen HTML
+        const taskEl = document.getElementById('ticker-tasks');
+        const meetingEl = document.getElementById('ticker-meetings');
+
+        if (taskEl) taskEl.innerText = taskString;
+        if (meetingEl) meetingEl.innerText = meetingString;
+
+    } catch (e) {
+        console.error("Ralat mengemas kini ticker dinamik:", e);
+    }
+}
+
+// Jalankan fungsi sebaik sahaja portal dimuatkan
+document.addEventListener("DOMContentLoaded", () => {
+    updateDynamicTicker();
+});
 
     populateSenderDropdown();
     loadDataFromCloud();
