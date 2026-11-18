@@ -40,7 +40,7 @@
         .topbar-title p { font-size: 12px; color: var(--text-muted); }
         .topbar-actions { display: flex; align-items: center; gap: 12px; }
 
-        .content-body { padding: 30px; flex: 1; }
+        .content-body { padding: 30px; flex: 1; margin-bottom: 50px; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
@@ -128,26 +128,32 @@
         .cal-event-pill { font-size: 9px; padding: 3px 5px; border-radius: 4px; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
         .cal-event-pill:hover { opacity: 0.85; }
 
+        /* --- MEDIA QUERY KHAS UNTUK TELEFON BIMBIT (Mobile Optimized) --- */
         @media (max-width: 768px) {
-            aside { width: 65px; }
-            aside .sidebar-brand span, aside .menu-category, aside .menu-item span { display: none; }
-            .sidebar-brand { justify-content: center; padding: 20px 10px; }
-            .sidebar-menu { padding: 15px 8px; align-items: center; }
-            .menu-item { justify-content: center; padding: 12px; width: 42px; height: 42px; }
-            .menu-item i { font-size: 16px; }
-            
-            .main-wrapper { margin-left: 65px; }
-            topbar { padding: 0 15px; height: 60px; }
-            .topbar-title h2 { font-size: 14px; }
-            .topbar-title p { font-size: 10px; }
-            .content-body { padding: 15px; }
+            /* Ubah Sidebar Desktop kepada Navigasi Bawah (Bottom Bar) */
+            aside { width: 100%; height: 60px; bottom: 0; top: auto; left: 0; flex-direction: row; justify-content: space-around; align-items: center; padding: 0 10px; box-shadow: 0 -4px 15px rgba(0,0,0,0.1); }
+            .sidebar-brand { display: none; }
+            .sidebar-menu { flex-direction: row; justify-content: space-around; width: 100%; padding: 0; gap: 0; overflow: visible; }
+            .menu-category { display: none; }
+            .menu-item { flex-direction: column; align-items: center; justify-content: center; font-size: 9px; padding: 6px; gap: 2px; text-align: center; background: transparent !important; color: rgba(255,255,255,0.7); width: auto; border-radius: 0; }
+            .menu-item i { font-size: 18px; }
+            .menu-item span { display: block; font-size: 9px; }
+            .menu-item.active { color: white; border-top: 3px solid white; background: transparent !important; box-shadow: none; }
+
+            /* Ubah Ruang Utama supaya tidak tertutup oleh Bottom Nav */
+            .main-wrapper { margin-left: 0; margin-bottom: 60px; }
+            topbar { padding: 0 12px; height: 55px; }
+            .topbar-title h2 { font-size: 13px; }
+            .topbar-title p { font-size: 9px; }
+            .content-body { padding: 10px; }
             
             .form-grid { grid-template-columns: 1fr; }
             .form-group.full-width { grid-column: span 1; }
             
-            .cal-day-cell { height: 85px; padding: 4px; }
-            .cal-day-num { font-size: 10px; }
-            .cal-event-pill { font-size: 8px; padding: 2px 4px; }
+            /* Kalendar untuk Mobile */
+            .cal-day-cell { height: 72px; padding: 3px; }
+            .cal-day-num { font-size: 9px; }
+            .cal-event-pill { font-size: 7px; padding: 2px 3px; }
         }
     </style>
 </head>
@@ -162,15 +168,15 @@
             <div class="menu-category">Modul</div>
             <button class="menu-item active" onclick="switchTab('documents', this)" title="Document Tracker">
                 <i class="fa-solid fa-folder-open"></i>
-                <span>Document Tracker</span>
+                <span>Dokumen</span>
             </button>
             <button class="menu-item" onclick="switchTab('tasks', this)" title="Pemantauan Tugasan">
                 <i class="fa-solid fa-list-check"></i>
-                <span>Pemantauan Tugasan</span>
+                <span>Tugasan</span>
             </button>
             <button class="menu-item" onclick="switchTab('calendar', this)" title="Kalendar Mesyuarat">
                 <i class="fa-solid fa-calendar-days"></i>
-                <span>Kalendar Mesyuarat</span>
+                <span>Kalendar</span>
             </button>
         </div>
     </aside>
@@ -182,8 +188,8 @@
                 <p>Kementerian Pertahanan Malaysia</p>
             </div>
             <div class="topbar-actions">
-                <button class="btn btn-secondary" onclick="refreshData()"><i class="fa-solid fa-rotate"></i> Refresh</button>
-                <button class="btn btn-primary" onclick="requestAdminAccess()"><i class="fa-solid fa-key"></i> <span id="auth-status-text">Token</span></button>
+                <button class="btn btn-secondary" onclick="refreshData()" style="padding: 6px 10px; font-size: 12px;"><i class="fa-solid fa-rotate"></i> Refresh</button>
+                <button class="btn btn-primary" onclick="requestAdminAccess()" style="padding: 6px 10px; font-size: 12px;"><i class="fa-solid fa-key"></i> <span id="auth-status-text">Token</span></button>
             </div>
         </topbar>
 
@@ -377,11 +383,11 @@
                         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                             <span id="update-time-calendar" style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Kemas kini: -</span>
                             <div id="meeting-action-buttons" style="display: none; gap: 10px; align-items: center;">
-                                <label class="btn btn-secondary" style="cursor: pointer; margin: 0;">
+                                <label class="btn btn-secondary" style="cursor: pointer; margin: 0; padding: 6px 10px; font-size: 12px;">
                                     <i class="fa-solid fa-file-import"></i> .ics
                                     <input type="file" accept=".ics" onchange="handleIcsUpload(event)" style="display: none;">
                                 </label>
-                                <button class="btn btn-primary" onclick="openMeetingModal()"><i class="fa-solid fa-plus"></i> Tambah</button>
+                                <button class="btn btn-primary" onclick="openMeetingModal()" style="padding: 6px 10px; font-size: 12px;"><i class="fa-solid fa-plus"></i> Tambah</button>
                             </div>
                         </div>
                     </div>
@@ -463,15 +469,15 @@
                         <textarea id="meet-notes" rows="2" placeholder="Catatan..."></textarea>
                     </div>
                     <div class="form-group" style="margin-bottom: 12px;">
-                        <label>Emel Pegawai / Penerima</label>
+                        <label>E-mel Pegawai / Penerima</label>
                         <input type="email" id="meet-email" placeholder="pegawai@mod.gov.my">
                     </div>
                     <div class="form-group" style="margin-bottom: 16px;">
                         <label>Warna Label Acara (Auto ikut tajuk)</label>
                         <select id="meet-color">
-                            <option value="#0284c7">Biru (Mesyuarat / Rehat)</option>
+                            <option value="#0284c7">Biru (Mesyuarat  /Bincang / Lawatan)</option>
                             <option value="#0d9488">Hijau (Kursus / Bengkel)</option>
-                            <option value="#d97706">Oren (TBC / Bincang)</option>
+                            <option value="#d97706">Oren (TBC)</option>
                             <option value="#4f46e5">Ungu (Lain-lain)</option>
                         </select>
                     </div>
@@ -774,25 +780,22 @@
         return `${day}/${month}/${year} ${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
     }
 
-    // --- FUNGSI FORMAT MASA 12 JAM (AM/PM) ---
     function formatTo12Hour(isoDateTimeStr) {
         if (!isoDateTimeStr) return '-';
-        // Contoh input: 2026-11-16T08:00 atau 2026-11-16 08:00
         let parts = isoDateTimeStr.split('T');
         if (parts.length < 2) parts = isoDateTimeStr.split(' ');
         if (parts.length < 2) return isoDateTimeStr;
 
-        let datePart = parts[0]; // 2026-11-16
-        let timePart = parts[1].substring(0, 5); // 08:00
+        let datePart = parts[0];
+        let timePart = parts[1].substring(0, 5);
         let [hours, minutes] = timePart.split(':');
         
         let h = parseInt(hours, 10);
         let ampm = h >= 12 ? 'PM' : 'AM';
         h = h % 12;
-        h = h ? h : 12; // Jam 0 jadi 12
+        h = h ? h : 12;
         let formattedTime = `${String(h).padStart(2, '0')}:${minutes} ${ampm}`;
         
-        // Tukar tarikh kepada format ringkas cth: 16 Nov 2026
         let [y, m, d] = datePart.split('-');
         const monthsShort = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ogs", "Sep", "Okt", "Nov", "Dis"];
         let monthName = monthsShort[parseInt(m, 10) - 1];
@@ -1223,11 +1226,8 @@
         if(!m) return;
         selectedMeetingIdForEdit = String(m.id);
         document.getElementById('view-meet-title').innerText = m.title || '-';
-        
-        // Papar masa format 12 jam (AM/PM)
         document.getElementById('view-meet-start').innerText = formatTo12Hour(m.start);
         document.getElementById('view-meet-end').innerText = formatTo12Hour(m.end);
-        
         document.getElementById('view-meet-location').innerText = m.location || '-';
         document.getElementById('view-meet-notes').innerText = m.notes || '-';
         const editBtn = document.getElementById('btn-edit-from-view');
@@ -1261,18 +1261,17 @@
         const notes = document.getElementById('meet-notes').value;
         const email = document.getElementById('meet-email').value;
         
-        // Auto warna ikut kategori tajuk
         let titleLower = title.toLowerCase();
         let color = document.getElementById('meet-color').value;
         
         if (titleLower.includes('kursus') || titleLower.includes('bengkel') || titleLower.includes('latihan')) {
-            color = '#0d9488'; // Hijau untuk Kursus/Bengkel
+            color = '#0d9488';
         } else if (titleLower.includes('tbc') || titleLower.includes('bincang')) {
-            color = '#d97706'; // Oren untuk TBC
+            color = '#d97706';
         } else if (titleLower.includes('rehat') || titleLower.includes('lunch') || titleLower.includes('makan')) {
-            color = '#0284c7'; // Biru untuk Rehat
+            color = '#0284c7';
         } else if (titleLower.includes('mesyuarat')) {
-            color = '#0284c7'; // Biru untuk Mesyuarat
+            color = '#0284c7';
         }
 
         if (id) {
