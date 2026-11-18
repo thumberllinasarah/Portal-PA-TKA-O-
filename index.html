@@ -157,49 +157,27 @@
 <body>
 
     <aside>
-        <div class="sidebar-brand">
-            <i class="fa-solid fa-shield-halved"></i>
-            <span>Pejabat TKA(Operasi)</span>
-        </div>
-        <div class="sidebar-menu">
-            <div class="menu-category">Modul</div>
-            <button class="menu-item active" onclick="switchTab('documents', this)" title="Document Tracker">
-                <i class="fa-solid fa-folder-open"></i>
-                <span>Dokumen</span>
-            </button>
-            <button class="menu-item" onclick="switchTab('tasks', this)" title="Pemantauan Tugasan">
-                <i class="fa-solid fa-list-check"></i>
-                <span>Tugasan</span>
-            </button>
-            <button class="menu-item" onclick="switchTab('calendar', this)" title="Kalendar Mesyuarat">
-                <i class="fa-solid fa-calendar-days"></i>
-                <span>Kalendar</span>
-            </button>
-        </div>
-    </aside>
-
-    <div class="main-wrapper">
+       <div class="main-wrapper">
         <topbar>
             <div class="topbar-title">
                 <h2>Portal PA TKA(O)</h2>
                 <p>Kementerian Pertahanan Malaysia</p>
-                <!-- Banner Pengumuman & Teks Bergerak Dinamik -->
-<div style="background: #eff6ff; border-left: 4px solid #1e40af; padding: 10px 15px; margin: 15px 0; border-radius: 4px; display: flex; align-items: center;">
-    <div style="width: 100%; overflow: hidden;">
-        <marquee behavior="scroll" direction="left" scrollamount="4" onmouseover="this.stop();" onmouseout="this.start();" style="font-size: 13px; color: #1e293b; font-weight: 500;">
-            📢 &nbsp; Sebarang pertanyaan lanjut, sila hubungi PA melalui WhatsApp. &nbsp;&nbsp;&bull;&nbsp;&nbsp; 
-            <span id="live-ticker-tasks">Memuatkan tugasan hari ini...</span>
-        </marquee>
-    </div>
-</div>
-    </div>
-</div>
             </div>
             <div class="topbar-actions">
                 <button class="btn btn-secondary" onclick="refreshData()" style="padding: 6px 10px; font-size: 12px;"><i class="fa-solid fa-rotate"></i> Refresh</button>
                 <button class="btn btn-primary" onclick="requestAdminAccess()" style="padding: 6px 10px; font-size: 12px;"><i class="fa-solid fa-key"></i> <span id="auth-status-text">Token</span></button>
             </div>
         </topbar>
+
+        <!-- Banner Pengumuman & Teks Bergerak Dinamik (Diletakkan di luar topbar, melintang penuh) -->
+        <div style="background: #eff6ff; border-left: 4px solid #1e40af; padding: 10px 15px; margin: 15px 0; border-radius: 4px; display: flex; align-items: center; width: 100%;">
+            <div style="width: 100%; overflow: hidden;">
+                <marquee behavior="scroll" direction="left" scrollamount="4" onmouseover="this.stop();" onmouseout="this.start();" style="font-size: 13px; color: #1e293b; font-weight: 500;">
+                    📢 &nbsp; Sebarang pertanyaan lanjut, sila hubungi PA melalui WhatsApp. &nbsp;&nbsp;&bull;&nbsp;&nbsp; 
+                    <span id="live-ticker-tasks">Memuatkan tugasan hari ini...</span>
+                </marquee>
+            </div>
+        </div>
 
         <div class="content-body">
             <!-- TAB 1: DOCUMENT TRACKER -->
