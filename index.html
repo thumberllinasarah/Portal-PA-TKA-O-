@@ -959,7 +959,6 @@
 
     function formatDeadline(deadline, status) {
         if(!deadline) return '-';
-        if(status === 'Completed') return `<span class="badge-deadline badge-completed">${deadline} (Selesai)</span>`;
         
         let cleanDateStr = String(deadline).split('T')[0];
         if (cleanDateStr.includes('GMT') || cleanDateStr.includes('Wed') || cleanDateStr.includes('Nov')) {
@@ -972,16 +971,23 @@
             }
         }
 
-        const today = new Date(); today.setHours(0,0,0,0);
-        const target = new Date(cleanDateStr); target.setHours(0,0,0,0);
+        const target = new Date(cleanDateStr); 
+        target.setHours(0,0,0,0);
         
-        if (isNaN(target)) return `<span class="badge-deadline badge-upcoming">${deadline}</span>`;
-
-        const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
         const monthsShort = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ogs", "Sep", "Okt", "Nov", "Dis"];
         const daysShort = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        
+        if (isNaN(target)) return `<span class="badge-deadline badge-upcoming">${deadline} ${status === 'Completed' ? '(Selesai)' : ''}</span>`;
+
         let dayName = daysShort[target.getDay()];
         let formattedDateReadable = `${target.getDate()} ${monthsShort[target.getMonth()]} ${target.getFullYear()} ${dayName}`;
+
+        if(status === 'Completed') {
+            return `<span class="badge-deadline badge-completed">${formattedDateReadable} (Selesai)</span>`;
+        }
+
+        const today = new Date(); today.setHours(0,0,0,0);
+        const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
 
         if (diffDays < 0) return `<span class="badge-deadline badge-overdue">${formattedDateReadable} (${Math.abs(diffDays)} Hari Lepas)</span>`;
         if (diffDays === 0) return `<span class="badge-deadline badge-today">${formattedDateReadable} (Hari Ini!)</span>`;
