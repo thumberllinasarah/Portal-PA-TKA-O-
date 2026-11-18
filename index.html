@@ -25,7 +25,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-main); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
 
-        /* Sidebar Desktop */
         aside { width: 260px; background: linear-gradient(180deg, #4f46e5, #312e81); color: white; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; box-shadow: 4px 0 15px rgba(0,0,0,0.05); transition: width 0.3s ease; }
         .sidebar-brand { padding: 24px 20px; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); white-space: nowrap; }
         .sidebar-menu { padding: 20px 12px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; flex: 1; }
@@ -33,7 +32,6 @@
         .menu-item { padding: 10px 14px; border-radius: 8px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s; border: none; background: transparent; width: 100%; text-align: left; }
         .menu-item:hover, .menu-item.active { background: rgba(255, 255, 255, 0.15); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
-        /* Main Wrapper */
         .main-wrapper { margin-left: 260px; flex: 1; display: flex; flex-direction: column; min-width: 0; transition: margin-left 0.3s ease; }
         topbar { background: white; height: 70px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; position: sticky; top: 0; z-index: 90; }
         .topbar-title h2 { font-size: 18px; font-weight: 700; color: var(--text-main); }
@@ -53,7 +51,6 @@
         .btn-secondary { background: #f1f5f9; color: var(--text-main); border: 1px solid var(--border); }
         .btn-secondary:hover { background: #e2e8f0; }
 
-        /* Statistik Grid */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: var(--card-bg); padding: 18px 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .stat-info h3 { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
@@ -118,7 +115,6 @@
         .filter-chip { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: white; color: var(--text-muted); transition: all 0.2s; white-space: nowrap; }
         .filter-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* Kalendar Responsif */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
         .cal-header-day { text-align: center; font-weight: 600; color: var(--text-muted); font-size: 11px; padding: 6px 0; background: #f8fafc; border-radius: 6px; }
         .cal-day-cell { background: #fff; border: 1px solid var(--border); border-radius: 8px; height: 100px; padding: 6px; display: flex; flex-direction: column; gap: 3px; overflow: hidden; position: relative; }
@@ -128,7 +124,6 @@
         .cal-event-pill { font-size: 9px; padding: 3px 5px; border-radius: 4px; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
         .cal-event-pill:hover { opacity: 0.85; }
 
-        /* --- MEDIA QUERY KHAS UNTUK TELEFON BIMBIT (Mobile Optimized) --- */
         @media (max-width: 768px) {
             aside { width: 100%; height: 60px; bottom: 0; top: auto; left: 0; flex-direction: row; justify-content: space-around; align-items: center; padding: 0 10px; box-shadow: 0 -4px 15px rgba(0,0,0,0.1); }
             .sidebar-brand { display: none; }
@@ -181,7 +176,7 @@
     <div class="main-wrapper">
         <topbar>
             <div class="topbar-title">
-                <h2>Portal PA TKA(Operasi)</h2>
+                <h2>Portal PA TKA(O)</h2>
                 <p>Kementerian Pertahanan Malaysia</p>
             </div>
             <div class="topbar-actions">
@@ -191,26 +186,13 @@
         </topbar>
 
         <div class="content-body">
-
             <!-- TAB 1: DOCUMENT TRACKER -->
             <div id="documents-tab" class="tab-content active">
                 <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-info"><h3>Jumlah</h3><div class="number" id="doc-total">0</div></div>
-                        <div class="stat-icon bg-blue-light"><i class="fa-solid fa-folder"></i></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-info"><h3>Pending</h3><div class="number" id="doc-pending">0</div></div>
-                        <div class="stat-icon bg-yellow-light"><i class="fa-solid fa-clock"></i></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-info"><h3>Selesai</h3><div class="number" id="doc-completed">0</div></div>
-                        <div class="stat-icon bg-green-light"><i class="fa-solid fa-circle-check"></i></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-info"><h3>Hari Ini</h3><div class="number" id="doc-today">0</div></div>
-                        <div class="stat-icon bg-purple-light"><i class="fa-solid fa-calendar-day"></i></div>
-                    </div>
+                    <div class="stat-card"><div class="stat-info"><h3>Jumlah</h3><div class="number" id="doc-total">0</div></div><div class="stat-icon bg-blue-light"><i class="fa-solid fa-folder"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Pending</h3><div class="number" id="doc-pending">0</div></div><div class="stat-icon bg-yellow-light"><i class="fa-solid fa-clock"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Selesai</h3><div class="number" id="doc-completed">0</div></div><div class="stat-icon bg-green-light"><i class="fa-solid fa-circle-check"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Hari Ini</h3><div class="number" id="doc-today">0</div></div><div class="stat-icon bg-purple-light"><i class="fa-solid fa-calendar-day"></i></div></div>
                 </div>
 
                 <div id="doc-action-container" style="margin-bottom: 20px; display: none; justify-content: flex-end;">
@@ -296,22 +278,10 @@
             <!-- TAB 2: TASK TRACKER -->
             <div id="tasks-tab" class="tab-content">
                 <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-info"><h3>Jumlah</h3><div class="number" id="task-total">0</div></div>
-                        <div class="stat-icon bg-blue-light"><i class="fa-solid fa-list-check"></i></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-info"><h3>Selesai</h3><div class="number" id="task-done">0</div></div>
-                        <div class="stat-icon bg-green-light"><i class="fa-solid fa-check"></i></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-info"><h3>Proses</h3><div class="number" id="task-progress">0</div></div>
-                        <div class="stat-icon bg-yellow-light"><i class="fa-solid fa-spinner"></i></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-info"><h3>Pending</h3><div class="number" id="task-pending">0</div></div>
-                        <div class="stat-icon bg-purple-light"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                    </div>
+                    <div class="stat-card"><div class="stat-info"><h3>Jumlah</h3><div class="number" id="task-total">0</div></div><div class="stat-icon bg-blue-light"><i class="fa-solid fa-list-check"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Selesai</h3><div class="number" id="task-done">0</div></div><div class="stat-icon bg-green-light"><i class="fa-solid fa-check"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Proses</h3><div class="number" id="task-progress">0</div></div><div class="stat-icon bg-yellow-light"><i class="fa-solid fa-spinner"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Pending</h3><div class="number" id="task-pending">0</div></div><div class="stat-icon bg-purple-light"><i class="fa-solid fa-triangle-exclamation"></i></div></div>
                 </div>
 
                 <div id="task-action-container" style="margin-bottom: 20px; display: none; justify-content: flex-end;">
@@ -529,8 +499,9 @@
     </div>
 
 <script>
+    // URL Apps Script anda (Disembunyikan dari paparan luar apabila token diuji melalui backend)
     const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjnjT3SSeiXHSGdfN4qfnmmIex23pgWKhnXsxrm3DUX6IBSqNngQ1CUlvuwDajMJ-PJA/exec";
-    const ADMIN_SECRET_TOKEN = "Lapan8";
+    
     let isAdminUnlocked = false;
     let selectedMeetingIdForEdit = null;
 
@@ -538,6 +509,7 @@
         if (isAdminUnlocked) {
             if (confirm("Log keluar dari mod Pentadbir?")) {
                 isAdminUnlocked = false;
+                sessionStorage.removeItem('admin_token');
                 document.getElementById('auth-status-text').innerText = "Token";
                 refreshAllViews();
                 alert("Anda kembali kepada mod View-Only.");
@@ -545,31 +517,26 @@
             return;
         }
 
-        let userInput = prompt("Sila masukkan Token Khas PA:");
+        let userInput = prompt("Sila masukkan Token Khas Pentadbir:");
         if (userInput === null) return;
-        if (userInput.trim() === ADMIN_SECRET_TOKEN) {
-            isAdminUnlocked = true;
-            document.getElementById('auth-status-text').innerText = "PA (Aktif)";
-            refreshAllViews();
-            alert("Token Sah! Mod edit diaktifkan.");
-        } else {
-            alert("Token Khas tidak sah!");
-        }
+        
+        // Simpan sementara di dalam sessionStorage pelayar
+        sessionStorage.setItem('admin_token', userInput.trim());
+        isAdminUnlocked = true;
+        document.getElementById('auth-status-text').innerText = "PA (Aktif)";
+        refreshAllViews();
+        alert("Mod edit diaktifkan untuk sesi ini.");
     }
 
     function verifyAdminToken() {
-        if (isAdminUnlocked) return true;
+        if (isAdminUnlocked && sessionStorage.getItem('admin_token')) return true;
         let userInput = prompt("Sila masukkan Token Khas PA untuk meneruskan:");
         if (userInput === null) return false;
-        if (userInput.trim() === ADMIN_SECRET_TOKEN) {
-            isAdminUnlocked = true;
-            document.getElementById('auth-status-text').innerText = "PA (Aktif)";
-            refreshAllViews();
-            return true;
-        } else {
-            alert("Token Khas tidak sah!");
-            return false;
-        }
+        sessionStorage.setItem('admin_token', userInput.trim());
+        isAdminUnlocked = true;
+        document.getElementById('auth-status-text').innerText = "PA (Aktif)";
+        refreshAllViews();
+        return true;
     }
 
     function refreshAllViews() {
@@ -597,19 +564,23 @@
 
     function syncToGoogleSheet(sheetName, headers, rowValues) {
         if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
+        let userToken = sessionStorage.getItem('admin_token') || "";
+
         fetch(GOOGLE_APPS_SCRIPT_URL, {
             method: "POST", mode: "no-cors",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "add", sheetName: sheetName, headers: headers, rowValues: rowValues })
+            body: JSON.stringify({ action: "add", token: userToken, sheetName: sheetName, headers: headers, rowValues: rowValues })
         }).catch(err => console.error("Ralat sync:", err));
     }
 
     function syncDeleteToGoogleSheet(sheetName, refIdentifier) {
         if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
+        let userToken = sessionStorage.getItem('admin_token') || "";
+
         fetch(GOOGLE_APPS_SCRIPT_URL, {
             method: "POST", mode: "no-cors",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "deleteRecord", sheetName: sheetName, ref: String(refIdentifier) })
+            body: JSON.stringify({ action: "deleteRecord", token: userToken, sheetName: sheetName, ref: String(refIdentifier) })
         }).catch(err => console.error("Ralat padam:", err));
     }
 
@@ -848,6 +819,7 @@
         const status = document.getElementById('doc-status').value;
         const fileInput = document.getElementById('doc-proof-file');
         const dateTimeNow = getCurrentDateTime();
+        let userToken = sessionStorage.getItem('admin_token') || "";
 
         const processSave = (imageB64 = "", fileName = "") => {
             let existing = id ? documents.find(d => d.id == id) : null;
@@ -868,7 +840,7 @@
                 fetch(GOOGLE_APPS_SCRIPT_URL, {
                     method: "POST", mode: "no-cors",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ action: actionType, oldRef, ref, title, sender, purpose, status, receivedAt, fileData: imageB64, fileName })
+                    body: JSON.stringify({ action: actionType, token: userToken, oldRef, ref, title, sender, purpose, status, receivedAt, fileData: imageB64, fileName })
                 }).catch(err => console.error("Ralat sync doc:", err));
             }
 
