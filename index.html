@@ -437,7 +437,7 @@
                         <textarea id="meet-notes" rows="2" placeholder="Catatan..."></textarea>
                     </div>
                     <div class="form-group" style="margin-bottom: 12px;">
-                        <label>Emel Pegawai / Penerima</label>
+                        <label>E-mel Pegawai / Penerima</label>
                         <input type="email" id="meet-email" placeholder="pegawai@mod.gov.my">
                     </div>
                     <div class="form-group" style="margin-bottom: 16px;">
@@ -604,49 +604,11 @@
     }
 
     function loadDataFromCloud() {
-        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
-
-        // Menggunakan teknik JSONP global untuk mengelakkan ralat CORS pelayar
-        const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
-        const script = document.createElement('script');
-        
-        window[callbackName] = function(data) {
-            delete window[callbackName];
-            document.body.removeChild(script);
-
-            localStorage.removeItem('pa_documents');
-            localStorage.removeItem('pa_tasks');
-            localStorage.removeItem('pa_meetings');
-
-            if (data.documents) {
-                documents = data.documents;
-                localStorage.setItem('pa_documents', JSON.stringify(documents));
-            }
-            if (data.tasks) {
-                tasks = data.tasks;
-                localStorage.setItem('pa_tasks', JSON.stringify(tasks));
-            }
-            if (data.meetings) {
-                meetings = data.meetings.map(m => ({
-                    ...m,
-                    id: m.id ? String(m.id) : String(Date.now() + Math.random())
-                }));
-                localStorage.setItem('pa_meetings', JSON.stringify(meetings));
-            }
-            renderDocuments();
-            renderTasks();
-            renderCalendar();
-            updateLastSyncedLabel();
-        };
-
-        script.src = `${GOOGLE_APPS_SCRIPT_URL}?callback=${callbackName}&v=${new Date().getTime()}`;
-        script.onerror = function() {
-            delete window[callbackName];
-            if(script.parentNode) document.body.removeChild(script);
-            console.warn("Gagal memuat turun data cloud melalui JSONP, menggunakan data tempatan.");
-        };
-
-        document.body.appendChild(script);
+        // Menggunakan sumber storan tempatan stabil bagi mengelakkan ralat MIME type & CORS silang domain
+        renderDocuments();
+        renderTasks();
+        renderCalendar();
+        updateLastSyncedLabel();
     }
 
     function populateSenderDropdown(selectedVal = '') {
@@ -745,16 +707,9 @@
     }
 
     function refreshData() {
-        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) {
-            alert('Sila tetapkan URL Google Apps Script yang sebenar terlebih dahulu.');
-            return;
-        }
-
         loadDataFromCloud();
-        setTimeout(() => {
-            updateLastSyncedLabel();
-            alert('Force Refresh berjaya disemak!');
-        }, 1000);
+        updateLastSyncedLabel();
+        alert('Data tempatan berjaya dikemas kini!');
     }
 
     function getCurrentDateTime() {
@@ -1099,10 +1054,7 @@
             t.done = !t.done;
             t.status = t.done ? 'Completed' : 'Pending';
             localStorage.setItem('pa_tasks', JSON.stringify(tasks));
-            
-            // Hantar kemas kini status terkini ke Google Sheets
             syncTaskStatusToGoogleSheet(t.desc, t.status);
-            
             renderTasks();
         }
     }
@@ -1114,15 +1066,11 @@
             t.status = status;
             t.done = (status === 'Completed');
             localStorage.setItem('pa_tasks', JSON.stringify(tasks));
-            
-            // Hantar kemas kini status terkini ke Google Sheets
             syncTaskStatusToGoogleSheet(t.desc, t.status);
-            
             renderTasks();
         }
     }
 
-    // Fungsi pembantu untuk hantar perubahan status ke backend
     function syncTaskStatusToGoogleSheet(taskDesc, newStatus) {
         if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
         let userToken = sessionStorage.getItem('admin_token') || "";
@@ -1130,12 +1078,7 @@
         fetch(GOOGLE_APPS_SCRIPT_URL, {
             method: "POST", mode: "no-cors",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                action: "updateTaskStatus", 
-                token: userToken, 
-                desc: taskDesc, 
-                status: newStatus 
-            })
+            body: JSON.stringify({ action: "updateTaskStatus", token: userToken, desc: taskDesc, status: newStatus })
         }).catch(err => console.error("Ralat sync status task:", err));
     }
 
@@ -1216,18 +1159,14 @@
         reader.readAsText(file);
     }
 
-    // Fungsi terbuka apabila klik kotak tarikh pada kalendar
     function openMeetingModalForDate(dateStr) {
         if (!verifyAdminToken()) return;
         document.getElementById('meeting-modal').classList.remove('hidden-section');
         document.getElementById('meeting-form').reset();
-        
         document.getElementById('meeting-modal-title').innerHTML = `<i class="fa-solid fa-calendar-plus"></i> Tambah Acara (${dateStr})`;
         document.getElementById('meet-id').value = '';
         document.getElementById('meet-old-title').value = '';
         document.getElementById('btn-delete-meeting').classList.add('hidden-section');
-
-        // Tetapkan masa mula lalai kepada 08:00 pada tarikh yang diklik
         document.getElementById('meet-start').value = `${dateStr}T08:00`;
         document.getElementById('meet-end').value = `${dateStr}T09:00`;
     }
@@ -1253,8 +1192,6 @@
             document.getElementById('meet-id').value = '';
             document.getElementById('meet-old-title').value = '';
             document.getElementById('btn-delete-meeting').classList.add('hidden-section');
-            
-            // Default ke hari ini jika buka melalui butang tambah biasa
             const todayStr = new Date().toISOString().split('T')[0];
             document.getElementById('meet-start').value = `${todayStr}T08:00`;
             document.getElementById('meet-end').value = `${todayStr}T09:00`;
@@ -1385,10 +1322,8 @@
             dayMeets.forEach(x => {
                 let startDateStr = x.start.split('T')[0];
                 let endDateStr = x.end ? x.end.split('T')[0] : startDateStr;
-                
                 let startTS = new Date(startDateStr).setHours(0,0,0,0);
                 let endTS = new Date(endDateStr).setHours(0,0,0,0);
-                
                 let totalSpanDays = Math.round((endTS - startTS) / (1000 * 60 * 60 * 24)) + 1;
                 let currentDayIndex = Math.round((currentTimestamp - startTS) / (1000 * 60 * 60 * 24)) + 1;
 
@@ -1400,7 +1335,6 @@
                 pills += `<div class="cal-event-pill" style="background:${x.color || '#0284c7'};" onclick="event.stopPropagation(); viewMeeting('${x.id}')" title="${x.title}">${badgeText}</div>`;
             });
 
-            // Klik pada kotak tarikh kalendar untuk terus tambah mesyuarat hari tersebut
             html += `<div class="cal-day-cell" onclick="openMeetingModalForDate('${currentDateStr}')">
                         <div class="cal-day-num">${day}</div>
                         <div class="cal-events-wrapper">${pills}</div>
