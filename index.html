@@ -500,7 +500,7 @@
     </div>
 
 <script>
-    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyC1qZYvjt0bneHkztdKYHe72byAiYBRf-ig-b-bsrDPMFXwIn8iDbsWEK4e85nlIUrsA/exec";
+    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-I8zmcpbyN-HEkjoqs4alfIer9XAiwzFIz9-xOILICJuqUPEbpVgJ9aKkvIhmocUyDg/exec";
     
     let isAdminUnlocked = false;
     let selectedMeetingIdForEdit = null;
@@ -859,29 +859,25 @@
             }
 
             if (GOOGLE_APPS_SCRIPT_URL && !GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) {
+                if (GOOGLE_APPS_SCRIPT_URL && !GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) {
                 fetch(GOOGLE_APPS_SCRIPT_URL, {
                     method: "POST", mode: "no-cors",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ action: actionType, token: userToken, oldRef, ref, title, sender, purpose, status, receivedAt, fileData: imageB64, fileName })
+                    body: JSON.stringify({ 
+                        action: actionType, 
+                        token: userToken, 
+                        oldRef, 
+                        ref, 
+                        title, 
+                        sender, // <--- Pastikan parameter sender dihantar di sini
+                        purpose, 
+                        status, 
+                        receivedAt, 
+                        fileData: imageB64, 
+                        fileName 
+                    })
                 }).catch(err => console.error("Ralat sync doc:", err));
             }
-
-            localStorage.setItem('pa_documents', JSON.stringify(documents));
-            document.getElementById('document-form').reset();
-            document.getElementById('document-form-card').classList.add('hidden-section');
-            document.getElementById('doc-toggle-btn-text').innerText = 'Rekod Dokumen Baru';
-            renderDocuments();
-            updateLastSyncedLabel();
-        };
-
-        if (fileInput.files && fileInput.files[0]) {
-            const reader = new FileReader();
-            reader.onload = ev => processSave(ev.target.result, fileInput.files[0].name);
-            reader.readAsDataURL(fileInput.files[0]);
-        } else {
-            processSave("", "");
-        }
-    }
 
     function editDocument(id) {
         if (!verifyAdminToken()) return;
