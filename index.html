@@ -1,4 +1,3 @@
-HTML
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -13,7 +12,7 @@ HTML
         body { display: flex; background-color: #f8fafc; color: #1e293b; min-height: 100vh; }
         
         /* Sidebar */
-        aside { width: 260px; background-color: #1e1b4b; color: #fff; display: flex; flex-direction: column; position: fixed; height: 100vh; }
+        aside { width: 260px; background-color: #1e1b4b; color: #fff; display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; }
         .sidebar-brand { padding: 20px; font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 10px; background: #312e81; }
         .sidebar-menu { padding: 20px 10px; display: flex; flex-direction: column; gap: 8px; }
         .menu-category { font-size: 11px; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; padding-left: 10px; }
@@ -29,9 +28,78 @@ HTML
         .btn { padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
         .btn-secondary { background: #f1f5f9; color: #475569; }
         .btn-primary { background: #4f46e5; color: #fff; }
+        .btn-success { background: #10b981; color: #fff; }
+        .btn-danger { background: #ef4444; color: #fff; }
 
-        /* Kandungan Utama */
+        /* Kandungan Utama & Tab */
         .content-container { padding: 10px 0; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .hidden-section { display: none !important; }
+
+        /* Kad & Grid Statistik */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+        .stat-info h3 { font-size: 12px; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-info .number { font-size: 24px; font-weight: bold; color: #1e293b; }
+        .stat-icon { width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .bg-blue-light { background: #eff6ff; color: #3b82f6; }
+        .bg-yellow-light { background: #fef3c7; color: #d97706; }
+        .bg-green-light { background: #ecfdf5; color: #10b981; }
+        .bg-purple-light { background: #f3e8ff; color: #9333ea; }
+
+        .card { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; overflow: hidden; }
+        .card-header { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .card-header h2 { font-size: 16px; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+        .card-body { padding: 20px; }
+
+        /* Borang & Jadual */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label { font-size: 12px; font-weight: 600; color: #475569; }
+        .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
+        
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        .search-filter-group { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; flex: 1; }
+        .search-box { position: relative; flex: 1; min-width: 200px; }
+        .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 13px; }
+        .search-box input { width: 100%; padding: 8px 12px 8px 35px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
+        
+        .filter-status-group { display: flex; gap: 6px; flex-wrap: wrap; }
+        .filter-chip { padding: 6px 12px; background: #f1f5f9; border: none; border-radius: 20px; font-size: 12px; font-weight: 600; color: #475569; cursor: pointer; transition: 0.2s; }
+        .filter-chip.active { background: #1e1b4b; color: #fff; }
+
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+        th { background: #f8fafc; padding: 12px; font-weight: 600; color: #475569; border-bottom: 1px solid #e2e8f0; }
+        td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
+        
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
+        .badge-warning { background: #fef3c7; color: #d97706; }
+        .badge-success { background: #ecfdf5; color: #059669; }
+
+        .badge-deadline { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
+        .badge-overdue { background: #fee2e2; color: #dc2626; }
+        .badge-today { background: #fef3c7; color: #d97706; }
+        .badge-upcoming { background: #f1f5f9; color: #475569; }
+        .badge-completed { background: #ecfdf5; color: #059669; }
+
+        .actions-cell { display: flex; gap: 6px; align-items: center; }
+        .btn-icon { background: none; border: none; cursor: pointer; font-size: 14px; padding: 4px; border-radius: 4px; }
+        .btn-wa { color: #16a34a; }
+        .btn-edit { color: #2563eb; }
+        .btn-delete { color: #dc2626; }
+
+        /* Kalendar */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .cal-header-day { background: #f1f5f9; text-align: center; font-weight: 600; font-size: 12px; padding: 8px; color: #475569; border-radius: 4px; }
+        .cal-day-cell { background: #fff; border: 1px solid #e2e8f0; min-height: 90px; border-radius: 6px; padding: 6px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; }
+        .cal-day-cell:hover { background: #f8fafc; }
+        .cal-day-cell.other-month { background: #f8fafc; opacity: 0.4; }
+        .cal-day-num { font-size: 12px; font-weight: 600; color: #1e293b; }
+        .cal-events-wrapper { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; max-height: 60px; }
+        .cal-event-pill { font-size: 10px; padding: 2px 5px; border-radius: 3px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     </style>
 </head>
 <body>
@@ -72,7 +140,7 @@ HTML
             </div>
         </topbar>
 
-        <!-- BANNER TEKS BERGERAK (MARQUEE) DINAMIK -->
+        <!-- BANNER TEKS BERGERAK (MARQUEE) DINAMIK - HANYA PAPAR TUGASAN HARI INI -->
         <div style="background: #eff6ff; border-left: 4px solid #1e40af; padding: 10px 15px; margin-bottom: 20px; border-radius: 6px; display: flex; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
             <div style="width: 100%; overflow: hidden;">
                 <marquee behavior="scroll" direction="left" scrollamount="4" onmouseover="this.stop();" onmouseout="this.start();" style="font-size: 13px; color: #1e293b; font-weight: 500;">
@@ -84,18 +152,7 @@ HTML
 
         <!-- Ruang Paparan Kandungan Modul -->
         <div class="content-container" id="main-content-area">
-            <!-- Kandungan modul anda dipaparkan di sini -->
-        </div>
-    </div>
-
-    <script>
-        // Contoh data tugasan (Sila sesuaikan dengan tatasusunan 'tasks' sebenar dalam portal anda jika ada)
-        let tasks = [
-            { title: "Semak dokumen Akaun Persekutuan", status: "Pending" },
-            { title: "Kemas kini pergerakan pegawai Sektor Operasi", status: "In Progress" }
-        ];
-
-        <div class="content-body">
+            
             <!-- TAB 1: DOCUMENT TRACKER -->
             <div id="documents-tab" class="tab-content active">
                 <div class="stats-grid">
@@ -117,9 +174,9 @@ HTML
                             <div class="form-grid">
                                 <div class="form-group"><label>No. Rujukan Dokumen / Surat</label><input type="text" id="doc-ref" placeholder="Cth: MOD.500-2/1 (45)" required></div>
                                 <div class="form-group">
-                                    <div class="label-row">
+                                    <div style="display:flex; justify-content:space-between; align-items:center;">
                                         <label>Nama Penghantar / Pegawai</label>
-                                        <button type="button" class="add-btn-small" onclick="openManagerModal()"><i class="fa-solid fa-gear"></i> Urus Pegawai</button>
+                                        <button type="button" class="btn btn-secondary" style="padding: 2px 6px; font-size: 10px;" onclick="openManagerModal()"><i class="fa-solid fa-gear"></i> Urus Pegawai</button>
                                     </div>
                                     <select id="doc-sender" required><option value="">-- Pilih Pegawai Penghantar --</option></select>
                                 </div>
@@ -154,7 +211,7 @@ HTML
                 <div class="card">
                     <div class="card-header">
                         <h2><i class="fa-solid fa-table-list"></i> Status Pergerakan Dokumen</h2>
-                        <span id="update-time-docs" style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Kemas kini: -</span>
+                        <span id="update-time-docs" style="font-size: 11px; color: #64748b; font-weight: 500;">Kemas kini: -</span>
                     </div>
                     <div class="card-body">
                         <div class="toolbar">
@@ -163,7 +220,7 @@ HTML
                                     <i class="fa-solid fa-magnifying-glass"></i>
                                     <input type="text" id="doc-search" placeholder="Cari tajuk atau no rujukan..." oninput="renderDocuments()">
                                 </div>
-                                <input type="month" id="doc-month-filter" onchange="renderDocuments()" style="max-width: 170px;">
+                                <input type="month" id="doc-month-filter" onchange="renderDocuments()" style="max-width: 170px; padding: 7px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
                             </div>
                             <div class="filter-status-group">
                                 <button class="filter-chip active" onclick="setDocFilter('Aktif', this)">Semua (Aktif)</button>
@@ -174,7 +231,6 @@ HTML
                         </div>
                         <div class="table-responsive">
                             <table>
-                                <colgroup><col style="width: 13%;"><col style="width: 27%;"><col style="width: 14%;"><col style="width: 13%;"><col style="width: 13%;"><col style="width: 10%;"><col style="width: 10%;"><col style="width: 10%;"></colgroup>
                                 <thead>
                                     <tr><th>TARIKH DITERIMA</th><th>NO. RUJUKAN & TAJUK</th><th>PENGHANTAR</th><th>TUJUAN</th><th>TARIKH DIPULANGKAN</th><th>STATUS</th><th>BUKTI</th><th>TINDAKAN</th></tr>
                                 </thead>
@@ -224,7 +280,7 @@ HTML
                 <div class="card">
                     <div class="card-header">
                         <h2><i class="fa-solid fa-table-list"></i> Senarai Pemantauan Perkara</h2>
-                        <span id="update-time-tasks" style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Kemas kini: -</span>
+                        <span id="update-time-tasks" style="font-size: 11px; color: #64748b; font-weight: 500;">Kemas kini: -</span>
                     </div>
                     <div class="card-body">
                         <div class="toolbar">
@@ -241,7 +297,6 @@ HTML
                         </div>
                         <div class="table-responsive">
                             <table>
-                                <colgroup><col style="width: 5%;"><col style="width: 25%;"><col style="width: 15%;"><col style="width: 20%;"><col style="width: 14%;"><col style="width: 10%;"><col style="width: 11%;"></colgroup>
                                 <thead>
                                     <tr><th>DONE</th><th>TASK / PERKARA</th><th>PEGAWAI</th><th>CATATAN</th><th>DEADLINE</th><th>STATUS</th><th>TINDAKAN</th></tr>
                                 </thead>
@@ -258,7 +313,7 @@ HTML
                     <div class="card-header">
                         <h2><i class="fa-solid fa-calendar-days"></i> Kalendar Mesyuarat TKA(Operasi)</h2>
                         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                            <span id="update-time-calendar" style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Kemas kini: -</span>
+                            <span id="update-time-calendar" style="font-size: 11px; color: #64748b; font-weight: 500;">Kemas kini: -</span>
                             <div id="meeting-action-buttons" style="display: none; gap: 10px; align-items: center;">
                                 <label class="btn btn-secondary" style="cursor: pointer; margin: 0; padding: 6px 10px; font-size: 12px;">
                                     <i class="fa-solid fa-file-import"></i> .ics
@@ -274,7 +329,7 @@ HTML
                                 <button class="btn btn-secondary" onclick="changeMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
                                 <button class="btn btn-secondary" onclick="changeMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
-                            <h3 id="calendar-month-year" style="font-size: 16px; font-weight: 700; color: var(--primary);">November 2026</h3>
+                            <h3 id="calendar-month-year" style="font-size: 16px; font-weight: 700; color: #1e1b4b;">November 2026</h3>
                         </div>
 
                         <div class="calendar-grid">
@@ -304,12 +359,12 @@ HTML
             <div class="card-body">
                 <div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
                     <input type="hidden" id="edit-sender-index" value="-1">
-                    <input type="text" id="manager-name-input" placeholder="Nama Pegawai..." style="flex:2; min-width: 150px;">
-                    <input type="text" id="manager-phone-input" placeholder="No Tel (6012...)" style="flex:1; min-width: 120px;">
+                    <input type="text" id="manager-name-input" placeholder="Nama Pegawai..." style="flex:2; min-width: 150px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                    <input type="text" id="manager-phone-input" placeholder="No Tel (6012...)" style="flex:1; min-width: 120px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
                     <button class="btn btn-primary" onclick="saveSenderData()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
                 </div>
-                <div style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px;">
-                    <table style="width: 100%; font-size: 12px; min-width: 100%;">
+                <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
+                    <table>
                         <thead><tr style="background: #f8fafc;"><th style="padding: 8px;">NAMA</th><th style="padding: 8px;">NO TEL</th><th style="padding: 8px; text-align: right;">TINDAKAN</th></tr></thead>
                         <tbody id="manager-table-body"></tbody>
                     </table>
@@ -374,31 +429,31 @@ HTML
     <div id="view-meeting-modal" class="hidden-section" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1050; padding: 15px;">
         <div class="card" style="width: 500px; max-width: 100%; margin: 0;">
             <div class="card-header">
-                <h2><i class="fa-solid fa-circle-info" style="color: var(--accent);"></i> Maklumat Lanjut</h2>
+                <h2><i class="fa-solid fa-circle-info" style="color: #4f46e5;"></i> Maklumat Lanjut</h2>
                 <button onclick="closeViewMeetingModal()" style="background:none; border:none; font-size:16px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="card-body" style="display: flex; flex-direction: column; gap: 14px; font-size: 13px;">
                 <div>
-                    <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Tajuk Acara</span>
-                    <div id="view-meet-title" style="font-size: 15px; font-weight: 700; color: var(--primary); margin-top: 2px;">-</div>
+                    <span style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Tajuk Acara</span>
+                    <div id="view-meet-title" style="font-size: 15px; font-weight: 700; color: #1e1b4b; margin-top: 2px;">-</div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div>
-                        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Masa Mula</span>
+                        <span style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Masa Mula</span>
                         <div id="view-meet-start" style="font-weight: 600; margin-top: 2px;">-</div>
                     </div>
                     <div>
-                        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Masa Tamat</span>
+                        <span style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Masa Tamat</span>
                         <div id="view-meet-end" style="font-weight: 600; margin-top: 2px;">-</div>
                     </div>
                 </div>
                 <div>
-                    <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Tempat</span>
+                    <span style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Tempat</span>
                     <div id="view-meet-location" style="font-weight: 600; margin-top: 2px;">-</div>
                 </div>
                 <div>
-                    <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Catatan / Minit Ringkas</span>
-                    <div id="view-meet-notes" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid var(--border); margin-top: 2px; color: var(--text-main);">-</div>
+                    <span style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Catatan / Minit Ringkas</span>
+                    <div id="view-meet-notes" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-top: 2px; color: #334155;">-</div>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 10px;">
                     <button type="button" id="btn-edit-from-view" class="btn btn-primary hidden-section" onclick="editMeetingFromView()"><i class="fa-solid fa-pen"></i> Sunting</button>
@@ -468,6 +523,7 @@ HTML
         renderDocuments();
         renderTasks();
         renderCalendar();
+        loadLiveTasksToTicker();
     }
 
     function syncToGoogleSheet(sheetName, headers, rowValues) {
@@ -515,7 +571,6 @@ HTML
     function loadDataFromCloud() {
         if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
 
-        // Menggunakan teknik JSONP global untuk menarik data terkini dari Google Sheets merentas peranti
         const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
         const script = document.createElement('script');
         
@@ -525,7 +580,6 @@ HTML
 
             if (!data) return;
 
-            // Kemas kini pemboleh ubah global dengan data baharu dari awan
             if (data.documents) {
                 documents = data.documents;
                 localStorage.setItem('pa_documents', JSON.stringify(documents));
@@ -542,10 +596,10 @@ HTML
                 localStorage.setItem('pa_meetings', JSON.stringify(meetings));
             }
 
-            // Segarkan paparan pada semua modul
             renderDocuments();
             renderTasks();
             renderCalendar();
+            loadLiveTasksToTicker();
             updateLastSyncedLabel();
         };
 
@@ -553,7 +607,7 @@ HTML
         script.onerror = function() {
             delete window[callbackName];
             if(script.parentNode) document.body.removeChild(script);
-            console.warn("Gagal memuat turun data cloud melalui JSONP, menggunakan data tempatan.");
+            console.warn("Gagal memuat turun data cloud.");
         };
 
         document.body.appendChild(script);
@@ -591,7 +645,7 @@ HTML
         if(!tbody) return;
         tbody.innerHTML = '';
         if(sendersList.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 15px;">Tiada pegawai.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #64748b; padding: 15px;">Tiada pegawai.</td></tr>`;
             return;
         }
         sendersList.forEach((s, index) => {
@@ -659,11 +713,9 @@ HTML
             alert('Sila tetapkan URL Google Apps Script yang sebenar terlebih dahulu.');
             return;
         }
-
-        // Panggil semula fungsi muat turun data awan
         loadDataFromCloud();
         setTimeout(() => {
-            alert('Force Refresh berjaya! Data terkini telah dimuat turun dari Google Sheets.');
+            alert('Force Refresh berjaya! Data terkini telah dimuat turun.');
         }, 800);
     }
 
@@ -691,8 +743,7 @@ HTML
         
         let h = parseInt(hours, 10);
         let ampm = h >= 12 ? 'PM' : 'AM';
-        h = h % 12;
-        h = h ? h : 12;
+        h = h % 12; h = h ? h : 12;
         let formattedTime = `${String(h).padStart(2, '0')}:${minutes} ${ampm}`;
         
         let [y, m, d] = datePart.split('-');
@@ -769,22 +820,9 @@ HTML
 
             if (GOOGLE_APPS_SCRIPT_URL && !GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) {
                 fetch(GOOGLE_APPS_SCRIPT_URL, {
-                    method: "POST", 
-                    mode: "no-cors",
+                    method: "POST", mode: "no-cors",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        action: actionType, 
-                        token: userToken, 
-                        oldRef, 
-                        ref, 
-                        title, 
-                        sender, 
-                        purpose, 
-                        status, 
-                        receivedAt, 
-                        fileData: imageB64, 
-                        fileName 
-                    })
+                    body: JSON.stringify({ action: actionType, token: userToken, oldRef, ref, title, sender, purpose, status, receivedAt, fileData: imageB64, fileName })
                 }).catch(err => console.error("Ralat sync doc:", err));
             }
 
@@ -875,7 +913,7 @@ HTML
 
         tbody.innerHTML = '';
         if(filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 25px;">Tiada rekod dokumen.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #64748b; padding: 25px;">Tiada rekod dokumen.</td></tr>`;
             return;
         }
 
@@ -891,7 +929,7 @@ HTML
             tbody.innerHTML += `
                 <tr>
                     <td><small>${d.receivedAt || '-'}</small></td>
-                    <td><strong>${d.ref || '-'}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${d.title || '-'}</span></td>
+                    <td><strong>${d.ref || '-'}</strong><br><span style="font-size: 11px; color: #64748b;">${d.title || '-'}</span></td>
                     <td>${d.sender || '-'}</td>
                     <td>${d.purpose || '-'}</td>
                     <td><small>${d.returnedAt || '-'}</small></td>
@@ -919,7 +957,7 @@ HTML
         const target = new Date(cleanDateStr); 
         target.setHours(0,0,0,0);
         
-        const monthsShort = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ogs", "Sep", "Okt", "Nov", "Dis"];
+        const monthsShort = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogs", "Sep", "Okt", "Nov", "Dis"];
         const daysShort = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         
         if (isNaN(target)) return `<span class="badge-deadline badge-upcoming">${deadline} ${status === 'Completed' ? '(Selesai)' : ''}</span>`;
@@ -988,6 +1026,8 @@ HTML
                     <td>${actions}</td>
                 </tr>`;
         });
+        
+        loadLiveTasksToTicker();
     }
 
     function saveTask(e) {
@@ -1311,62 +1351,46 @@ HTML
         container.innerHTML = html;
     }
 
-    <script>
-        // Contoh data tugasan (Sila sesuaikan dengan tatasusunan 'tasks' sebenar dalam portal anda jika ada)
-        let tasks = [
-            { title: "Semak dokumen Akaun Persekutuan", status: "Pending" },
-            { title: "Kemaskini pergerakan pegawai Sektor Operasi", status: "In Progress" }
-        ];
+    // FUNGSI TICKER DINAMIK: HANYA PAPAR TUGASAN HARI INI SAHAJA
+    function loadLiveTasksToTicker() {
+        try {
+            const taskEl = document.getElementById('live-ticker-tasks');
+            if (!taskEl) return;
 
-        // Fungsi Memuatkan Data Tugasan Sebenar ke Ticker
-        function loadLiveTasksToTicker() {
-            try {
-                const taskEl = document.getElementById('live-ticker-tasks');
-                if (!taskEl) return;
+            if (typeof tasks !== 'undefined' && Array.isArray(tasks)) {
+                // Dapatkan tarikh hari ini dalam format YYYY-MM-DD
+                const todayDateStr = new Date().toISOString().split('T')[0];
 
-                if (typeof tasks !== 'undefined' && Array.isArray(tasks)) {
-                    const pendingTasks = tasks.filter(t => t.status !== 'Selesai' && t.status !== 'Completed');
-                    
-                    if (pendingTasks.length > 0) {
-                        let taskListText = pendingTasks.map((t, index) => `(${index + 1}) ${t.title || t.name}`).join(' &nbsp;&nbsp;|&nbsp;&nbsp; ');
-                        taskEl.innerHTML = `Tugasan Semasa Hari Ini: ${taskListText}`;
-                    } else {
-                        taskEl.innerHTML = `Syabas! Tiada tugasan tertunggak untuk hari ini.`;
-                    }
+                // Tapis tugasan yang BELUM SELESAI DAN tarikh akhirnya (deadline) adalah HARI INI
+                const todayPendingTasks = tasks.filter(t => {
+                    if (t.status === 'Selesai' || t.status === 'Completed' || t.done) return false;
+                    if (!t.deadline) return false;
+                    let cleanDeadline = String(t.deadline).split('T')[0];
+                    return cleanDeadline === todayDateStr;
+                });
+                
+                if (todayPendingTasks.length > 0) {
+                    let taskListText = todayPendingTasks.map((t, index) => `(${index + 1}) ${t.desc || t.title} [PIC: ${t.pic}]`).join(' &nbsp;&nbsp;|&nbsp;&nbsp; ');
+                    taskEl.innerHTML = `Tugasan Hari Ini (${todayPendingTasks.length}): ${taskListText}`;
                 } else {
-                    taskEl.innerHTML = `Peringatan: Sila semak dokumen dan status pergerakan pegawai hari ini.`;
+                    taskEl.innerHTML = `Syabas! Tiada tugasan tertunggak yang perlu diselesaikan hari ini.`;
                 }
-            } catch (e) {
-                console.error("Ralat memuatkan ticker:", e);
+            } else {
+                taskEl.innerHTML = `Peringatan: Sila semak dokumen dan status pergerakan pegawai hari ini.`;
             }
+        } catch (e) {
+            console.error("Ralat memuatkan ticker:", e);
         }
+    }
 
-        // Jalankan fungsi apabila laman web siap dimuatkan
-        document.addEventListener("DOMContentLoaded", () => {
-            loadLiveTasksToTicker();
-        });
-
-        function switchTab(tabName, element) {
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            if(element) element.classList.add('active');
-            console.getElementById ? console.log("Bertukar ke tab:", tabName) : '';
-        }
-
-        function refreshData() {
-            loadLiveTasksToTicker();
-            alert("Data berjaya dikemas kini!");
-        }
-
-        function requestAdminAccess() {
-            alert("Mod Pengesahan Token PA.");
-        }
-    </script>
-  
-    
-    populateSenderDropdown();
-    loadDataFromCloud();
-    refreshAllViews();
-    updateLastSyncedLabel();
+    // Jalankan fungsi apabila laman web siap dimuatkan
+    document.addEventListener("DOMContentLoaded", () => {
+        populateSenderDropdown();
+        loadDataFromCloud();
+        refreshAllViews();
+        updateLastSyncedLabel();
+        loadLiveTasksToTicker();
+    });
 </script>
 
 </body>
