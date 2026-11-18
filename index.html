@@ -610,32 +610,37 @@
         });
     }
 
-    function loadDataFromCloud() {
-        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
-        fetch(GOOGLE_APPS_SCRIPT_URL)
-            .then(res => res.json())
-            .then(data => {
-                if (data.documents && data.documents.length > 0) {
-                    documents = data.documents;
-                    localStorage.setItem('pa_documents', JSON.stringify(documents));
-                }
-                if (data.tasks && data.tasks.length > 0) {
-                    tasks = data.tasks;
-                    localStorage.setItem('pa_tasks', JSON.stringify(tasks));
-                }
-                if (data.meetings && data.meetings.length > 0) {
-                    meetings = data.meetings.map(m => ({
-                        ...m,
-                        id: m.id ? String(m.id) : String(Date.now() + Math.random())
-                    }));
-                    localStorage.setItem('pa_meetings', JSON.stringify(meetings));
-                }
-                renderDocuments();
-                renderTasks();
-                renderCalendar();
-                updateLastSyncedLabel();
-            }).catch(err => console.error("Ralat load cloud:", err));
-    }
+   function loadDataFromCloud() {
+    if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
+    fetch(GOOGLE_APPS_SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+            // Kosongkan data lama supaya peranti lain tidak simpan rekod yang sudah dipadam
+            localStorage.removeItem('pa_documents');
+            localStorage.removeItem('pa_tasks');
+            localStorage.removeItem('pa_meetings');
+
+            if (data.documents) {
+                documents = data.documents;
+                localStorage.setItem('pa_documents', JSON.stringify(documents));
+            }
+            if (data.tasks) {
+                tasks = data.tasks;
+                localStorage.setItem('pa_tasks', JSON.stringify(tasks));
+            }
+            if (data.meetings) {
+                meetings = data.meetings.map(m => ({
+                    ...m,
+                    id: m.id ? String(m.id) : String(Date.now() + Math.random())
+                }));
+                localStorage.setItem('pa_meetings', JSON.stringify(meetings));
+            }
+            renderDocuments();
+            renderTasks();
+            renderCalendar();
+            updateLastSyncedLabel();
+        }).catch(err => console.error("Ralat load cloud:", err));
+}
 
     function populateSenderDropdown(selectedVal = '') {
         const select = document.getElementById('doc-sender');
