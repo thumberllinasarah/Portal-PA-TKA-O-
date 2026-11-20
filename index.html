@@ -1,0 +1,2638 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal PA TKA(O)</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Gaya Asas Portal & Responsif */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { display: flex; background-color: #f8fafc; color: #1e293b; min-height: 100vh; overflow-x: hidden; }
+        
+        /* Sidebar Desktop */
+        aside { width: 260px; background-color: #1e1b4b; color: #fff; display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; transition: transform 0.3s ease; }
+        .sidebar-brand { padding: 20px; font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 10px; background: #312e81; }
+        .sidebar-menu { padding: 20px 10px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+        .menu-category { font-size: 11px; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; margin-top: 6px; padding-left: 10px; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: #cbd5e1; background: transparent; border: none; border-radius: 6px; cursor: pointer; text-align: left; width: 100%; font-size: 14px; transition: 0.2s; }
+        .menu-item:hover, .menu-item.active { background-color: #4338ca; color: #fff; }
+
+        /* Main Wrapper & Topbar */
+        .main-wrapper { margin-left: 260px; padding: 20px; width: calc(100% - 260px); transition: margin 0.3s ease, width 0.3s ease; }
+        topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex-wrap: wrap; gap: 10px; }
+        .topbar-title h2 { font-size: 20px; color: #1e293b; }
+        .topbar-title p { font-size: 13px; color: #64748b; }
+        .topbar-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .btn { padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; transition: 0.2s; }
+        .btn-secondary { background: #f1f5f9; color: #475569; }
+        .btn-secondary:hover { background: #e2e8f0; }
+        .btn-primary { background: #4f46e5; color: #fff; }
+        .btn-primary:hover { background: #4338ca; }
+        .btn-success { background: #10b981; color: #fff; }
+        .btn-danger { background: #ef4444; color: #fff; }
+        .btn-print { background: #f59e0b; color: #111827; }
+        .btn-print:hover { background: #d97706; }
+
+        .print-controls-group { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+        /* Desk Utama: Status Semasa TKA(Operasi) */
+        .exec-status-card { background: linear-gradient(90deg, #1e1b4b 0%, #312e81 100%); color: #fff; border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; box-shadow: 0 2px 6px rgba(30,27,75,0.12); }
+        .status-pill { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+        .status-meeting { background: #fef3c7; color: #92400e; }
+        .status-office { background: #d1fae5; color: #065f46; }
+        .status-out { background: #e0f2fe; color: #075985; }
+        .status-leave { background: #fee2e2; color: #991b1b; }
+        .exec-meta { font-size: 12px; color: #e0e7ff; display: flex; flex-wrap: wrap; gap: 14px; margin-top: 4px; }
+        .status-switcher { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+        .status-switcher button { background: rgba(255,255,255,0.14); color: #fff; border: 1px solid rgba(255,255,255,0.22); padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; }
+        .status-switcher button:hover { background: rgba(255,255,255,0.25); }
+
+        /* Kandungan Utama & Tab */
+        .content-container { padding: 10px 0; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .hidden-section { display: none !important; }
+
+        /* Kad & Grid Statistik */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .stat-card { background: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+        .stat-info h3 { font-size: 12px; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-info .number { font-size: 24px; font-weight: bold; color: #1e293b; }
+        .stat-icon { width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .bg-blue-light { background: #eff6ff; color: #3b82f6; }
+        .bg-yellow-light { background: #fef3c7; color: #d97706; }
+        .bg-green-light { background: #ecfdf5; color: #10b981; }
+        .bg-purple-light { background: #f3e8ff; color: #9333ea; }
+
+        .card { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; overflow: hidden; }
+        .card-header { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .card-header h2, .card-header h3 { font-size: 16px; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+        .card-body { padding: 20px; }
+
+        /* Fokus Hari Ini & Pautan Khas */
+        .focus-item { padding: 10px 12px; border-radius: 6px; background: #f8fafc; border-left: 3px solid #4f46e5; margin-bottom: 8px; font-size: 12px; }
+        .focus-item:last-child { margin-bottom: 0; }
+        .focus-item.urgent { border-left-color: #dc2626; background: #fef2f2; }
+        .focus-item.holiday { border-left-color: #be123c; background: #fff1f2; }
+        .focus-time { font-weight: 700; color: #312e81; font-size: 11px; margin-bottom: 2px; }
+        .focus-item.holiday .focus-time { color: #be123c; }
+
+        .quick-links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+        .quick-link-box { display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc; text-decoration: none; color: #1e293b; font-size: 12px; font-weight: 600; transition: 0.2s; cursor: pointer; }
+        .quick-link-box:hover { border-color: #4f46e5; background: #eef2ff; }
+        .quick-link-box i { font-size: 16px; color: #4f46e5; }
+        .quick-link-box span.sub { font-size: 10px; font-weight: 400; color: #64748b; }
+
+        /* Borang & Jadual */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label { font-size: 12px; font-weight: 600; color: #475569; }
+        .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; width: 100%; }
+        
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        .search-filter-group { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; flex: 1; width: 100%; }
+        .search-box { position: relative; flex: 1; min-width: 200px; }
+        .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 13px; }
+        .search-box input { width: 100%; padding: 8px 12px 8px 35px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
+        
+        .filter-status-group { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+        .deadline-filter-bar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; padding: 8px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; }
+        .deadline-filter-label { font-size: 11.5px; font-weight: 700; color: #475569; margin-right: 4px; display: inline-flex; align-items: center; gap: 5px; }
+        .filter-chip { padding: 6px 12px; background: #f1f5f9; border: none; border-radius: 20px; font-size: 12px; font-weight: 600; color: #475569; cursor: pointer; transition: 0.2s; }
+        .filter-chip.active { background: #1e1b4b; color: #fff; }
+        .deadline-chip { padding: 5px 11px; background: #fff; border: 1px solid #cbd5e1; border-radius: 16px; font-size: 11.5px; font-weight: 600; color: #334155; cursor: pointer; transition: 0.15s; }
+        .deadline-chip:hover { background: #eef2ff; border-color: #a5b4fc; }
+        .deadline-chip.active { background: #312e81; color: #fff; border-color: #312e81; }
+
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; min-width: 750px; }
+        th { background: #f8fafc; padding: 12px; font-weight: 600; color: #475569; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
+        td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
+        
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
+        .badge-warning { background: #fef3c7; color: #d97706; }
+        .badge-success { background: #ecfdf5; color: #059669; }
+        .badge-info { background: #e0f2fe; color: #0369a1; }
+
+        @keyframes pulseAlert {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        }
+
+        .badge-deadline { padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; display: block; line-height: 1.4; text-align: left; width: 170px; }
+        .badge-overdue { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; animation: pulseAlert 2s infinite; }
+        .badge-today { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+        .badge-upcoming { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
+        .badge-completed { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+
+        .actions-cell { display: flex; gap: 6px; align-items: center; }
+        .btn-icon { background: none; border: none; cursor: pointer; font-size: 14px; padding: 4px; border-radius: 4px; }
+        .btn-wa { color: #16a34a; }
+        .btn-edit { color: #2563eb; }
+        .btn-delete { color: #dc2626; }
+
+        /* Blok Cetak Tugasan (Tersembunyi di Skrin Normal) */
+        .print-only-block { display: none; }
+        .print-category-section { margin-bottom: 16px; page-break-inside: avoid; }
+        .print-category-title { font-size: 12pt; font-weight: 700; background: #f1f5f9; border: 1px solid #000000; border-bottom: none; padding: 6px 10px; }
+
+        /* Kalendar Gaya Google Calendar */
+        .gcal-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
+        .gcal-nav-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .gcal-btn-today { padding: 5px 12px; border: 1px solid #dadce0; background: #fff; color: #3c4043; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.15s; }
+        .gcal-btn-today:hover { background: #f1f3f4; }
+        .gcal-arrow-btn { width: 28px; height: 28px; border-radius: 50%; border: none; background: transparent; color: #5f6368; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; transition: 0.15s; }
+        .gcal-arrow-btn:hover { background: #f1f3f4; color: #202124; }
+        .gcal-month-heading { font-size: 18px; font-weight: 500; color: #202124; margin-left: 4px; }
+        .gcal-view-switch { display: inline-flex; border: 1px solid #dadce0; border-radius: 4px; overflow: hidden; background: #fff; }
+        .gcal-view-btn { padding: 5px 12px; border: none; background: #fff; color: #3c4043; font-size: 12px; font-weight: 600; cursor: pointer; border-right: 1px solid #dadce0; transition: 0.15s; }
+        .gcal-view-btn:last-child { border-right: none; }
+        .gcal-view-btn:hover { background: #f8f9fa; }
+        .gcal-view-btn.active { background: #e8f0fe; color: #1967d2; }
+
+        .gcal-board { border: 1px solid #dadce0; border-radius: 8px; background: #fff; overflow: hidden; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); width: 100%; }
+        .cal-header-day { background: #fff; text-align: center; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; padding: 7px 4px; color: #70757a; border-bottom: 1px solid #dadce0; border-right: 1px solid #f1f3f4; }
+        .cal-header-day:last-child { border-right: none; }
+        .cal-day-cell { background: #fff; border-bottom: 1px solid #dadce0; border-right: 1px solid #dadce0; min-height: 86px; padding: 3px 5px; cursor: pointer; display: flex; flex-direction: column; gap: 2px; transition: background 0.15s; min-width: 0; overflow: hidden; }
+        .cal-day-cell:nth-child(7n) { border-right: none; }
+        .cal-day-cell:hover { background: #f8f9fa; }
+        .cal-day-cell.other-month { background: #fafafa; color: #9aa0a6; }
+        .cal-day-cell.other-month .cal-day-num { color: #9aa0a6; }
+        .cal-day-top { display: flex; justify-content: center; margin-bottom: 1px; flex-shrink: 0; }
+        .cal-day-num { font-size: 11px; font-weight: 500; color: #3c4043; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; }
+        .cal-day-cell.is-today .cal-day-num { background: #1a73e8; color: #fff; font-weight: 700; }
+        .cal-events-wrapper { display: flex; flex-direction: column; gap: 2px; width: 100%; min-height: 0; }
+        .cal-event-pill { font-size: 10.5px; font-weight: 500; padding: 1.5px 6px; border-radius: 4px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; box-shadow: 0 1px 1px rgba(0,0,0,0.06); }
+        .cal-event-pill:hover { filter: brightness(0.95); }
+        .gcal-more-btn { font-size: 10px; font-weight: 700; color: #3c4043; background: #f1f3f4; border: none; border-radius: 4px; padding: 1px 6px; text-align: left; cursor: pointer; }
+        .gcal-more-btn:hover { background: #e8eaed; }
+
+        /* Mod Fit 1 Skrin Penuh Apabila Tab Kalendar Aktif (Desktop) */
+        @media (min-width: 901px) {
+            body.calendar-fit-mode { height: 100vh; overflow: hidden; }
+            body.calendar-fit-mode .main-wrapper { height: 100vh; display: flex; flex-direction: column; padding: 12px 18px; overflow: hidden; }
+            body.calendar-fit-mode topbar { margin-bottom: 10px; padding: 10px 16px; flex-shrink: 0; }
+            body.calendar-fit-mode .topbar-title h2 { font-size: 18px; }
+            body.calendar-fit-mode .topbar-title p { font-size: 12px; }
+            body.calendar-fit-mode .content-container { flex: 1; min-height: 0; padding: 0; display: flex; flex-direction: column; }
+            body.calendar-fit-mode #calendar-tab.active { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+            body.calendar-fit-mode #calendar-tab .card { flex: 1; min-height: 0; margin-bottom: 0; display: flex; flex-direction: column; }
+            body.calendar-fit-mode #calendar-tab .card-header { padding: 10px 16px; flex-shrink: 0; }
+            body.calendar-fit-mode #calendar-tab .card-body { flex: 1; min-height: 0; padding: 10px 14px 12px; display: flex; flex-direction: column; overflow: hidden; }
+            body.calendar-fit-mode .gcal-toolbar { margin-bottom: 8px; flex-shrink: 0; }
+            body.calendar-fit-mode #gcal-month-view { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+            body.calendar-fit-mode #gcal-month-view > .calendar-grid:first-child { flex-shrink: 0; }
+            body.calendar-fit-mode #calendar-days-container { flex: 1; min-height: 0; grid-auto-rows: 1fr; }
+            body.calendar-fit-mode .cal-day-cell { min-height: 0; height: 100%; }
+            body.calendar-fit-mode #gcal-agenda-view { flex: 1; min-height: 0; overflow-y: auto; }
+        }
+
+        .gcal-agenda-list { display: flex; flex-direction: column; }
+        .gcal-agenda-row { display: grid; grid-template-columns: 145px 1fr; gap: 14px; padding: 14px 18px; border-bottom: 1px solid #e8eaed; align-items: start; }
+        .gcal-agenda-row:last-child { border-bottom: none; }
+        .gcal-agenda-date { font-size: 12px; font-weight: 700; color: #3c4043; }
+        .gcal-agenda-sub { font-size: 11px; color: #70757a; margin-top: 2px; }
+        .gcal-agenda-events { display: flex; flex-direction: column; gap: 6px; }
+        .gcal-agenda-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; background: #f8f9fa; cursor: pointer; border-left: 4px solid #1a73e8; transition: 0.15s; }
+        .gcal-agenda-item:hover { background: #f1f3f4; }
+
+        /* Butang Menu Mudah Alih (Hamburger Toggle) */
+        .mobile-menu-toggle { display: none; background: none; border: none; font-size: 20px; color: #1e293b; cursor: pointer; }
+
+        /* MEDIA QUERIES UNTUK PERANTI MUDAH ALIH (MOBILE RESPONSIVE) */
+        @media (max-width: 900px) {
+            aside { transform: translateX(-260px); transition: transform 0.3s ease; }
+            aside.mobile-open { transform: translateX(0); }
+            .main-wrapper { margin-left: 0; width: 100%; padding: 10px; }
+            .mobile-menu-toggle { display: inline-block; }
+            .calendar-grid { gap: 0; }
+            .cal-day-cell { min-height: 82px; padding: 3px; }
+            .cal-day-num { font-size: 11px; width: 20px; height: 20px; }
+            .cal-event-pill { font-size: 9.5px; padding: 1px 4px; }
+            .cal-header-day { font-size: 10px; padding: 8px 2px; }
+            .gcal-agenda-row { grid-template-columns: 1fr; gap: 6px; }
+        }
+
+        /* ==========================================================
+           STYLING KHUSUS CETAKAN PEMANTAUAN TUGASAN (@media print)
+           ========================================================== */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 12mm;
+            }
+
+            body.printing-tasks {
+                display: block !important;
+                background: #ffffff !important;
+                color: #000000 !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            body.printing-tasks aside,
+            body.printing-tasks topbar,
+            body.printing-tasks #desk-bos-tab,
+            body.printing-tasks #documents-tab,
+            body.printing-tasks #calendar-tab,
+            body.printing-tasks #tasks-tab .stats-grid,
+            body.printing-tasks #task-action-container,
+            body.printing-tasks #task-form-card,
+            body.printing-tasks #tasks-tab .toolbar,
+            body.printing-tasks #tasks-tab .deadline-filter-bar,
+            body.printing-tasks #tasks-tab .card-header,
+            body.printing-tasks #tasks-tab .table-responsive,
+            body.printing-tasks .no-print-col {
+                display: none !important;
+            }
+
+            body.printing-tasks .main-wrapper {
+                margin-left: 0 !important;
+                width: 100% !important;
+                padding: 0 !important;
+            }
+
+            body.printing-tasks .content-container {
+                padding: 0 !important;
+            }
+
+            body.printing-tasks #tasks-tab {
+                display: block !important;
+            }
+
+            body.printing-tasks #tasks-tab .card {
+                box-shadow: none !important;
+                border: 1.5px solid #000000 !important;
+                margin-bottom: 0 !important;
+            }
+
+            body.printing-tasks #tasks-tab .card-body {
+                padding: 14px !important;
+            }
+
+            body.printing-tasks .print-only-block {
+                display: block !important;
+            }
+
+            body.printing-tasks .print-tasks-header {
+                border-bottom: 2px solid #000000;
+                padding-bottom: 10px;
+                margin-bottom: 14px;
+            }
+
+            body.printing-tasks .print-tasks-header h2 {
+                font-size: 16pt;
+                color: #000000;
+                margin-bottom: 3px;
+            }
+
+            body.printing-tasks .print-tasks-meta {
+                font-size: 11pt;
+                color: #000000;
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-top: 6px;
+            }
+
+            body.printing-tasks .print-category-section {
+                margin-bottom: 14px;
+                page-break-before: auto;
+                page-break-inside: avoid;
+            }
+
+            body.printing-tasks .print-category-title {
+                background: #f1f5f9 !important;
+                color: #000000 !important;
+                border: 1px solid #000000 !important;
+                border-bottom: none !important;
+                font-size: 11.5pt;
+                padding: 6px 10px;
+            }
+
+            body.printing-tasks table {
+                min-width: 0 !important;
+                width: 100% !important;
+                font-size: 10.5pt;
+            }
+
+            body.printing-tasks th,
+            body.printing-tasks td {
+                border: 1px solid #000000 !important;
+                color: #000000 !important;
+                background: #ffffff !important;
+                padding: 7px !important;
+            }
+
+            body.printing-tasks .badge-deadline {
+                width: auto !important;
+                animation: none !important;
+                border: 1px solid #000000 !important;
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+
+            body.printing-tasks .print-tasks-footer {
+                margin-top: 14px;
+                padding-top: 10px;
+                border-top: 1.5px solid #000000;
+                display: flex !important;
+                justify-content: space-between;
+                font-size: 11pt;
+                color: #000000;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside id="app-sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Pejabat TKA(Operasi)</span>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-category">Utama</div>
+            <button class="menu-item active" onclick="switchTab('desk-bos', this); closeMobileMenu();" title="Desk Utama Bos">
+                <i class="fa-solid fa-gauge-high"></i>
+                <span>Desk Utama Bos</span>
+            </button>
+            <div class="menu-category">Modul</div>
+            <button class="menu-item" onclick="switchTab('documents', this); closeMobileMenu();" title="Document Tracker">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>Dokumen</span>
+            </button>
+            <button class="menu-item" onclick="switchTab('tasks', this); closeMobileMenu();" title="Pemantauan Tugasan">
+                <i class="fa-solid fa-list-check"></i>
+                <span>Tugasan</span>
+            </button>
+            <button class="menu-item" onclick="switchTab('calendar', this); closeMobileMenu();" title="Kalendar Mesyuarat">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span>Kalendar</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+        <topbar>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
+                <div class="topbar-title">
+                    <h2>Portal PA TKA(O)</h2>
+                    <p>Kementerian Pertahanan Malaysia</p>
+                </div>
+            </div>
+            <div class="topbar-actions">
+                <a href="https://wa.me/60138449145?text=Assalamualaikum%20PA%20TKA(O)%2C%20mohon%20pertanyaan%20berkaitan%20urusan%20pejabat." target="_blank" class="btn btn-success"><i class="fa-brands fa-whatsapp"></i> Hubungi PA</a>
+                <button class="btn btn-secondary" onclick="refreshData()"><i class="fa-solid fa-rotate"></i> Refresh</button>
+                <button class="btn btn-primary" onclick="requestAdminAccess()"><i class="fa-solid fa-key"></i> <span id="auth-status-text">Token</span></button>
+            </div>
+        </topbar>
+
+        <!-- Ruang Paparan Kandungan Modul -->
+        <div class="content-container" id="main-content-area">
+
+            <!-- TAB 0: DESK UTAMA BOS -->
+            <div id="desk-bos-tab" class="tab-content active">
+                <div style="background: #eff6ff; border-left: 4px solid #1e40af; padding: 10px 15px; margin-bottom: 16px; border-radius: 6px; display: flex; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    <div style="width: 100%; overflow: hidden;">
+                        <marquee behavior="scroll" direction="left" scrollamount="4" onmouseover="this.stop();" onmouseout="this.start();" style="font-size: 13px; color: #1e293b; font-weight: 500;">
+                            📢 &nbsp; Sebarang pertanyaan lanjut, sila hubungi PA melalui WhatsApp. &nbsp;&nbsp;&bull;&nbsp;&nbsp; 
+                            <span id="live-ticker-tasks">Memuatkan tugasan hari ini...</span>
+                        </marquee>
+                    </div>
+                </div>
+
+                <!-- DESK UTAMA: STATUS SEMASA TKA(OPERASI) -->
+                <div class="exec-status-card">
+                    <div>
+                        <span id="exec-status-badge" class="status-pill status-office">
+                            <i class="fa-solid fa-circle-check"></i> <span id="exec-status-text">Di Pejabat</span>
+                        </span>
+                        <div style="font-size: 15px; font-weight: 700;">Status Semasa TKA(Operasi)</div>
+                        <div class="exec-meta">
+                            <span><i class="fa-solid fa-location-dot"></i> Lokasi: <strong id="exec-location">Pejabat TKA(Operasi)</strong></span>
+                            <span><i class="fa-solid fa-clock"></i> Anggaran Selesai: <strong id="exec-eta">5:00 PM</strong></span>
+                            <span><i class="fa-solid fa-note-sticky"></i> Catatan: <span id="exec-note">Sedia untuk semakan fail &amp; perbincangan ringkas</span></span>
+                        </div>
+                    </div>
+                    <div id="exec-status-controls" class="status-switcher hidden-section">
+                        <button type="button" onclick="quickSetExecStatus('Di Pejabat')"><i class="fa-solid fa-building"></i> Di Pejabat</button>
+                        <button type="button" onclick="quickSetExecStatus('Bermesyuarat')"><i class="fa-solid fa-users"></i> Mesyuarat</button>
+                        <button type="button" onclick="quickSetExecStatus('Tugas Luar')"><i class="fa-solid fa-car"></i> Tugas Luar</button>
+                        <button type="button" onclick="openExecStatusModal()"><i class="fa-solid fa-pen"></i> Kemas Kini Butiran</button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-info"><h3>Dokumen Pending</h3><div class="number" id="desk-doc-pending">0</div></div><div class="stat-icon bg-yellow-light"><i class="fa-solid fa-file-lines"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Tugasan Aktif</h3><div class="number" id="desk-task-active">0</div></div><div class="stat-icon bg-blue-light"><i class="fa-solid fa-list-check"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Jadual Hari Ini</h3><div class="number" id="desk-today-events">0</div></div><div class="stat-icon bg-purple-light"><i class="fa-solid fa-calendar-day"></i></div></div>
+                </div>
+
+                <!-- FOKUS HARI INI & PAUTAN KHAS -->
+                <div class="grid-2">
+                    <div class="card" style="margin-bottom: 0;">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-bullseye" style="color:#4f46e5;"></i> Fokus Hari Ini (<span id="desk-today-date-label">-</span>)</h3>
+                            <span class="badge badge-info">Ringkasan Pantas</span>
+                        </div>
+                        <div class="card-body" id="desk-focus-list">
+                            <div class="focus-item">Memuatkan jadual &amp; tugasan hari ini...</div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-bottom: 0;">
+                        <div class="card-header" style="padding: 12px 16px;">
+                            <h3 style="font-size: 14px;"><i class="fa-solid fa-link" style="color:#0d9488;"></i> Pautan Khas</h3>
+                            <span style="font-size:11px; color:#64748b;">Akses Pantas Modul</span>
+                        </div>
+                        <div class="card-body" style="padding: 14px 16px;">
+                            <div class="quick-links-grid">
+                                <a href="#documents" onclick="switchTab('documents', document.querySelectorAll('.menu-item')[1]); return false;" class="quick-link-box">
+                                    <i class="fa-solid fa-folder-open"></i>
+                                    <span>Dokumen</span>
+                                    <span class="sub">Status pergerakan fail &amp; surat</span>
+                                </a>
+                                <a href="#tasks" onclick="switchTab('tasks', document.querySelectorAll('.menu-item')[2]); return false;" class="quick-link-box">
+                                    <i class="fa-solid fa-list-check"></i>
+                                    <span>Tugasan</span>
+                                    <span class="sub">Senarai pemantauan perkara</span>
+                                </a>
+                                <a href="#calendar" onclick="switchTab('calendar', document.querySelectorAll('.menu-item')[3]); return false;" class="quick-link-box">
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                    <span>Kalendar</span>
+                                    <span class="sub">Jadual mesyuarat &amp; acara</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TAB 1: DOCUMENT TRACKER -->
+            <div id="documents-tab" class="tab-content">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-info"><h3>Jumlah</h3><div class="number" id="doc-total">0</div></div><div class="stat-icon bg-blue-light"><i class="fa-solid fa-folder"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Pending</h3><div class="number" id="doc-pending">0</div></div><div class="stat-icon bg-yellow-light"><i class="fa-solid fa-clock"></i></div></div>
+                    <div class="stat-card" id="doc-completed-card"><div class="stat-info"><h3>Selesai</h3><div class="number" id="doc-completed">0</div></div><div class="stat-icon bg-green-light"><i class="fa-solid fa-circle-check"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Hari Ini</h3><div class="number" id="doc-today">0</div></div><div class="stat-icon bg-purple-light"><i class="fa-solid fa-calendar-day"></i></div></div>
+                </div>
+
+                <div id="doc-action-container" style="margin-bottom: 20px; display: none; justify-content: flex-end;">
+                    <button class="btn btn-success" onclick="toggleDocForm()"><i class="fa-solid fa-plus" id="doc-toggle-icon"></i> <span id="doc-toggle-btn-text">Rekod Dokumen Baru</span></button>
+                </div>
+
+                <div class="card hidden-section" id="document-form-card">
+                    <div class="card-header"><h2 id="doc-form-card-title"><i class="fa-solid fa-square-plus"></i> Rekod Dokumen Masuk Baru</h2></div>
+                    <div class="card-body">
+                        <form id="document-form" onsubmit="saveDocument(event)">
+                            <input type="hidden" id="doc-id">
+                            <div class="form-grid">
+                                <div class="form-group"><label>No. Rujukan Dokumen / Surat</label><input type="text" id="doc-ref" placeholder="Cth: MOD.500-2/1 (45)" required></div>
+                                <div class="form-group">
+                                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                                        <label>Nama Penghantar / Pegawai</label>
+                                        <button type="button" class="btn btn-secondary" style="padding: 2px 6px; font-size: 10px;" onclick="openManagerModal()"><i class="fa-solid fa-gear"></i> Urus Pegawai</button>
+                                    </div>
+                                    <select id="doc-sender" required><option value="">-- Pilih Pegawai Penghantar --</option></select>
+                                </div>
+                                <div class="form-group full-width"><label>Tajuk Dokumen</label><input type="text" id="doc-title" placeholder="Cth: Kelulusan Peruntukan..." required></div>
+                                <div class="form-group">
+                                    <label>Tujuan Dokumen Masuk</label>
+                                    <select id="doc-purpose" required>
+                                        <option value="">-- Pilih Tujuan --</option>
+                                        <option value="Untuk tandatangan">Untuk tandatangan</option>
+                                        <option value="Untuk semakan">Untuk semakan</option>
+                                        <option value="Untuk kelulusan">Untuk kelulusan</option>
+                                        <option value="Makluman">Makluman</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Status Dokumen</label>
+                                    <select id="doc-status" required>
+                                        <option value="Dalam Semakan">Dalam Semakan (Pending)</option>
+                                        <option value="Selesai">Selesai</option>
+                                    </select>
+                                </div>
+                                <div class="form-group full-width"><label>Muat Naik Bukti Gambar (PNG / JPG)</label><input type="file" id="doc-proof-file" accept="image/png, image/jpeg"></div>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan Dokumen</button>
+                                <button type="button" class="btn btn-secondary" onclick="toggleDocForm()">Tutup</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-table-list"></i> Status Pergerakan Dokumen</h2>
+                        <span id="update-time-docs" style="font-size: 11px; color: #64748b; font-weight: 500;">Kemas kini: -</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="toolbar">
+                            <div class="search-filter-group">
+                                <div class="search-box">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" id="doc-search" placeholder="Cari tajuk atau no rujukan..." oninput="renderDocuments()">
+                                </div>
+                                <input type="month" id="doc-month-filter" onchange="renderDocuments()" style="max-width: 170px; padding: 7px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                            </div>
+                            <div class="filter-status-group" id="doc-filter-chips">
+                                <button class="filter-chip active" onclick="setDocFilter('Aktif', this)">Semua (Aktif)</button>
+                                <button class="filter-chip" onclick="setDocFilter('Dalam Semakan', this)">Dalam Semakan</button>
+                                <button class="filter-chip admin-only-chip" onclick="setDocFilter('Selesai', this)">Selesai</button>
+                                <button class="filter-chip admin-only-chip" onclick="setDocFilter('Semua', this)">Semua</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr><th>TARIKH DITERIMA</th><th>NO. RUJUKAN &amp; TAJUK</th><th>PENGHANTAR</th><th>TUJUAN</th><th>TARIKH DIPULANGKAN</th><th>STATUS</th><th>BUKTI</th><th>TINDAKAN</th></tr>
+                                </thead>
+                                <tbody id="document-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: TASK TRACKER -->
+            <div id="tasks-tab" class="tab-content">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-info"><h3>Jumlah</h3><div class="number" id="task-total">0</div></div><div class="stat-icon bg-blue-light"><i class="fa-solid fa-list-check"></i></div></div>
+                    <div class="stat-card" id="task-done-card"><div class="stat-info"><h3>Selesai</h3><div class="number" id="task-done">0</div></div><div class="stat-icon bg-green-light"><i class="fa-solid fa-check"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Proses</h3><div class="number" id="task-progress">0</div></div><div class="stat-icon bg-yellow-light"><i class="fa-solid fa-spinner"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Pending</h3><div class="number" id="task-pending">0</div></div><div class="stat-icon bg-purple-light"><i class="fa-solid fa-triangle-exclamation"></i></div></div>
+                </div>
+
+                <div id="task-action-container" style="margin-bottom: 20px; display: none; justify-content: flex-end;">
+                    <button class="btn btn-success" onclick="toggleTaskForm()"><i class="fa-solid fa-plus" id="toggle-icon"></i> <span id="toggle-btn-text">Tambah Task Baru</span></button>
+                </div>
+
+                <div class="card hidden-section" id="task-form-card">
+                    <div class="card-header"><h2 id="form-card-title"><i class="fa-solid fa-square-plus"></i> Tambah Tugasan Baru</h2></div>
+                    <div class="card-body">
+                        <form id="task-form" onsubmit="saveTask(event)">
+                            <input type="hidden" id="task-id">
+                            <div class="form-grid">
+                                <div class="form-group"><label>Pegawai / PIC</label><input type="text" id="task-pic" placeholder="Cth: Puan Josephine" required></div>
+                                <div class="form-group"><label>Tarikh Akhir (Deadline)</label><input type="date" id="task-deadline"></div>
+                                <div class="form-group full-width"><label>Task / Perkara</label><textarea id="task-desc" rows="2" placeholder="Nyatakan tugasan..." required></textarea></div>
+                                <div class="form-group"><label>Catatan Minit</label><input type="text" id="task-notes" placeholder="Cth: Sila bincang segera..."></div>
+                                <div class="form-group">
+                                    <label>Priority</label>
+                                    <select id="task-priority"><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan Tugasan</button>
+                                <button type="button" class="btn btn-secondary" onclick="toggleTaskForm()">Tutup</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-table-list"></i> Senarai Pemantauan Perkara</h2>
+                        <span id="update-time-tasks" style="font-size: 11px; color: #64748b; font-weight: 500;">Kemas kini: -</span>
+                    </div>
+                    <div class="card-body">
+                        <!-- Pengepala Khusus Cetakan Tugasan -->
+                        <div id="print-tasks-header" class="print-only-block print-tasks-header">
+                            <h2>LAPORAN PEMANTAUAN TUGASAN — PEJABAT TKA(OPERASI)</h2>
+                            <div style="font-size: 11pt;">Sektor Operasi, Bahagian Akaun, Kementerian Pertahanan Malaysia</div>
+                            <div class="print-tasks-meta">
+                                <span><strong>Tarikh Cetakan:</strong> <span id="print-tasks-timestamp">-</span></span>
+                                <span><strong>Tapisan:</strong> <span id="print-tasks-filter-label">Semua</span></span>
+                                <span><strong>Jumlah Dipaparkan:</strong> <span id="print-tasks-count">0</span></span>
+                            </div>
+                        </div>
+
+                        <div class="toolbar">
+                            <div class="search-box" style="max-width: 320px;">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="task-search" placeholder="Cari tugasan..." oninput="renderTasks()">
+                            </div>
+                            <div class="filter-status-group" id="task-filter-chips">
+                                <button class="filter-chip active" onclick="setTaskFilter('Semua', this)">Semua (Aktif)</button>
+                                <button class="filter-chip" onclick="setTaskFilter('In Progress', this)">In Progress</button>
+                                <button class="filter-chip" onclick="setTaskFilter('Pending', this)">Pending</button>
+                                <button class="filter-chip admin-only-chip" onclick="setTaskFilter('Completed', this)">Completed</button>
+                                <div id="task-print-controls" class="print-controls-group hidden-section">
+                                    <button type="button" class="btn btn-print" onclick="printTasksReport()"><i class="fa-solid fa-print"></i> Cetak Laporan</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tapisan Kategori Tempoh Tarikh Akhir Tugasan -->
+                        <div class="deadline-filter-bar" id="task-deadline-chips" role="group" aria-label="Kategori Tarikh Akhir Tugasan">
+                            <span class="deadline-filter-label"><i class="fa-solid fa-clock-rotate-left"></i> Kategori:</span>
+                            <button type="button" class="deadline-chip active" onclick="setTaskDeadlineCategory('Semua', this)">Semua (<span id="count-cat-all">0</span>)</button>
+                            <button type="button" class="deadline-chip" onclick="setTaskDeadlineCategory('Overdue', this)">Overdue (<span id="count-cat-overdue">0</span>)</button>
+                            <button type="button" class="deadline-chip" onclick="setTaskDeadlineCategory('Due Today', this)">Due Today (<span id="count-cat-today">0</span>)</button>
+                            <button type="button" class="deadline-chip" onclick="setTaskDeadlineCategory('Due This Week', this)">Due This Week (<span id="count-cat-this-week">0</span>)</button>
+                            <button type="button" class="deadline-chip" onclick="setTaskDeadlineCategory('Due Next Week', this)">Due Next Week (<span id="count-cat-next-week">0</span>)</button>
+                            <button type="button" class="deadline-chip" onclick="setTaskDeadlineCategory('No Deadline', this)">No Deadline (<span id="count-cat-no-deadline">0</span>)</button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table>
+                                <colgroup>
+                                    <col style="width: 5%;">
+                                    <col style="width: 27%;">
+                                    <col style="width: 15%;">
+                                    <col style="width: 20%;">
+                                    <col style="width: 13%;">
+                                    <col style="width: 10%;">
+                                    <col style="width: 10%;">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>DONE</th>
+                                        <th>TASK / PERKARA</th>
+                                        <th>PEGAWAI</th>
+                                        <th>CATATAN</th>
+                                        <th>DEADLINE</th>
+                                        <th>STATUS</th>
+                                        <th class="no-print-col">TINDAKAN</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="task-table-body"></tbody>
+                            </table>
+                        </div>
+
+                        <!-- Paparan Berasingan Mengikut Kategori Khusus Untuk Cetakan -->
+                        <div id="print-grouped-tasks-container" class="print-only-block"></div>
+
+                        <!-- Footer Khusus Cetakan Tugasan -->
+                        <div id="print-tasks-footer" class="print-only-block print-tasks-footer">
+                            <div><strong>Disediakan oleh:</strong> PA TKA(O)</div>
+                            <div>Portal PA TKA(O) — Kementerian Pertahanan Malaysia</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: KALENDAR MESYUARAT -->
+            <div id="calendar-tab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-calendar-days" style="color:#1a73e8;"></i> Kalendar Mesyuarat TKA(Operasi)</h2>
+                        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                            <button type="button" class="btn btn-primary" onclick="openMeetingModal()"><i class="fa-solid fa-plus"></i> Tambah Jadual</button>
+                            <span id="update-time-calendar" style="font-size: 11px; color: #64748b; font-weight: 500;">Kemas kini: -</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="gcal-toolbar">
+                            <div class="gcal-nav-left">
+                                <button type="button" class="gcal-btn-today" onclick="goToTodayCalendar()">Hari Ini</button>
+                                <button type="button" class="gcal-arrow-btn" onclick="changeMonth(-1)" title="Bulan Sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button type="button" class="gcal-arrow-btn" onclick="changeMonth(1)" title="Bulan Hadapan"><i class="fa-solid fa-chevron-right"></i></button>
+                                <h3 id="calendar-month-year" class="gcal-month-heading">November 2026</h3>
+                            </div>
+                            <div class="gcal-view-switch" role="group" aria-label="Pilihan Paparan Kalendar">
+                                <button type="button" id="btn-cal-view-month" class="gcal-view-btn active" onclick="setCalendarView('month')">Bulan</button>
+                                <button type="button" id="btn-cal-view-agenda" class="gcal-view-btn" onclick="setCalendarView('agenda')">Jadual</button>
+                            </div>
+                        </div>
+
+                        <div id="gcal-month-view" class="gcal-board">
+                            <div class="calendar-grid">
+                                <div class="cal-header-day">Isn</div>
+                                <div class="cal-header-day">Sel</div>
+                                <div class="cal-header-day">Rab</div>
+                                <div class="cal-header-day">Kha</div>
+                                <div class="cal-header-day">Jum</div>
+                                <div class="cal-header-day">Sab</div>
+                                <div class="cal-header-day">Ahd</div>
+                            </div>
+                            <div class="calendar-grid" id="calendar-days-container"></div>
+                        </div>
+
+                        <div id="gcal-agenda-view" class="gcal-board hidden-section">
+                            <div id="gcal-agenda-container" class="gcal-agenda-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal Kemas Kini Status Semasa TKA(Operasi) -->
+    <div id="exec-status-modal" class="hidden-section" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1150; padding: 15px;">
+        <div class="card" style="width: 480px; max-width: 100%; margin: 0;">
+            <div class="card-header">
+                <h2><i class="fa-solid fa-user-tie"></i> Kemas Kini Status Semasa TKA(O)</h2>
+                <button onclick="closeExecStatusModal()" style="background:none; border:none; font-size:16px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="card-body">
+                <form onsubmit="saveExecStatusForm(event)">
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Status Keberadaan</label>
+                        <select id="input-exec-status" required>
+                            <option value="Di Pejabat">Di Pejabat</option>
+                            <option value="Bermesyuarat">Bermesyuarat</option>
+                            <option value="Tugas Luar">Tugas Luar</option>
+                            <option value="Cuti / BDR">Cuti / BDR</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Lokasi</label>
+                        <input type="text" id="input-exec-location" placeholder="Cth: Pejabat TKA(Operasi) / Bilik Mesyuarat Utama" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Anggaran Selesai / Kembali</label>
+                        <input type="text" id="input-exec-eta" placeholder="Cth: 2:30 PM / 5:00 PM">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label>Catatan Ringkas</label>
+                        <input type="text" id="input-exec-note" placeholder="Cth: Sedia untuk semakan fail & perbincangan ringkas">
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button type="button" class="btn btn-secondary" onclick="closeExecStatusModal()">Batal</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan Status</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Urus Pegawai -->
+    <div id="manager-modal" class="hidden-section" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1100; padding: 15px;">
+        <div class="card" style="width: 500px; max-width: 100%; margin: 0;">
+            <div class="card-header">
+                <h2><i class="fa-solid fa-users-gear"></i> Pengurusan Pegawai</h2>
+                <button onclick="closeManagerModal()" style="background:none; border:none; font-size:16px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="card-body">
+                <div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
+                    <input type="hidden" id="edit-sender-index" value="-1">
+                    <input type="text" id="manager-name-input" placeholder="Nama Pegawai..." style="flex:2; min-width: 150px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                    <input type="text" id="manager-phone-input" placeholder="No Tel (6012...)" style="flex:1; min-width: 120px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                    <button class="btn btn-primary" onclick="saveSenderData()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+                </div>
+                <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
+                    <table>
+                        <thead><tr style="background: #f8fafc;"><th style="padding: 8px;">NAMA</th><th style="padding: 8px;">NO TEL</th><th style="padding: 8px; text-align: right;">TINDAKAN</th></tr></thead>
+                        <tbody id="manager-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah / Edit Mesyuarat -->
+    <div id="meeting-modal" class="hidden-section" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 15px;">
+        <div class="card" style="width: 550px; max-width: 100%; margin: 0; max-height: 90vh; overflow-y: auto;">
+            <div class="card-header">
+                <h2 id="meeting-modal-title"><i class="fa-solid fa-calendar-plus"></i> Tambah Jadual</h2>
+                <button onclick="closeMeetingModal()" style="background:none; border:none; font-size:16px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="card-body">
+                <form id="meeting-form" onsubmit="saveMeeting(event)">
+                    <input type="hidden" id="meet-id">
+                    <input type="hidden" id="meet-old-title">
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Tajuk Mesyuarat / Kursus / MC</label>
+                        <input type="text" id="meet-title" placeholder="Cth: MC (5 Hari) atau Kursus Aset" required>
+                    </div>
+                    <div class="form-grid" style="margin-bottom: 0;">
+                        <div class="form-group"><label>Masa Mula</label><input type="datetime-local" id="meet-start" required></div>
+                        <div class="form-group"><label>Masa Tamat</label><input type="datetime-local" id="meet-end" required></div>
+                    </div>
+                    <div class="form-group" style="margin-top: 12px; margin-bottom: 12px;">
+                        <label>Tempat</label>
+                        <input type="text" id="meet-location" placeholder="Cth: Bilik Kenanga, Aras 5 / Klinik">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Catatan / Minit Ringkas</label>
+                        <textarea id="meet-notes" rows="2" placeholder="Catatan..."></textarea>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>E-mel Pegawai / Penerima</label>
+                        <input type="email" id="meet-email" placeholder="pegawai@mod.gov.my">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label>Warna Label Acara (Auto ikut tajuk)</label>
+                        <select id="meet-color">
+                            <option value="#0284c7">Biru (Mesyuarat / Bincang)</option>
+                            <option value="#0d9488">Hijau (Kursus / Bengkel)</option>
+                            <option value="#d97706">Oren (TBC)</option>
+                            <option value="#4f46e5">Ungu (MC / Lain-lain)</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: space-between; flex-wrap: wrap;">
+                        <div style="display: flex; gap: 10px;">
+                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+                            <button type="button" class="btn btn-secondary" onclick="closeMeetingModal()">Batal</button>
+                        </div>
+                        <button type="button" id="btn-delete-meeting" class="btn btn-danger hidden-section" onclick="deleteMeeting()"><i class="fa-solid fa-trash"></i> Padam</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Paparan Maklumat Mesyuarat / Cuti Umum -->
+    <div id="view-meeting-modal" class="hidden-section" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1050; padding: 15px;">
+        <div class="card" style="width: 500px; max-width: 100%; margin: 0;">
+            <div class="card-header">
+                <h2><i class="fa-solid fa-circle-info" style="color: #4f46e5;"></i> Maklumat Lanjut</h2>
+                <button onclick="closeViewMeetingModal()" style="background:none; border:none; font-size:16px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="card-body" style="display: flex; flex-direction: column; gap: 14px; font-size: 13px;">
+                <div>
+                    <span style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Tajuk Acara</span>
+                    <div id="view-meet-title" style="font-size: 15px; font-weight: 700; color: #1e1b4b; margin-top: 2px;">-</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <span style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Masa Mula</span>
+                        <div id="view-meet-start" style="font-weight: 600; margin-top: 2px;">-</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Masa Tamat</span>
+                        <div id="view-meet-end" style="font-weight: 600; margin-top: 2px;">-</div>
+                    </div>
+                </div>
+                <div>
+                    <span style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Tempat / Liputan</span>
+                    <div id="view-meet-location" style="font-weight: 600; margin-top: 2px;">-</div>
+                </div>
+                <div>
+                    <span style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Catatan / Minit Ringkas</span>
+                    <div id="view-meet-notes" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-top: 2px; color: #334155;">-</div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 10px;">
+                    <button type="button" id="btn-edit-from-view" class="btn btn-primary hidden-section" onclick="editMeetingFromView()"><i class="fa-solid fa-pen"></i> Sunting</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeViewMeetingModal()" style="margin-left: auto;">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZK--0olBngiu3UmrbA-MZMSP_zSs7nVWz5NTbYfkUopuPBD8qd03vwW5JWlDukg0sSg/exec";
+    
+    let isAdminUnlocked = false;
+    let selectedMeetingIdForEdit = null;
+    let isSyncingCloud = false;
+    let calendarViewMode = 'month';
+    let currentTaskDeadlineCategory = 'Semua';
+
+    // Cuti Umum Malaysia & Sarawak (2026 & 2027)
+    const MALAYSIA_SARAWAK_HOLIDAYS = [
+        // 2026
+        { id: "hol-2026-01-01", date: "2026-01-01", title: "Tahun Baru", location: "Semua Negeri (kecuali Johor, Kedah, Kelantan, Perlis & Terengganu)", notes: "Cuti Umum Persekutuan / Negeri", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-02-01", date: "2026-02-01", title: "Hari Wilayah Persekutuan", location: "WP Kuala Lumpur, Labuan & Putrajaya", notes: "Cuti Umum Wilayah Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-02-17", date: "2026-02-17", title: "Tahun Baru Cina", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan (Hari Pertama)", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-02-18", date: "2026-02-18", title: "Tahun Baru Cina (Hari Kedua)", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan (Hari Kedua)", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-03-21", date: "2026-03-21", title: "Hari Raya Aidilfitri", location: "Seluruh Malaysia", notes: "Tertakluk pada pengisytiharan rasmi", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-03-22", date: "2026-03-22", title: "Hari Raya Aidilfitri (Hari Kedua)", location: "Seluruh Malaysia", notes: "Tertakluk pada pengisytiharan rasmi", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-04-03", date: "2026-04-03", title: "Good Friday", location: "Sarawak & Sabah", notes: "Cuti Umum Negeri Sarawak", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-05-01", date: "2026-05-01", title: "Hari Pekerja", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-05-27", date: "2026-05-27", title: "Hari Raya Aidiladha", location: "Seluruh Malaysia", notes: "Tertakluk pada pengisytiharan rasmi", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-05-31", date: "2026-05-31", title: "Hari Wesak", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-06-01-a", date: "2026-06-01", title: "Hari Keputeraan Rasmi YDPA", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-06-01-b", date: "2026-06-01", title: "Perayaan Hari Gawai Dayak", location: "Sarawak", notes: "Cuti Umum Negeri Sarawak (Hari Pertama)", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-06-02", date: "2026-06-02", title: "Perayaan Hari Gawai Dayak (Hari Kedua)", location: "Sarawak", notes: "Cuti Umum Negeri Sarawak (Hari Kedua)", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-06-17", date: "2026-06-17", title: "Awal Muharram (Maal Hijrah)", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-07-22", date: "2026-07-22", title: "Hari Kemerdekaan Sarawak", location: "Sarawak", notes: "Cuti Umum Negeri Sarawak", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-08-25", date: "2026-08-25", title: "Maulidur Rasul", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-08-31", date: "2026-08-31", title: "Hari Kebangsaan", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-09-16", date: "2026-09-16", title: "Hari Malaysia", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-10-10", date: "2026-10-10", title: "Hari Jadi TYT Yang di-Pertua Negeri Sarawak", location: "Sarawak", notes: "Cuti Umum Negeri Sarawak", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-11-08", date: "2026-11-08", title: "Hari Deepavali", location: "Semua Negeri (kecuali Sarawak)", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2026-12-25", date: "2026-12-25", title: "Hari Krismas", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+
+        // 2027
+        { id: "hol-2027-01-01", date: "2027-01-01", title: "Tahun Baru", location: "Semua Negeri (kecuali Johor, Kedah, Kelantan, Perlis & Terengganu)", notes: "Cuti Umum Persekutuan / Negeri", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-02-07", date: "2027-02-07", title: "Tahun Baru Cina", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan (Hari Pertama)", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-02-08", date: "2027-02-08", title: "Tahun Baru Cina (Hari Kedua)", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan (Hari Kedua)", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-03-10", date: "2027-03-10", title: "Hari Raya Aidilfitri", location: "Seluruh Malaysia", notes: "Tertakluk pada pengisytiharan rasmi", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-03-11", date: "2027-03-11", title: "Hari Raya Aidilfitri (Hari Kedua)", location: "Seluruh Malaysia", notes: "Tertakluk pada pengisytiharan rasmi", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-03-26", date: "2027-03-26", title: "Good Friday", location: "Sarawak & Sabah", notes: "Cuti Umum Negeri Sarawak", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-05-01", date: "2027-05-01", title: "Hari Pekerja", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-05-17", date: "2027-05-17", title: "Hari Raya Aidiladha", location: "Seluruh Malaysia", notes: "Tertakluk pada pengisytiharan rasmi", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-05-20", date: "2027-05-20", title: "Hari Wesak", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-06-01-s", date: "2027-06-01", title: "Perayaan Hari Gawai Dayak", location: "Sarawak", notes: "Cuti Umum Negeri Sarawak (Hari Pertama)", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-06-02-s", date: "2027-06-02", title: "Perayaan Hari Gawai Dayak (Hari Kedua)", location: "Sarawak", notes: "Cuti Umum Negeri Sarawak (Hari Kedua)", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-06-06", date: "2027-06-06", title: "Awal Muharram (Maal Hijrah)", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-06-07", date: "2027-06-07", title: "Hari Keputeraan Rasmi YDPA", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-07-22", date: "2027-07-22", title: "Hari Kemerdekaan Sarawak", location: "Sarawak", notes: "Cuti Umum Negeri Sarawak", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-08-15", date: "2027-08-15", title: "Maulidur Rasul", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-08-31", date: "2027-08-31", title: "Hari Kebangsaan", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-09-16", date: "2027-09-16", title: "Hari Malaysia", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-10-09", date: "2027-10-09", title: "Hari Jadi TYT Yang di-Pertua Negeri Sarawak", location: "Sarawak", notes: "Cuti Umum Negeri Sarawak", isHoliday: true, color: "#be123c" },
+        { id: "hol-2027-12-25", date: "2027-12-25", title: "Hari Krismas", location: "Seluruh Malaysia", notes: "Cuti Umum Persekutuan", isHoliday: true, color: "#be123c" }
+    ];
+
+    function getAllCalendarItems() {
+        const existingTitles = new Set(
+            meetings.map(m => String(m.title || '').replace(/^🇲🇾\s*/, '').trim().toLowerCase() + '|' + String(m.start || '').split('T')[0])
+        );
+        const holidayItems = MALAYSIA_SARAWAK_HOLIDAYS
+            .filter(h => !existingTitles.has(h.title.trim().toLowerCase() + '|' + h.date))
+            .map(h => ({
+                id: h.id,
+                title: `🇲🇾 ${h.title}`,
+                rawTitle: h.title,
+                start: `${h.date}T00:00`,
+                end: `${h.date}T23:59`,
+                location: h.location,
+                notes: h.notes,
+                color: h.color,
+                isHoliday: true
+            }));
+        return [...meetings, ...holidayItems];
+    }
+
+    function isDocCompleted(d) {
+        return d && d.status === 'Selesai';
+    }
+
+    function isTaskCompleted(t) {
+        return t && (t.status === 'Completed' || Boolean(t.done));
+    }
+
+    function getVisibleDocuments() {
+        if (isAdminUnlocked) return documents;
+        return documents.filter(d => !isDocCompleted(d));
+    }
+
+    function getVisibleTasks() {
+        if (isAdminUnlocked) return tasks;
+        return tasks.filter(t => !isTaskCompleted(t));
+    }
+
+    let execStatus = JSON.parse(localStorage.getItem('pa_exec_status')) || {
+        status: 'Di Pejabat',
+        location: 'Pejabat TKA(Operasi)',
+        eta: '5:00 PM',
+        note: 'Sedia untuk semakan fail & perbincangan ringkas'
+    };
+
+    function toggleMobileMenu() {
+        const sidebar = document.getElementById('app-sidebar');
+        if(sidebar) sidebar.classList.toggle('mobile-open');
+    }
+
+    function closeMobileMenu() {
+        const sidebar = document.getElementById('app-sidebar');
+        if(sidebar) sidebar.classList.remove('mobile-open');
+    }
+
+    function applyAdminVisibilityRules() {
+        const docCompletedCard = document.getElementById('doc-completed-card');
+        const taskDoneCard = document.getElementById('task-done-card');
+        if (docCompletedCard) docCompletedCard.style.display = isAdminUnlocked ? 'flex' : 'none';
+        if (taskDoneCard) taskDoneCard.style.display = isAdminUnlocked ? 'flex' : 'none';
+
+        document.querySelectorAll('.admin-only-chip').forEach(chip => {
+            chip.style.display = isAdminUnlocked ? 'inline-block' : 'none';
+            if (!isAdminUnlocked && chip.classList.contains('active')) {
+                chip.classList.remove('active');
+                const firstChip = chip.parentElement && chip.parentElement.querySelector('.filter-chip');
+                if (firstChip) firstChip.classList.add('active');
+                currentDocFilter = 'Aktif';
+                currentTaskFilter = 'Semua';
+            }
+        });
+    }
+
+    function requestAdminAccess() {
+        if (isAdminUnlocked) {
+            if (confirm("Log keluar dari mod Pentadbir?")) {
+                isAdminUnlocked = false;
+                sessionStorage.removeItem('admin_token');
+                document.getElementById('auth-status-text').innerText = "Token";
+                currentDocFilter = 'Aktif';
+                currentTaskFilter = 'Semua';
+                loadDataFromCloud({ silent: true });
+                refreshAllViews();
+                alert("Anda kembali kepada mod View-Only.");
+            }
+            return;
+        }
+
+        let userInput = prompt("Sila masukkan Token Khas PA:");
+        if (userInput === null) return;
+        
+        sessionStorage.setItem('admin_token', userInput.trim());
+        isAdminUnlocked = true;
+        document.getElementById('auth-status-text').innerText = "PA (Aktif)";
+        loadDataFromCloud({ silent: true });
+        refreshAllViews();
+        alert("Mod PA diaktifkan untuk sesi ini.");
+    }
+
+    function verifyAdminToken() {
+        if (isAdminUnlocked && sessionStorage.getItem('admin_token')) return true;
+        let userInput = prompt("Sila masukkan Token Khas PA untuk meneruskan:");
+        if (userInput === null) return false;
+        sessionStorage.setItem('admin_token', userInput.trim());
+        isAdminUnlocked = true;
+        document.getElementById('auth-status-text').innerText = "PA (Aktif)";
+        loadDataFromCloud({ silent: true });
+        refreshAllViews();
+        return true;
+    }
+
+    function refreshAllViews() {
+        const docAction = document.getElementById('doc-action-container');
+        const taskAction = document.getElementById('task-action-container');
+        const execControls = document.getElementById('exec-status-controls');
+        const printControls = document.getElementById('task-print-controls');
+
+        applyAdminVisibilityRules();
+
+        if (isAdminUnlocked) {
+            if(docAction) docAction.style.display = 'flex';
+            if(taskAction) taskAction.style.display = 'flex';
+            if(execControls) execControls.classList.remove('hidden-section');
+            if(printControls) printControls.classList.remove('hidden-section');
+        } else {
+            if(docAction) docAction.style.display = 'none';
+            if(taskAction) taskAction.style.display = 'none';
+            if(execControls) execControls.classList.add('hidden-section');
+            if(printControls) printControls.classList.add('hidden-section');
+            document.body.classList.remove('printing-tasks');
+            document.getElementById('document-form-card').classList.add('hidden-section');
+            document.getElementById('task-form-card').classList.add('hidden-section');
+            closeExecStatusModal();
+            closeMeetingModal();
+            closeViewMeetingModal();
+        }
+        renderExecStatus();
+        renderDeskOverview();
+        renderDocuments();
+        renderTasks();
+        renderCalendar();
+        loadLiveTasksToTicker();
+        displaySavedLastUpdatedLabel();
+    }
+
+    function syncToGoogleSheet(sheetName, headers, rowValues) {
+        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
+        let userToken = sessionStorage.getItem('admin_token') || "";
+
+        fetch(GOOGLE_APPS_SCRIPT_URL, {
+            method: "POST", mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "add", token: userToken, sheetName: sheetName, headers: headers, rowValues: rowValues })
+        }).catch(err => console.error("Ralat sync:", err));
+    }
+
+    function syncDeleteToGoogleSheet(sheetName, refIdentifier) {
+        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
+        let userToken = sessionStorage.getItem('admin_token') || "";
+
+        fetch(GOOGLE_APPS_SCRIPT_URL, {
+            method: "POST", mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "deleteRecord", token: userToken, sheetName: sheetName, ref: String(refIdentifier) })
+        }).catch(err => console.error("Ralat padam:", err));
+    }
+
+    /* ==================== STATUS SEMASA TKA(OPERASI) ==================== */
+    function renderExecStatus() {
+        const badge = document.getElementById('exec-status-badge');
+        const loc = document.getElementById('exec-location');
+        const eta = document.getElementById('exec-eta');
+        const note = document.getElementById('exec-note');
+        if (!badge) return;
+
+        badge.className = 'status-pill';
+        const st = execStatus.status || 'Di Pejabat';
+        if (st === 'Di Pejabat') {
+            badge.classList.add('status-office');
+            badge.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>Di Pejabat</span>`;
+        } else if (st === 'Bermesyuarat') {
+            badge.classList.add('status-meeting');
+            badge.innerHTML = `<i class="fa-solid fa-calendar-check"></i> <span>Bermesyuarat</span>`;
+        } else if (st === 'Tugas Luar') {
+            badge.classList.add('status-out');
+            badge.innerHTML = `<i class="fa-solid fa-car"></i> <span>Tugas Luar</span>`;
+        } else {
+            badge.classList.add('status-leave');
+            badge.innerHTML = `<i class="fa-solid fa-house-user"></i> <span>${st}</span>`;
+        }
+
+        if (loc) loc.innerText = execStatus.location || '-';
+        if (eta) eta.innerText = execStatus.eta || '-';
+        if (note) note.innerText = execStatus.note || '-';
+    }
+
+    function quickSetExecStatus(mode) {
+        if (!verifyAdminToken()) return;
+        if (mode === 'Di Pejabat') {
+            execStatus = { status: 'Di Pejabat', location: 'Pejabat TKA(Operasi)', eta: '5:00 PM', note: 'Sedia untuk semakan fail & perbincangan ringkas' };
+        } else if (mode === 'Bermesyuarat') {
+            execStatus = { status: 'Bermesyuarat', location: 'Bilik Mesyuarat Utama, Aras 5', eta: '-', note: 'Sedang bermesyuarat' };
+        } else if (mode === 'Tugas Luar') {
+            execStatus = { status: 'Tugas Luar', location: 'Urusan Rasmi Luar', eta: '-', note: 'Lawatan / tugas rasmi di luar pejabat' };
+        }
+        persistExecStatus();
+        renderExecStatus();
+        updateLastSyncedLabel();
+    }
+
+    function openExecStatusModal() {
+        if (!verifyAdminToken()) return;
+        document.getElementById('input-exec-status').value = execStatus.status || 'Di Pejabat';
+        document.getElementById('input-exec-location').value = execStatus.location || '';
+        document.getElementById('input-exec-eta').value = execStatus.eta || '';
+        document.getElementById('input-exec-note').value = execStatus.note || '';
+        document.getElementById('exec-status-modal').classList.remove('hidden-section');
+    }
+
+    function closeExecStatusModal() {
+        const modal = document.getElementById('exec-status-modal');
+        if (modal) modal.classList.add('hidden-section');
+    }
+
+    function saveExecStatusForm(e) {
+        e.preventDefault();
+        if (!verifyAdminToken()) return;
+        execStatus = {
+            status: document.getElementById('input-exec-status').value,
+            location: document.getElementById('input-exec-location').value.trim(),
+            eta: document.getElementById('input-exec-eta').value.trim() || '-',
+            note: document.getElementById('input-exec-note').value.trim() || '-'
+        };
+        persistExecStatus();
+        renderExecStatus();
+        closeExecStatusModal();
+        updateLastSyncedLabel();
+    }
+
+    function persistExecStatus() {
+        localStorage.setItem('pa_exec_status', JSON.stringify(execStatus));
+        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
+        let userToken = sessionStorage.getItem('admin_token') || "";
+        fetch(GOOGLE_APPS_SCRIPT_URL, {
+            method: "POST", mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                action: "updateExecStatus",
+                token: userToken,
+                status: execStatus.status,
+                location: execStatus.location,
+                eta: execStatus.eta,
+                note: execStatus.note,
+                updatedAt: getCurrentDateTime()
+            })
+        }).catch(err => console.error("Ralat sync execStatus:", err));
+    }
+
+    /* ==================== RINGKASAN DESK UTAMA BOS ==================== */
+    function getLocalTodayIso() {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    function renderDeskOverview() {
+        const todayIso = getLocalTodayIso();
+        const todayTS = new Date(todayIso).setHours(0, 0, 0, 0);
+
+        const monthsShort = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogs", "Sep", "Okt", "Nov", "Dis"];
+        const nowObj = new Date();
+        const dateLabelEl = document.getElementById('desk-today-date-label');
+        if (dateLabelEl) {
+            dateLabelEl.innerText = `${nowObj.getDate()} ${monthsShort[nowObj.getMonth()]} ${nowObj.getFullYear()}`;
+        }
+
+        const visibleDocs = getVisibleDocuments();
+        const visibleTasks = getVisibleTasks();
+        const allCalItems = getAllCalendarItems();
+
+        const pendingDocs = visibleDocs.filter(d => !isDocCompleted(d));
+        const activeTasks = visibleTasks.filter(t => !isTaskCompleted(t));
+
+        const todayItems = allCalItems.filter(x => {
+            if (!x.start) return false;
+            const startStr = String(x.start).split('T')[0];
+            const endStr = x.end ? String(x.end).split('T')[0] : startStr;
+            const startTS = new Date(startStr).setHours(0, 0, 0, 0);
+            const endTS = new Date(endStr).setHours(0, 0, 0, 0);
+            return todayTS >= startTS && todayTS <= endTS;
+        });
+
+        const docEl = document.getElementById('desk-doc-pending');
+        const taskEl = document.getElementById('desk-task-active');
+        const evEl = document.getElementById('desk-today-events');
+        if (docEl) docEl.innerText = pendingDocs.length;
+        if (taskEl) taskEl.innerText = activeTasks.length;
+        if (evEl) evEl.innerText = todayItems.length;
+
+        const focusContainer = document.getElementById('desk-focus-list');
+        if (!focusContainer) return;
+
+        let focusHtml = '';
+
+        const urgentTasks = activeTasks.filter(t => {
+            if (!t.deadline) return false;
+            const dlStr = String(t.deadline).split('T')[0];
+            const dlTS = new Date(dlStr).setHours(0, 0, 0, 0);
+            return !isNaN(dlTS) && dlTS <= todayTS;
+        });
+
+        urgentTasks.forEach(t => {
+            const dlStr = String(t.deadline).split('T')[0];
+            const isOverdue = new Date(dlStr).setHours(0, 0, 0, 0) < todayTS;
+            focusHtml += `
+                <div class="focus-item urgent">
+                    <div class="focus-time">${isOverdue ? 'TERTANGGUH (OVERDUE)' : 'DEADLINE HARI INI'}</div>
+                    <div><strong>${t.desc}</strong> &bull; PIC: ${t.pic || '-'}</div>
+                </div>
+            `;
+        });
+
+        todayItems.forEach(m => {
+            if (m.isHoliday) {
+                focusHtml += `
+                    <div class="focus-item holiday" style="cursor:pointer;" onclick="viewMeeting('${m.id}')">
+                        <div class="focus-time">CUTI UMUM ${m.location ? '&bull; ' + m.location : ''}</div>
+                        <div><strong>${m.title}</strong>${m.notes ? ' &bull; ' + m.notes : ''}</div>
+                    </div>
+                `;
+            } else {
+                const timePart = (m.start && m.start.includes('T')) ? formatTo12Hour(m.start).split(', ')[1] : 'Sepanjang Hari';
+                focusHtml += `
+                    <div class="focus-item" style="cursor:pointer;" onclick="viewMeeting('${m.id}')">
+                        <div class="focus-time">${timePart}${m.location ? ' &bull; ' + m.location : ''}</div>
+                        <div><strong>${m.title}</strong>${m.notes ? ' &bull; ' + m.notes : ''}</div>
+                    </div>
+                `;
+            }
+        });
+
+        if (!focusHtml) {
+            focusHtml = `<div class="focus-item">Tiada jadual atau deadline mendesak dijadualkan pada hari ini.</div>`;
+        }
+
+        focusContainer.innerHTML = focusHtml;
+    }
+
+    let sendersList = JSON.parse(localStorage.getItem('pa_senders')) || [
+        { name: "Encik Shah Rizal bin Mohd Salleh", phone: "60138449145" }
+    ];
+
+    let documents = JSON.parse(localStorage.getItem('pa_documents')) || [];
+    let tasks = JSON.parse(localStorage.getItem('pa_tasks')) || [];
+    let meetings = JSON.parse(localStorage.getItem('pa_meetings')) || [];
+
+    let currentTaskFilter = 'Semua';
+    let currentDocFilter = 'Aktif';
+    let calendarDate = new Date(2026, 10, 1);
+
+    function displaySavedLastUpdatedLabel() {
+        const savedLabel = localStorage.getItem('pa_last_updated_label') || '-';
+        ['update-time-docs', 'update-time-tasks', 'update-time-calendar'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerText = `Kemas kini: ${savedLabel}`;
+        });
+    }
+
+    function updateLastSyncedLabel() {
+        if (!isAdminUnlocked) {
+            displaySavedLastUpdatedLabel();
+            return;
+        }
+        const timeNow = getCurrentDateTime();
+        localStorage.setItem('pa_last_updated_label', timeNow);
+        displaySavedLastUpdatedLabel();
+    }
+
+    function loadDataFromCloud(options = {}) {
+        const { showFeedback = false, silent = false } = options;
+
+        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) {
+            if (showFeedback) {
+                alert('Sila tetapkan URL Google Apps Script yang sebenar terlebih dahulu.');
+            }
+            return;
+        }
+
+        if (isSyncingCloud) return;
+        isSyncingCloud = true;
+        if (!silent) setRefreshButtonState(true);
+
+        const callbackName = 'jsonp_cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+        const script = document.createElement('script');
+        let settled = false;
+
+        const cleanup = () => {
+            if (window[callbackName]) delete window[callbackName];
+            if (script.parentNode) document.body.removeChild(script);
+        };
+
+        const timeoutId = setTimeout(() => {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            isSyncingCloud = false;
+            setRefreshButtonState(false);
+            if (showFeedback) {
+                alert('Masa tamat semasa menyambung ke Google Sheets. Sila cuba lagi.');
+            }
+        }, 10000);
+
+        window[callbackName] = function(data) {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timeoutId);
+            cleanup();
+            isSyncingCloud = false;
+            setRefreshButtonState(false);
+
+            if (!data) {
+                if (showFeedback) alert('Tiada data diterima daripada pelayan.');
+                return;
+            }
+
+            if (Array.isArray(data.documents)) {
+                documents = isAdminUnlocked ? data.documents : data.documents.filter(d => !isDocCompleted(d));
+                localStorage.setItem('pa_documents', JSON.stringify(documents));
+            }
+            if (Array.isArray(data.tasks)) {
+                tasks = isAdminUnlocked ? data.tasks : data.tasks.filter(t => !isTaskCompleted(t));
+                localStorage.setItem('pa_tasks', JSON.stringify(tasks));
+            }
+            if (Array.isArray(data.meetings)) {
+                meetings = data.meetings.map(m => ({
+                    ...m,
+                    id: m.id ? String(m.id) : String(Date.now() + Math.random())
+                }));
+                localStorage.setItem('pa_meetings', JSON.stringify(meetings));
+            }
+            if (data.execStatus && data.execStatus.status) {
+                execStatus = data.execStatus;
+                localStorage.setItem('pa_exec_status', JSON.stringify(execStatus));
+            }
+            if (Array.isArray(data.senders) && data.senders.length > 0) {
+                sendersList = data.senders;
+                localStorage.setItem('pa_senders', JSON.stringify(sendersList));
+                const currentSenderSel = document.getElementById('doc-sender');
+                populateSenderDropdown(currentSenderSel ? currentSenderSel.value : '');
+                const mgrModal = document.getElementById('manager-modal');
+                if (mgrModal && !mgrModal.classList.contains('hidden-section')) {
+                    renderManagerTable();
+                }
+            }
+
+            renderExecStatus();
+            renderDeskOverview();
+            renderDocuments();
+            renderTasks();
+            renderCalendar();
+            loadLiveTasksToTicker();
+            if (isAdminUnlocked && showFeedback) {
+                updateLastSyncedLabel();
+            } else {
+                displaySavedLastUpdatedLabel();
+            }
+
+            if (showFeedback) {
+                alert('Data terkini berjaya dimuat turun daripada Google Sheets.');
+            }
+        };
+
+        const activeToken = encodeURIComponent(sessionStorage.getItem('admin_token') || "");
+        script.src = `${GOOGLE_APPS_SCRIPT_URL}?callback=${callbackName}&token=${activeToken}&v=${Date.now()}`;
+        script.onerror = function() {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timeoutId);
+            cleanup();
+            isSyncingCloud = false;
+            setRefreshButtonState(false);
+            if (!silent) {
+                console.warn("Gagal memuat turun data cloud.");
+            }
+            if (showFeedback) {
+                alert('Gagal memuat turun data daripada Google Apps Script. Semak sambungan internet atau tetapan akses Web App.');
+            }
+        };
+
+        document.body.appendChild(script);
+    }
+
+    function populateSenderDropdown(selectedVal = '') {
+        const select = document.getElementById('doc-sender');
+        if(!select) return;
+        select.innerHTML = '<option value="">-- Pilih Pegawai --</option>';
+        sendersList.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.name;
+            opt.textContent = `${s.name} (${s.phone || 'Tiada No'})`;
+            if(s.name === selectedVal) opt.selected = true;
+            select.appendChild(opt);
+        });
+    }
+
+    function syncSendersToGoogleSheet() {
+        localStorage.setItem('pa_senders', JSON.stringify(sendersList));
+        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
+        let userToken = sessionStorage.getItem('admin_token') || "";
+        fetch(GOOGLE_APPS_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                action: "saveSenders",
+                token: userToken,
+                senders: sendersList
+            })
+        }).catch(err => console.error("Ralat sync senders:", err));
+    }
+
+    function openManagerModal() {
+        if (!verifyAdminToken()) return;
+        document.getElementById('manager-modal').classList.remove('hidden-section');
+        document.getElementById('edit-sender-index').value = "-1";
+        document.getElementById('manager-name-input').value = "";
+        document.getElementById('manager-phone-input').value = "";
+        renderManagerTable();
+    }
+
+    function closeManagerModal() {
+        document.getElementById('manager-modal').classList.add('hidden-section');
+        populateSenderDropdown();
+    }
+
+    function renderManagerTable() {
+        const tbody = document.getElementById('manager-table-body');
+        if(!tbody) return;
+        tbody.innerHTML = '';
+        if(sendersList.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #64748b; padding: 15px;">Tiada pegawai.</td></tr>`;
+            return;
+        }
+        sendersList.forEach((s, index) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td style="padding: 8px;"><strong>${s.name}</strong></td>
+                    <td style="padding: 8px;">${s.phone || '-'}</td>
+                    <td style="padding: 8px; text-align: right;">
+                        <button onclick="editSender(${index})" class="btn-icon btn-edit"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteSender(${index})" class="btn-icon btn-delete"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function saveSenderData() {
+        if (!verifyAdminToken()) return;
+        const index = parseInt(document.getElementById('edit-sender-index').value);
+        const name = document.getElementById('manager-name-input').value.trim();
+        const phone = document.getElementById('manager-phone-input').value.trim();
+        if(!name) { alert('Sila masukkan nama pegawai.'); return; }
+        if(index === -1) { sendersList.push({ name, phone }); } 
+        else { sendersList[index] = { name, phone }; }
+        syncSendersToGoogleSheet();
+        document.getElementById('edit-sender-index').value = "-1";
+        document.getElementById('manager-name-input').value = "";
+        document.getElementById('manager-phone-input').value = "";
+        renderManagerTable();
+        populateSenderDropdown(name);
+        updateLastSyncedLabel();
+    }
+
+    function editSender(index) {
+        if (!verifyAdminToken()) return;
+        const s = sendersList[index];
+        document.getElementById('edit-sender-index').value = index;
+        document.getElementById('manager-name-input').value = s.name;
+        document.getElementById('manager-phone-input').value = s.phone || '';
+    }
+
+    function deleteSender(index) {
+        if (!verifyAdminToken()) return;
+        if(confirm('Padam pegawai ini?')) {
+            sendersList.splice(index, 1);
+            syncSendersToGoogleSheet();
+            renderManagerTable();
+            populateSenderDropdown();
+            updateLastSyncedLabel();
+        }
+    }
+
+    function switchTab(tabName, btn) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+        document.body.classList.toggle('calendar-fit-mode', tabName === 'calendar');
+        if(tabName === 'desk-bos') {
+            document.getElementById('desk-bos-tab').classList.add('active');
+            renderDeskOverview();
+        }
+        else if(tabName === 'documents') document.getElementById('documents-tab').classList.add('active');
+        else if(tabName === 'tasks') document.getElementById('tasks-tab').classList.add('active');
+        else if(tabName === 'calendar') {
+            document.getElementById('calendar-tab').classList.add('active');
+            renderCalendar();
+        }
+        if (btn) btn.classList.add('active');
+    }
+
+    function setRefreshButtonState(loading) {
+        const refreshBtn = document.querySelector('button[onclick="refreshData()"]');
+        if (!refreshBtn) return;
+        const icon = refreshBtn.querySelector('i');
+        refreshBtn.disabled = loading;
+        refreshBtn.style.opacity = loading ? '0.7' : '1';
+        if (icon) {
+            icon.classList.toggle('fa-spin', loading);
+        }
+    }
+
+    function refreshData() {
+        loadDataFromCloud({ showFeedback: true });
+    }
+
+    function getCurrentDateTime() {
+        const now = new Date();
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12;
+        return `${day}/${month}/${year} ${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
+    }
+
+    function formatTo12Hour(isoDateTimeStr) {
+        if (!isoDateTimeStr) return '-';
+        let parts = isoDateTimeStr.split('T');
+        if (parts.length < 2) parts = isoDateTimeStr.split(' ');
+        if (parts.length < 2) return isoDateTimeStr;
+
+        let datePart = parts[0];
+        let timePart = parts[1].substring(0, 5);
+        let [hours, minutes] = timePart.split(':');
+        
+        let h = parseInt(hours, 10);
+        let ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12; h = h ? h : 12;
+        let formattedTime = `${String(h).padStart(2, '0')}:${minutes} ${ampm}`;
+        
+        let [y, m, d] = datePart.split('-');
+        const monthsShort = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ogs", "Sep", "Okt", "Nov", "Dis"];
+        let monthName = monthsShort[parseInt(m, 10) - 1];
+
+        return `${parseInt(d, 10)} ${monthName} ${y}, ${formattedTime}`;
+    }
+
+    function resetDocFormToAddMode(keepOpen = true) {
+        const formCard = document.getElementById('document-form-card');
+        const btnText = document.getElementById('doc-toggle-btn-text');
+        const toggleIcon = document.getElementById('doc-toggle-icon');
+        const cardTitle = document.getElementById('doc-form-card-title');
+
+        document.getElementById('document-form').reset();
+        document.getElementById('doc-id').value = '';
+        populateSenderDropdown();
+
+        if (cardTitle) {
+            cardTitle.innerHTML = '<i class="fa-solid fa-square-plus"></i> Rekod Dokumen Masuk Baru';
+        }
+
+        if (keepOpen) {
+            formCard.classList.remove('hidden-section');
+            if (btnText) btnText.innerText = 'Tutup Borang';
+            if (toggleIcon) toggleIcon.className = 'fa-solid fa-xmark';
+        } else {
+            formCard.classList.add('hidden-section');
+            if (btnText) btnText.innerText = 'Rekod Dokumen Baru';
+            if (toggleIcon) toggleIcon.className = 'fa-solid fa-plus';
+        }
+    }
+
+    function resetTaskFormToAddMode(keepOpen = true) {
+        const formCard = document.getElementById('task-form-card');
+        const btnText = document.getElementById('toggle-btn-text');
+        const toggleIcon = document.getElementById('toggle-icon');
+        const cardTitle = document.getElementById('form-card-title');
+
+        document.getElementById('task-form').reset();
+        document.getElementById('task-id').value = '';
+
+        if (cardTitle) {
+            cardTitle.innerHTML = '<i class="fa-solid fa-square-plus"></i> Tambah Tugasan Baru';
+        }
+
+        if (keepOpen) {
+            formCard.classList.remove('hidden-section');
+            if (btnText) btnText.innerText = 'Tutup Borang';
+            if (toggleIcon) toggleIcon.className = 'fa-solid fa-xmark';
+        } else {
+            formCard.classList.add('hidden-section');
+            if (btnText) btnText.innerText = 'Tambah Task Baru';
+            if (toggleIcon) toggleIcon.className = 'fa-solid fa-plus';
+        }
+    }
+
+    function toggleDocForm() {
+        if (!verifyAdminToken()) return;
+        const formCard = document.getElementById('document-form-card');
+        resetDocFormToAddMode(formCard.classList.contains('hidden-section'));
+    }
+
+    function toggleTaskForm() {
+        if (!verifyAdminToken()) return;
+        const formCard = document.getElementById('task-form-card');
+        resetTaskFormToAddMode(formCard.classList.contains('hidden-section'));
+    }
+
+    function saveDocument(e) {
+        e.preventDefault();
+        if (!verifyAdminToken()) return;
+        const id = document.getElementById('doc-id').value;
+        const ref = document.getElementById('doc-ref').value.trim();
+        const sender = document.getElementById('doc-sender').value;
+        const title = document.getElementById('doc-title').value.trim();
+        const purpose = document.getElementById('doc-purpose').value;
+        const status = document.getElementById('doc-status').value;
+        const fileInput = document.getElementById('doc-proof-file');
+        const dateTimeNow = getCurrentDateTime();
+        let userToken = sessionStorage.getItem('admin_token') || "";
+
+        const processSave = (imageB64 = "", fileName = "") => {
+            let existing = id ? documents.find(d => d.id == id) : null;
+            let actionType = existing ? "updateDocument" : "addDocument";
+            let oldRef = existing ? existing.ref : ref;
+            let receivedAt = existing ? existing.receivedAt : dateTimeNow;
+            let returnedAt = status === 'Selesai' ? dateTimeNow : '-';
+
+            if (existing) {
+                existing.ref = ref; existing.sender = sender; existing.title = title;
+                existing.purpose = purpose; existing.status = status; existing.returnedAt = returnedAt;
+                if (imageB64) existing.proofImage = imageB64;
+            } else {
+                documents.unshift({ id: Date.now(), ref, title, sender, purpose, receivedAt, returnedAt, status, proofImage: imageB64 });
+            }
+
+            if (GOOGLE_APPS_SCRIPT_URL && !GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) {
+                fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: "POST", mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ action: actionType, token: userToken, oldRef, ref, title, sender, purpose, status, receivedAt, returnedAt, fileData: imageB64, fileName })
+                }).catch(err => console.error("Ralat sync doc:", err));
+            }
+
+            localStorage.setItem('pa_documents', JSON.stringify(documents));
+            resetDocFormToAddMode(true);
+            renderDocuments();
+            renderDeskOverview();
+            updateLastSyncedLabel();
+        };
+
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = ev => processSave(ev.target.result, fileInput.files[0].name);
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            processSave("", "");
+        }
+    }
+
+    function editDocument(id) {
+        if (!verifyAdminToken()) return;
+        const doc = documents.find(d => d.id == id);
+        if(doc) {
+            document.getElementById('doc-id').value = doc.id;
+            document.getElementById('doc-ref').value = doc.ref;
+            populateSenderDropdown(doc.sender);
+            document.getElementById('doc-title').value = doc.title;
+            document.getElementById('doc-purpose').value = doc.purpose;
+            document.getElementById('doc-status').value = doc.status;
+
+            const cardTitle = document.getElementById('doc-form-card-title');
+            if (cardTitle) {
+                cardTitle.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Kemas Kini Dokumen';
+            }
+
+            document.getElementById('document-form-card').classList.remove('hidden-section');
+            document.getElementById('doc-toggle-btn-text').innerText = 'Tutup Borang';
+            document.getElementById('doc-toggle-icon').className = 'fa-solid fa-xmark';
+            document.getElementById('document-form-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+
+    function deleteDocument(id) {
+        if (!verifyAdminToken()) return;
+        const doc = documents.find(d => d.id == id);
+        if(confirm('Padam rekod dokumen ini?')) {
+            documents = documents.filter(d => d.id != id);
+            localStorage.setItem('pa_documents', JSON.stringify(documents));
+            if(doc) syncDeleteToGoogleSheet("Documents", doc.ref);
+            renderDocuments();
+            renderDeskOverview();
+            updateLastSyncedLabel();
+        }
+    }
+
+    function setDocFilter(type, btn) {
+        if (!isAdminUnlocked && (type === 'Selesai' || type === 'Semua')) {
+            if (!verifyAdminToken()) return;
+        }
+        currentDocFilter = type;
+        btn.parentElement.querySelectorAll('.filter-chip').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        renderDocuments();
+    }
+
+    function viewProofImage(url) {
+        if(!url) return;
+        window.open(url, '_blank');
+    }
+
+    function sendDocWhatsApp(sender, ref, title, status) {
+        const found = sendersList.find(s => s.name === sender);
+        let phone = found && found.phone ? found.phone.replace(/[^0-9]/g, '') : '';
+        const text = encodeURIComponent(`Makluman Dokumen:\nNo Rujukan: ${ref}\nTajuk: ${title}\nStatus: ${status}`);
+        window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+    }
+
+    function renderDocuments() {
+        const tbody = document.getElementById('document-table-body');
+        const search = document.getElementById('doc-search').value.toLowerCase();
+        const month = document.getElementById('doc-month-filter').value;
+        if(!tbody) return;
+
+        const baseDocs = getVisibleDocuments();
+        let filtered = [...baseDocs].sort((a, b) => b.id - a.id);
+        if(search) filtered = filtered.filter(d => d.title.toLowerCase().includes(search) || d.ref.toLowerCase().includes(search));
+        if(month) {
+            const [y, m] = month.split('-');
+            filtered = filtered.filter(d => d.receivedAt && d.receivedAt.split(' ')[0].split('/')[2] === y && d.receivedAt.split(' ')[0].split('/')[1] === m);
+        }
+
+        if (!isAdminUnlocked) {
+            filtered = filtered.filter(d => !isDocCompleted(d));
+        } else if(currentDocFilter === 'Aktif') {
+            filtered = filtered.filter(d => !isDocCompleted(d));
+        } else if(currentDocFilter === 'Dalam Semakan') {
+            filtered = filtered.filter(d => d.status === 'Dalam Semakan');
+        } else if(currentDocFilter === 'Selesai') {
+            filtered = filtered.filter(d => isDocCompleted(d));
+        }
+
+        document.getElementById('doc-total').innerText = baseDocs.length;
+        document.getElementById('doc-pending').innerText = baseDocs.filter(d => !isDocCompleted(d)).length;
+        if (isAdminUnlocked) {
+            document.getElementById('doc-completed').innerText = baseDocs.filter(d => isDocCompleted(d)).length;
+        }
+        document.getElementById('doc-today').innerText = baseDocs.filter(d => d.receivedAt && d.receivedAt.startsWith(new Date().toLocaleDateString('en-GB'))).length;
+
+        tbody.innerHTML = '';
+        if(filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #64748b; padding: 25px;">Tiada rekod dokumen.</td></tr>`;
+            return;
+        }
+
+        filtered.forEach(d => {
+            const proof = d.proofImage ? `<a href="javascript:void(0);" onclick="viewProofImage('${d.proofImage}')" class="btn btn-primary" style="padding: 4px 8px; font-size: 10px;"><i class="fa-solid fa-image"></i> Lihat</a>` : `-`;
+            let actions = isAdminUnlocked ? `
+                <div class="actions-cell">
+                    <button onclick="sendDocWhatsApp('${(d.sender || '').replace(/'/g, "\\'")}', '${(d.ref || '').replace(/'/g, "\\'")}', '${(d.title || '').replace(/'/g, "\\'")}', '${d.status}')" class="btn-icon btn-wa"><i class="fa-brands fa-whatsapp"></i></button>
+                    <button onclick="editDocument(${d.id})" class="btn-icon btn-edit"><i class="fa-solid fa-pen"></i></button>
+                    <button onclick="deleteDocument(${d.id})" class="btn-icon btn-delete"><i class="fa-solid fa-trash"></i></button>
+                </div>` : `-`;
+
+            tbody.innerHTML += `
+                <tr>
+                    <td><small>${d.receivedAt || '-'}</small></td>
+                    <td><strong>${d.ref || '-'}</strong><br><span style="font-size: 11px; color: #64748b;">${d.title || '-'}</span></td>
+                    <td>${d.sender || '-'}</td>
+                    <td>${d.purpose || '-'}</td>
+                    <td><small>${d.returnedAt || '-'}</small></td>
+                    <td><span class="badge ${isDocCompleted(d) ? 'badge-success' : 'badge-warning'}">${d.status || 'Dalam Semakan'}</span></td>
+                    <td>${proof}</td>
+                    <td>${actions}</td>
+                </tr>`;
+        });
+    }
+
+    function normalizeDeadlineDateStr(deadline) {
+        if (!deadline) return '';
+        let cleanDateStr = String(deadline).split('T')[0].trim();
+        if (!cleanDateStr) return '';
+        if (/^\d{4}-\d{2}-\d{2}$/.test(cleanDateStr)) {
+            return cleanDateStr;
+        }
+        const parsed = new Date(deadline);
+        if (!isNaN(parsed)) {
+            const y = parsed.getFullYear();
+            const m = String(parsed.getMonth() + 1).padStart(2, '0');
+            const d = String(parsed.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+        return cleanDateStr;
+    }
+
+    function getTaskDeadlineCategory(task) {
+        if (!task) return 'No Deadline';
+        const cleanDateStr = normalizeDeadlineDateStr(task.deadline);
+        if (!cleanDateStr) return 'No Deadline';
+
+        const parts = cleanDateStr.split('-');
+        if (parts.length !== 3) return 'No Deadline';
+        const target = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+        if (isNaN(target.getTime())) return 'No Deadline';
+        target.setHours(0, 0, 0, 0);
+
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        today.setHours(0, 0, 0, 0);
+
+        if (!isTaskCompleted(task) && target.getTime() < today.getTime()) {
+            return 'Overdue';
+        }
+        if (target.getTime() === today.getTime()) {
+            return 'Due Today';
+        }
+
+        // Minggu semasa: Isnin hingga Ahad
+        const dayOfWeek = today.getDay(); // 0 (Ahad) .. 6 (Sabtu)
+        const offsetToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+        const thisWeekMonday = new Date(today);
+        thisWeekMonday.setDate(today.getDate() + offsetToMonday);
+        thisWeekMonday.setHours(0, 0, 0, 0);
+
+        const thisWeekSunday = new Date(thisWeekMonday);
+        thisWeekSunday.setDate(thisWeekMonday.getDate() + 6);
+        thisWeekSunday.setHours(0, 0, 0, 0);
+
+        const nextWeekMonday = new Date(thisWeekMonday);
+        nextWeekMonday.setDate(thisWeekMonday.getDate() + 7);
+        nextWeekMonday.setHours(0, 0, 0, 0);
+
+        const nextWeekSunday = new Date(nextWeekMonday);
+        nextWeekSunday.setDate(nextWeekMonday.getDate() + 6);
+        nextWeekSunday.setHours(0, 0, 0, 0);
+
+        if (target.getTime() > today.getTime() && target.getTime() <= thisWeekSunday.getTime()) {
+            return 'Due This Week';
+        }
+        if (target.getTime() >= nextWeekMonday.getTime() && target.getTime() <= nextWeekSunday.getTime()) {
+            return 'Due Next Week';
+        }
+        return 'Later';
+    }
+
+    function setTaskDeadlineCategory(category, btn) {
+        currentTaskDeadlineCategory = category;
+        const bar = document.getElementById('task-deadline-chips');
+        if (bar) {
+            bar.querySelectorAll('.deadline-chip').forEach(el => el.classList.remove('active'));
+        }
+        if (btn) btn.classList.add('active');
+        renderTasks();
+    }
+
+    function updateTaskCategoryCounts(tasksList) {
+        const counts = {
+            all: tasksList.length,
+            overdue: 0,
+            today: 0,
+            thisWeek: 0,
+            nextWeek: 0,
+            noDeadline: 0
+        };
+        tasksList.forEach(t => {
+            const cat = getTaskDeadlineCategory(t);
+            if (cat === 'Overdue') counts.overdue++;
+            else if (cat === 'Due Today') counts.today++;
+            else if (cat === 'Due This Week') counts.thisWeek++;
+            else if (cat === 'Due Next Week') counts.nextWeek++;
+            else if (cat === 'No Deadline') counts.noDeadline++;
+        });
+        const map = {
+            'count-cat-all': counts.all,
+            'count-cat-overdue': counts.overdue,
+            'count-cat-today': counts.today,
+            'count-cat-this-week': counts.thisWeek,
+            'count-cat-next-week': counts.nextWeek,
+            'count-cat-no-deadline': counts.noDeadline
+        };
+        Object.keys(map).forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerText = String(map[id]);
+        });
+    }
+
+    function formatDeadline(deadline, status) {
+        const cleanDateStr = normalizeDeadlineDateStr(deadline);
+        if (!cleanDateStr) return '<span class="badge-deadline badge-upcoming"><div>Tiada Tarikh Akhir</div><div style="font-size: 11px; margin-top: 3px; font-weight: 600; color: #64748b;">(No Deadline)</div></span>';
+
+        const parts = cleanDateStr.split('-');
+        const target = parts.length === 3
+            ? new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]))
+            : new Date(cleanDateStr);
+        target.setHours(0,0,0,0);
+        
+        const monthsShort = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogs", "Sep", "Okt", "Nov", "Dis"];
+        const daysShort = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        
+        if (isNaN(target)) return `<span class="badge-deadline badge-upcoming">${deadline}</span>`;
+
+        let dayName = daysShort[target.getDay()];
+        let formattedDateReadable = `${target.getDate()} ${monthsShort[target.getMonth()]} ${target.getFullYear()} (${dayName})`;
+
+        if(status === 'Completed') {
+            return `<span class="badge-deadline badge-completed">
+                        <div>${formattedDateReadable}</div>
+                        <div style="font-size: 11px; margin-top: 3px; font-weight: 600; color: #047857;">(Selesai)</div>
+                    </span>`;
+        }
+
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        today.setHours(0,0,0,0);
+        const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+
+        if (diffDays < 0) {
+            return `<span class="badge-deadline badge-overdue">
+                        <div>${formattedDateReadable}</div>
+                        <div style="font-size: 11px; margin-top: 3px; font-weight: 800; color: #991b1b; text-transform: uppercase;">(${Math.abs(diffDays)} Hari Lepas)</div>
+                    </span>`;
+        }
+        if (diffDays === 0) {
+            return `<span class="badge-deadline badge-today">
+                        <div>${formattedDateReadable}</div>
+                        <div style="font-size: 11px; margin-top: 3px; font-weight: 800; color: #b45309;">(Hari Ini!)</div>
+                    </span>`;
+        }
+        return `<span class="badge-deadline badge-upcoming">
+                    <div>${formattedDateReadable}</div>
+                    <div style="font-size: 11px; margin-top: 3px; font-weight: 700; color: #1e3a8a;">(${diffDays} Hari Lagi)</div>
+                </span>`;
+    }
+
+    function buildPrintGroupedTasksBody(tasksToPrint) {
+        const container = document.getElementById('print-grouped-tasks-container');
+        if (!container) return;
+
+        const categoryOrder = [
+            'Overdue',
+            'Due Today',
+            'Due This Week',
+            'Due Next Week',
+            'Later',
+            'No Deadline'
+        ];
+
+        const grouped = {};
+        categoryOrder.forEach(cat => { grouped[cat] = []; });
+
+        tasksToPrint.forEach(t => {
+            const cat = getTaskDeadlineCategory(t);
+            if (!grouped[cat]) grouped[cat] = [];
+            grouped[cat].push(t);
+        });
+
+        let html = '';
+        categoryOrder.forEach(cat => {
+            const list = grouped[cat];
+            if (!list || list.length === 0) return;
+
+            const rowsHtml = list.map(t => `
+                <tr>
+                    <td><strong>${t.desc || '-'}</strong></td>
+                    <td>${t.pic || '-'}</td>
+                    <td>${t.notes || '-'}</td>
+                    <td>${formatDeadline(t.deadline, t.status)}</td>
+                    <td>${t.status || '-'}</td>
+                </tr>
+            `).join('');
+
+            html += `
+                <div class="print-category-section">
+                    <div class="print-category-title">${cat} (${list.length})</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">TASK / PERKARA</th>
+                                <th style="width: 17%;">PEGAWAI</th>
+                                <th style="width: 23%;">CATATAN</th>
+                                <th style="width: 18%;">DEADLINE</th>
+                                <th style="width: 12%;">STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rowsHtml}</tbody>
+                    </table>
+                </div>
+            `;
+        });
+
+        if (!html) {
+            html = `<div style="padding: 16px; border: 1px solid #000000; text-align: center;">Tiada tugasan untuk dicetak.</div>`;
+        }
+
+        container.innerHTML = html;
+    }
+
+    function updatePrintTasksMeta(visibleCount) {
+        const tsEl = document.getElementById('print-tasks-timestamp');
+        const filterEl = document.getElementById('print-tasks-filter-label');
+        const countEl = document.getElementById('print-tasks-count');
+        if (tsEl) tsEl.innerText = localStorage.getItem('pa_last_updated_label') || '-';
+        const statusText = currentTaskFilter === 'Semua' ? 'Semua (Aktif)' : currentTaskFilter;
+        const catText = currentTaskDeadlineCategory === 'Semua' ? 'Dipecah Mengikut Kategori' : currentTaskDeadlineCategory;
+        if (filterEl) filterEl.innerText = `${statusText} • ${catText}`;
+        if (countEl) countEl.innerText = String(visibleCount);
+    }
+
+    function printTasksReport() {
+        if (!isAdminUnlocked && !verifyAdminToken()) return;
+        const tasksTab = document.getElementById('tasks-tab');
+        if (tasksTab && !tasksTab.classList.contains('active')) {
+            const taskNavBtn = document.querySelectorAll('.menu-item')[2];
+            switchTab('tasks', taskNavBtn);
+        }
+        renderTasks();
+        document.body.classList.add('printing-tasks');
+        window.print();
+    }
+
+    window.addEventListener('afterprint', () => {
+        document.body.classList.remove('printing-tasks');
+    });
+
+    function renderTasks() {
+        const tbody = document.getElementById('task-table-body');
+        const search = document.getElementById('task-search').value.toLowerCase();
+        if(!tbody) return;
+
+        const baseTasks = getVisibleTasks();
+        let filtered = [...baseTasks];
+        if(search) filtered = filtered.filter(t => t.desc.toLowerCase().includes(search) || t.pic.toLowerCase().includes(search));
+
+        if (!isAdminUnlocked) {
+            filtered = filtered.filter(t => !isTaskCompleted(t));
+            if (currentTaskFilter !== 'Semua') {
+                filtered = filtered.filter(t => t.status === currentTaskFilter);
+            }
+        } else if (currentTaskFilter === 'Semua') {
+            filtered = filtered.filter(t => !isTaskCompleted(t));
+        } else {
+            filtered = filtered.filter(t => t.status === currentTaskFilter);
+        }
+
+        updateTaskCategoryCounts(filtered);
+
+        if (currentTaskDeadlineCategory !== 'Semua') {
+            filtered = filtered.filter(t => getTaskDeadlineCategory(t) === currentTaskDeadlineCategory);
+        }
+
+        filtered.sort((a, b) => {
+            const da = normalizeDeadlineDateStr(a.deadline);
+            const db = normalizeDeadlineDateStr(b.deadline);
+            if (!da && !db) return 0;
+            if (!da) return 1;
+            if (!db) return -1;
+            return new Date(da) - new Date(db);
+        });
+
+        document.getElementById('task-total').innerText = baseTasks.length;
+        if (isAdminUnlocked) {
+            document.getElementById('task-done').innerText = baseTasks.filter(t => isTaskCompleted(t)).length;
+        }
+        document.getElementById('task-progress').innerText = baseTasks.filter(t => t.status === 'In Progress').length;
+        document.getElementById('task-pending').innerText = baseTasks.filter(t => t.status === 'Pending').length;
+        updatePrintTasksMeta(filtered.length);
+        buildPrintGroupedTasksBody(filtered);
+
+        tbody.innerHTML = '';
+        if(filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px;">Tiada tugasan.</td></tr>`;
+            return;
+        }
+
+        filtered.forEach(t => {
+            let doneInput = isAdminUnlocked ? `<input type="checkbox" ${t.done ? 'checked' : ''} onclick="toggleTaskDone(${t.id})" style="width:16px;height:16px;cursor:pointer;">` : `-`;
+            let statusSel = isAdminUnlocked ? `
+                <select onchange="updateTaskStatus(${t.id}, this.value)" style="padding:4px; font-size:11px; width:100px;">
+                    <option value="Pending" ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                    <option value="In Progress" ${t.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                    <option value="Completed" ${t.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                </select>` : `<span>${t.status}</span>`;
+            let actions = isAdminUnlocked ? `
+                <div class="actions-cell">
+                    <button onclick="sendTaskReminder(${t.id})" class="btn-icon btn-wa"><i class="fa-brands fa-whatsapp"></i></button>
+                    <button onclick="editTask(${t.id})" class="btn-icon btn-edit"><i class="fa-solid fa-pen"></i></button>
+                    <button onclick="deleteTask(${t.id})" class="btn-icon btn-delete"><i class="fa-solid fa-trash"></i></button>
+                </div>` : `-`;
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${doneInput}</td>
+                    <td><strong>${t.desc}</strong></td>
+                    <td>${t.pic}</td>
+                    <td><small>${t.notes || '-'}</small></td>
+                    <td>${formatDeadline(t.deadline, t.status)}</td>
+                    <td>${statusSel}</td>
+                    <td class="no-print-col">${actions}</td>
+                </tr>`;
+        });
+        
+        loadLiveTasksToTicker();
+    }
+
+    function saveTask(e) {
+        e.preventDefault();
+        if (!verifyAdminToken()) return;
+        const id = document.getElementById('task-id').value || Date.now();
+        const pic = document.getElementById('task-pic').value;
+        const deadline = document.getElementById('task-deadline').value;
+        const desc = document.getElementById('task-desc').value;
+        const notes = document.getElementById('task-notes').value;
+        const priority = document.getElementById('task-priority').value;
+
+        let existing = tasks.find(t => t.id == id);
+        if(existing) {
+            existing.pic = pic; existing.deadline = deadline; existing.desc = desc; existing.notes = notes; existing.priority = priority;
+            syncDeleteToGoogleSheet("Tasks", desc);
+            syncToGoogleSheet("Tasks", ["Task / Perkara", "Pegawai", "Catatan", "Deadline", "Priority", "Status"], [desc, pic, notes, deadline, priority, existing.status || "Pending"]);
+        } else {
+            tasks.unshift({ id: Number(id), desc, pic, notes, deadline, priority, status: 'Pending', done: false });
+            syncToGoogleSheet("Tasks", ["Task / Perkara", "Pegawai", "Catatan", "Deadline", "Priority", "Status"], [desc, pic, notes, deadline, priority, "Pending"]);
+        }
+
+        localStorage.setItem('pa_tasks', JSON.stringify(tasks));
+        resetTaskFormToAddMode(true);
+        renderTasks();
+        renderDeskOverview();
+        updateLastSyncedLabel();
+    }
+
+    function toggleTaskDone(id) {
+        if (!verifyAdminToken()) return;
+        const t = tasks.find(x => x.id == id);
+        if(t) {
+            t.done = !t.done;
+            t.status = t.done ? 'Completed' : 'Pending';
+            localStorage.setItem('pa_tasks', JSON.stringify(tasks));
+            syncTaskStatusToGoogleSheet(t.desc, t.status);
+            renderTasks();
+            renderDeskOverview();
+            updateLastSyncedLabel();
+        }
+    }
+
+    function updateTaskStatus(id, status) {
+        if (!verifyAdminToken()) return;
+        const t = tasks.find(x => x.id == id);
+        if(t) {
+            t.status = status;
+            t.done = (status === 'Completed');
+            localStorage.setItem('pa_tasks', JSON.stringify(tasks));
+            syncTaskStatusToGoogleSheet(t.desc, t.status);
+            renderTasks();
+            renderDeskOverview();
+            updateLastSyncedLabel();
+        }
+    }
+
+    function syncTaskStatusToGoogleSheet(taskDesc, newStatus) {
+        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("AKfycbz...")) return;
+        let userToken = sessionStorage.getItem('admin_token') || "";
+
+        fetch(GOOGLE_APPS_SCRIPT_URL, {
+            method: "POST", mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "updateTaskStatus", token: userToken, desc: taskDesc, status: newStatus })
+        }).catch(err => console.error("Ralat sync status task:", err));
+    }
+
+    function sendTaskReminder(id) {
+        const t = tasks.find(x => x.id == id);
+        if(t) {
+            const text = encodeURIComponent(`Peringatan Tugasan:\nPerkara: ${t.desc}\nPegawai: ${t.pic}\nDeadline: ${t.deadline || 'Tiada Tarikh Akhir'}`);
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+    }
+
+    function editTask(id) {
+        if (!verifyAdminToken()) return;
+        const t = tasks.find(x => x.id == id);
+        if(t) {
+            document.getElementById('task-id').value = t.id;
+            document.getElementById('task-pic').value = t.pic;
+            document.getElementById('task-deadline').value = normalizeDeadlineDateStr(t.deadline);
+            document.getElementById('task-desc').value = t.desc;
+            document.getElementById('task-notes').value = t.notes;
+            document.getElementById('task-priority').value = t.priority;
+
+            const cardTitle = document.getElementById('form-card-title');
+            if (cardTitle) {
+                cardTitle.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Kemas Kini Tugasan';
+            }
+
+            document.getElementById('task-form-card').classList.remove('hidden-section');
+            document.getElementById('toggle-btn-text').innerText = 'Tutup Borang';
+            document.getElementById('toggle-icon').className = 'fa-solid fa-xmark';
+            document.getElementById('task-form-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+
+    function deleteTask(id) {
+        if (!verifyAdminToken()) return;
+        const t = tasks.find(x => x.id == id);
+        if(confirm('Padam tugasan ini?')) {
+            tasks = tasks.filter(x => x.id != id);
+            localStorage.setItem('pa_tasks', JSON.stringify(tasks));
+            if (t && t.desc) {
+                syncDeleteToGoogleSheet("Tasks", t.desc);
+            }
+            renderTasks();
+            renderDeskOverview();
+            updateLastSyncedLabel();
+        }
+    }
+
+    function setTaskFilter(filter, btn) {
+        if (!isAdminUnlocked && filter === 'Completed') {
+            if (!verifyAdminToken()) return;
+        }
+        currentTaskFilter = filter;
+        btn.parentElement.querySelectorAll('.filter-chip').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        renderTasks();
+    }
+
+    function openMeetingModalForDate(dateStr) {
+        if (!verifyAdminToken()) return;
+        document.getElementById('meeting-modal').classList.remove('hidden-section');
+        document.getElementById('meeting-form').reset();
+        document.getElementById('meeting-modal-title').innerHTML = `<i class="fa-solid fa-calendar-plus"></i> Tambah Jadual (${dateStr})`;
+        document.getElementById('meet-id').value = '';
+        document.getElementById('meet-old-title').value = '';
+        document.getElementById('btn-delete-meeting').classList.add('hidden-section');
+        document.getElementById('meet-start').value = `${dateStr}T08:00`;
+        document.getElementById('meet-end').value = `${dateStr}T09:00`;
+    }
+
+    function openMeetingModal(meet = null) {
+        if (!verifyAdminToken()) return;
+        document.getElementById('meeting-modal').classList.remove('hidden-section');
+        document.getElementById('meeting-form').reset();
+        if (meet) {
+            document.getElementById('meeting-modal-title').innerHTML = `<i class="fa-solid fa-pen"></i> Kemas kini Mesyuarat`;
+            document.getElementById('meet-id').value = String(meet.id);
+            document.getElementById('meet-old-title').value = meet.title;
+            document.getElementById('meet-title').value = meet.title;
+            document.getElementById('meet-start').value = meet.start || '';
+            document.getElementById('meet-end').value = meet.end || '';
+            document.getElementById('meet-location').value = meet.location || '';
+            document.getElementById('meet-notes').value = meet.notes || '';
+            document.getElementById('meet-email').value = meet.email || '';
+            document.getElementById('meet-color').value = meet.color || '#0284c7';
+            document.getElementById('btn-delete-meeting').classList.remove('hidden-section');
+        } else {
+            document.getElementById('meeting-modal-title').innerHTML = `<i class="fa-solid fa-calendar-plus"></i> Tambah Jadual`;
+            document.getElementById('meet-id').value = '';
+            document.getElementById('meet-old-title').value = '';
+            document.getElementById('btn-delete-meeting').classList.add('hidden-section');
+            const todayStr = new Date().toISOString().split('T')[0];
+            document.getElementById('meet-start').value = `${todayStr}T08:00`;
+            document.getElementById('meet-end').value = `${todayStr}T09:00`;
+        }
+    }
+
+    function closeMeetingModal() { document.getElementById('meeting-modal').classList.add('hidden-section'); }
+
+    function viewMeeting(id) {
+        const m = getAllCalendarItems().find(x => String(x.id) === String(id));
+        if(!m) return;
+        selectedMeetingIdForEdit = m.isHoliday ? null : String(m.id);
+        document.getElementById('view-meet-title').innerText = m.title || '-';
+        document.getElementById('view-meet-start').innerText = m.isHoliday ? `${String(m.start).split('T')[0]} (Sepanjang Hari)` : formatTo12Hour(m.start);
+        document.getElementById('view-meet-end').innerText = m.isHoliday ? `${String(m.end).split('T')[0]} (Sepanjang Hari)` : formatTo12Hour(m.end);
+        document.getElementById('view-meet-location').innerText = m.location || '-';
+        document.getElementById('view-meet-notes').innerText = m.notes || '-';
+        const editBtn = document.getElementById('btn-edit-from-view');
+        if (isAdminUnlocked && !m.isHoliday) editBtn.classList.remove('hidden-section');
+        else editBtn.classList.add('hidden-section');
+        document.getElementById('view-meeting-modal').classList.remove('hidden-section');
+    }
+
+    function closeViewMeetingModal() { document.getElementById('view-meeting-modal').classList.add('hidden-section'); }
+
+    function editMeetingFromView() {
+        if (!selectedMeetingIdForEdit) return;
+        closeViewMeetingModal();
+        const m = meetings.find(x => String(x.id) === String(selectedMeetingIdForEdit));
+        if (m) openMeetingModal(m);
+    }
+
+    function changeMonth(dir) {
+        calendarDate.setMonth(calendarDate.getMonth() + dir);
+        renderCalendar();
+    }
+
+    function saveMeeting(e) {
+        e.preventDefault();
+        if (!verifyAdminToken()) return;
+        const id = document.getElementById('meet-id').value;
+        const oldTitle = document.getElementById('meet-old-title').value;
+        const title = document.getElementById('meet-title').value;
+        const start = document.getElementById('meet-start').value;
+        const end = document.getElementById('meet-end').value;
+        const location = document.getElementById('meet-location').value;
+        const notes = document.getElementById('meet-notes').value;
+        const email = document.getElementById('meet-email').value;
+        
+        let titleLower = title.toLowerCase();
+        let color = document.getElementById('meet-color').value;
+        
+        if (titleLower.includes('kursus') || titleLower.includes('bengkel') || titleLower.includes('latihan')) {
+            color = '#0d9488';
+        } else if (titleLower.includes('tbc') || titleLower.includes('bincang')) {
+            color = '#d97706';
+        } else if (titleLower.includes('rehat') || titleLower.includes('lunch') || titleLower.includes('makan')) {
+            color = '#0284c7';
+        } else if (titleLower.includes('mesyuarat')) {
+            color = '#0284c7';
+        } else if (titleLower.includes('mc') || titleLower.includes('sakit')) {
+            color = '#4f46e5';
+        }
+
+        if (id) {
+            const m = meetings.find(x => String(x.id) === String(id));
+            if(m) Object.assign(m, { title, start, end, location, notes, email, color });
+            syncDeleteToGoogleSheet("Meetings", oldTitle || title);
+            syncToGoogleSheet("Meetings", ["Tajuk Mesyuarat", "Masa Mula", "Masa Tamat", "Tempat", "Catatan", "E-mel Pegawai", "Warna"], [title, start, end, location, notes, email, color]);
+        } else {
+            meetings.push({ id: String(Date.now()), title, start, end, location, notes, email, color });
+            syncToGoogleSheet("Meetings", ["Tajuk Mesyuarat", "Masa Mula", "Masa Tamat", "Tempat", "Catatan", "E-mel Pegawai", "Warna"], [title, start, end, location, notes, email, color]);
+        }
+
+        localStorage.setItem('pa_meetings', JSON.stringify(meetings));
+        closeMeetingModal();
+        renderCalendar();
+        renderDeskOverview();
+        updateLastSyncedLabel();
+        alert('Mesyuarat berjaya disimpan.');
+    }
+
+    function deleteMeeting() {
+        if (!verifyAdminToken()) return;
+        const id = document.getElementById('meet-id').value;
+        const m = meetings.find(x => String(x.id) === String(id));
+        if (m && confirm('Adakah anda pasti mahu padam mesyuarat ini?')) {
+            meetings = meetings.filter(x => String(x.id) !== String(id));
+            localStorage.setItem('pa_meetings', JSON.stringify(meetings));
+            syncDeleteToGoogleSheet("Meetings", m.title);
+            closeMeetingModal();
+            renderCalendar();
+            renderDeskOverview();
+            updateLastSyncedLabel();
+            alert('Mesyuarat berjaya dipadam.');
+        }
+    }
+
+    function setCalendarView(mode) {
+        calendarViewMode = mode;
+        const btnMonth = document.getElementById('btn-cal-view-month');
+        const btnAgenda = document.getElementById('btn-cal-view-agenda');
+        const monthView = document.getElementById('gcal-month-view');
+        const agendaView = document.getElementById('gcal-agenda-view');
+
+        if (btnMonth) btnMonth.classList.toggle('active', mode === 'month');
+        if (btnAgenda) btnAgenda.classList.toggle('active', mode === 'agenda');
+        if (monthView) monthView.classList.toggle('hidden-section', mode !== 'month');
+        if (agendaView) agendaView.classList.toggle('hidden-section', mode !== 'agenda');
+
+        renderCalendar();
+    }
+
+    function goToTodayCalendar() {
+        const now = new Date();
+        calendarDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        renderCalendar();
+    }
+
+    function formatShortTimeFromIso(isoStr) {
+        if (!isoStr || !isoStr.includes('T')) return '';
+        const timePart = isoStr.split('T')[1].substring(0, 5);
+        let [h, m] = timePart.split(':');
+        let hour = parseInt(h, 10);
+        if (isNaN(hour)) return '';
+        const suffix = hour >= 12 ? 'ptg' : 'pg';
+        const h12 = hour % 12 || 12;
+        return m === '00' ? `${h12}${suffix}` : `${h12}:${m}${suffix}`;
+    }
+
+    function renderCalendar() {
+        const container = document.getElementById('calendar-days-container');
+        const label = document.getElementById('calendar-month-year');
+        const agendaContainer = document.getElementById('gcal-agenda-container');
+        if(!container || !label) return;
+
+        const y = calendarDate.getFullYear(), m = calendarDate.getMonth();
+        const months = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+        label.innerText = `${months[m]} ${y}`;
+
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        const allItems = getAllCalendarItems();
+
+        if (calendarViewMode === 'agenda' && agendaContainer) {
+            const daysNames = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+            const totalDaysInMonth = new Date(y, m + 1, 0).getDate();
+            let agendaHtml = '';
+            let anyEventInMonth = false;
+
+            for (let day = 1; day <= totalDaysInMonth; day++) {
+                const currentDateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const currentTimestamp = new Date(currentDateStr).setHours(0,0,0,0);
+                const dayObj = new Date(y, m, day);
+
+                const dayMeets = allItems.filter(x => {
+                    if (!x.start) return false;
+                    const startDateStr = String(x.start).split('T')[0];
+                    const endDateStr = x.end ? String(x.end).split('T')[0] : startDateStr;
+                    const startTS = new Date(startDateStr).setHours(0,0,0,0);
+                    const endTS = new Date(endDateStr).setHours(0,0,0,0);
+                    return currentTimestamp >= startTS && currentTimestamp <= endTS;
+                });
+
+                if (dayMeets.length > 0) {
+                    anyEventInMonth = true;
+                    const itemsHtml = dayMeets.map(x => {
+                        const tStart = formatShortTimeFromIso(x.start);
+                        const tEnd = formatShortTimeFromIso(x.end);
+                        const timeLabel = x.isHoliday ? 'Cuti Umum' : (tStart ? `${tStart}${tEnd ? ' – ' + tEnd : ''}` : 'Sepanjang hari');
+                        return `
+                            <div class="gcal-agenda-item" style="border-left-color: ${x.color || '#1a73e8'};" onclick="viewMeeting('${x.id}')">
+                                <span style="width:10px; height:10px; border-radius:50%; background:${x.color || '#1a73e8'}; flex-shrink:0;"></span>
+                                <div style="flex:1; min-width:0;">
+                                    <div style="font-size:12px; font-weight:700; color:#202124;">${x.title}</div>
+                                    <div style="font-size:11px; color:#5f6368;">${timeLabel}${x.location ? ' • ' + x.location : ''}</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    agendaHtml += `
+                        <div class="gcal-agenda-row">
+                            <div>
+                                <div class="gcal-agenda-date">${day} ${months[m].substring(0,3)} ${y}${currentDateStr === todayStr ? ' • Hari Ini' : ''}</div>
+                                <div class="gcal-agenda-sub">${daysNames[dayObj.getDay()]}</div>
+                            </div>
+                            <div class="gcal-agenda-events">${itemsHtml}</div>
+                        </div>
+                    `;
+                }
+            }
+
+            if (!anyEventInMonth) {
+                agendaHtml = `<div style="padding:28px; text-align:center; color:#5f6368; font-size:13px;">Tiada acara atau mesyuarat dijadualkan pada ${months[m]} ${y}.</div>`;
+            }
+            agendaContainer.innerHTML = agendaHtml;
+        }
+
+        container.innerHTML = '';
+        let firstDay = new Date(y, m, 1).getDay();
+        let startOffset = (firstDay === 0) ? 6 : firstDay - 1;
+        let totalDays = new Date(y, m + 1, 0).getDate();
+        let prevDays = new Date(y, m, 0).getDate();
+        let html = '';
+
+        for(let i = startOffset; i > 0; i--) {
+            html += `<div class="cal-day-cell other-month"><div class="cal-day-top"><span class="cal-day-num">${prevDays - i + 1}</span></div></div>`;
+        }
+
+        for(let day = 1; day <= totalDays; day++) {
+            let currentDateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            let currentTimestamp = new Date(currentDateStr).setHours(0,0,0,0);
+            let isTodayClass = (currentDateStr === todayStr) ? ' is-today' : '';
+
+            let dayMeets = allItems.filter(x => {
+                if (!x.start) return false;
+                let startDateStr = String(x.start).split('T')[0];
+                let endDateStr = x.end ? String(x.end).split('T')[0] : startDateStr;
+                let startTS = new Date(startDateStr).setHours(0,0,0,0);
+                let endTS = new Date(endDateStr).setHours(0,0,0,0);
+                return currentTimestamp >= startTS && currentTimestamp <= endTS;
+            });
+
+            let pills = '';
+            const maxVisible = 3;
+            dayMeets.slice(0, maxVisible).forEach(x => {
+                let startDateStr = String(x.start).split('T')[0];
+                let endDateStr = x.end ? String(x.end).split('T')[0] : startDateStr;
+                let startTS = new Date(startDateStr).setHours(0,0,0,0);
+                let endTS = new Date(endDateStr).setHours(0,0,0,0);
+                let totalSpanDays = Math.round((endTS - startTS) / (1000 * 60 * 60 * 24)) + 1;
+                let currentDayIndex = Math.round((currentTimestamp - startTS) / (1000 * 60 * 60 * 24)) + 1;
+
+                let shortTime = formatShortTimeFromIso(x.start);
+                let badgeText = x.isHoliday
+                    ? x.title
+                    : (totalSpanDays > 1
+                        ? `[${currentDayIndex}/${totalSpanDays}] ${x.title}`
+                        : (shortTime ? `${shortTime} ${x.title}` : x.title));
+
+                pills += `<div class="cal-event-pill" style="background:${x.color || '#1a73e8'};" onclick="event.stopPropagation(); viewMeeting('${x.id}')" title="${x.title}">${badgeText}</div>`;
+            });
+
+            if (dayMeets.length > maxVisible) {
+                const extraCount = dayMeets.length - maxVisible;
+                pills += `<button type="button" class="gcal-more-btn" onclick="event.stopPropagation(); viewMeeting('${dayMeets[maxVisible].id}')">+${extraCount} lagi</button>`;
+            }
+
+            html += `<div class="cal-day-cell${isTodayClass}" onclick="openMeetingModalForDate('${currentDateStr}')">
+                        <div class="cal-day-top"><span class="cal-day-num">${day}</span></div>
+                        <div class="cal-events-wrapper">${pills}</div>
+                     </div>`;
+        }
+
+        const totalRenderedCells = startOffset + totalDays;
+        const remainingCells = (7 - (totalRenderedCells % 7)) % 7;
+        for (let nextDay = 1; nextDay <= remainingCells; nextDay++) {
+            html += `<div class="cal-day-cell other-month"><div class="cal-day-top"><span class="cal-day-num">${nextDay}</span></div></div>`;
+        }
+
+        container.innerHTML = html;
+    }
+
+    function loadLiveTasksToTicker() {
+        try {
+            const taskEl = document.getElementById('live-ticker-tasks');
+            if (!taskEl) return;
+
+            const activeList = getVisibleTasks();
+            if (Array.isArray(activeList)) {
+                const todayDateStr = getLocalTodayIso();
+                const todayPendingTasks = activeList.filter(t => {
+                    if (isTaskCompleted(t)) return false;
+                    if (!t.deadline) return false;
+                    let cleanDeadline = String(t.deadline).split('T')[0];
+                    return cleanDeadline === todayDateStr;
+                });
+                
+                if (todayPendingTasks.length > 0) {
+                    let taskListText = todayPendingTasks.map((t, index) => `(${index + 1}) ${t.desc || t.title} [PIC: ${t.pic}]`).join(' &nbsp;&nbsp;|&nbsp;&nbsp; ');
+                    taskEl.innerHTML = `Tugasan Hari Ini (${todayPendingTasks.length}): ${taskListText}`;
+                } else {
+                    taskEl.innerHTML = `Syabas! Tiada tugasan tertunggak yang perlu diselesaikan hari ini.`;
+                }
+            } else {
+                taskEl.innerHTML = `Peringatan: Sila semak dokumen dan status pergerakan pegawai hari ini.`;
+            }
+        } catch (e) {
+            console.error("Ralat memuatkan ticker:", e);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        populateSenderDropdown();
+        renderExecStatus();
+        renderDeskOverview();
+        refreshAllViews();
+        displaySavedLastUpdatedLabel();
+        loadLiveTasksToTicker();
+        loadDataFromCloud({ silent: true });
+
+        setInterval(() => {
+            if (!document.hidden) {
+                loadDataFromCloud({ silent: true });
+            }
+        }, 30000);
+    });
+
+    window.addEventListener("pageshow", () => {
+        loadDataFromCloud({ silent: true });
+    });
+
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) {
+            loadDataFromCloud({ silent: true });
+        }
+    });
+</script>
+
+</body>
+</html>
